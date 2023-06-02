@@ -21,9 +21,6 @@
     <ClCompile Include="LoadFile.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="AST.ixx">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Interpret.ixx">
       <Filter>Source Files</Filter>
     </ClCompile>

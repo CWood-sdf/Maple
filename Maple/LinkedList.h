@@ -1,11 +1,8 @@
-export module LinkedList;
+#ifndef LINKEDLIST_H
+#define LINKEDLIST_H
 
-#ifndef NULL
-#define NULL 0
-#endif // !NULL
-import <type_traits>;
-import <new>;
-
+#include <type_traits>
+#include <new>
 
 template<class _Tp1, class _Tp2>
 inline typename std::enable_if<
@@ -1289,11 +1286,10 @@ public:
 };
 
 template<class T, class T2, class T3, class T4>
-BasicLinkedList<T, T2, T3, T4>::Node* BasicLinkedList<T, T2, T3, T4>::emptyNode = BasicLinkedList<T, T2, T3, T4>::makeEmptyNode();
+typename BasicLinkedList<T, T2, T3, T4>::Node* BasicLinkedList<T, T2, T3, T4>::emptyNode = BasicLinkedList<T, T2, T3, T4>::makeEmptyNode();
 
-
-export namespace std {
-	export template<class _Tp>
+namespace std {
+	template<class _Tp>
 	class LinkedList : public BasicLinkedList<_Tp, _Tp&, _Tp*, _Tp> {
 	public:
 		typedef BasicLinkedList<_Tp, _Tp&, _Tp*, _Tp> BaseList;
@@ -1327,7 +1323,7 @@ export namespace std {
 
 		}
 	};
-	export template<class ptref>
+	template<class ptref>
 	class LinkedList<ptref*&> : public BasicLinkedList<ptref*&, ptref*&, ptref*, ptref> {
 		typedef ptref*& _Tp;
 	public:
@@ -1362,7 +1358,7 @@ export namespace std {
 
 		}
 	};
-	export template<class pt>
+	template<class pt>
 	class LinkedList<pt*> : public BasicLinkedList<pt*, pt*, pt*, pt> {
 		typedef pt* _Tp;
 		typedef BasicLinkedList<pt*, pt*, pt*, pt> BaseList;
@@ -1400,3 +1396,5 @@ export namespace std {
 
 
 }
+
+#endif // LINKEDLIST_H

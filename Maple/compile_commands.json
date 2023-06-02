@@ -1,0 +1,6 @@
+[
+    {
+        "directory": ".",
+        "arguments": ["clang++", "-std=c++20"]
+    }
+]

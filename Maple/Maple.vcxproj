@@ -128,17 +128,17 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="AST.ixx" />
-    <ClCompile Include="Error.ixx" />
-    <ClCompile Include="Interpret.ixx" />
-    <ClCompile Include="LinkedList.ixx" />
+    <ClCompile Include="Error.cpp" />
+    <ClCompile Include="Interpret.cpp" />
+    <ClCompile Include="LinkedList.cpp" />
     <ClCompile Include="LLVM.cpp" />
-    <ClCompile Include="LoadFile.ixx" />
+    <ClCompile Include="FileLoad.cpp" />
     <ClCompile Include="Maple.cpp" />
-    <ClCompile Include="Parser.ixx" />
-    <ClCompile Include="Scope.ixx" />
-    <ClCompile Include="String.ixx" />
-    <ClCompile Include="Variable.ixx" />
+    <ClCompile Include="Parser.cpp" />
+    <ClCompile Include="Scope.cpp" />
+    <ClCompile Include="String.cpp" />
+    <ClCompile Include="Variable.cpp" />
+    <ClCompile Include="AST.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

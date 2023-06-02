@@ -2,10 +2,12 @@
 //
 
 #include <iostream>
-import FileLoad;
-import AST;
-import Parser;
-import Scope;
+#include "FileLoad.h"
+#include "Scope.h"
+#include "Error.h"
+#include "Interpret.h"
+#include "Parser.h"
+
 int main()
 {
 	std::string file = loadFile("C:/Users/woodc/maple.mpl");

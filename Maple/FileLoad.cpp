@@ -1,10 +1,6 @@
-export module FileLoad;
-import Error;
-import <string>;
-import <fstream>;
+#include "FileLoad.h"
 using std::operator "" s;
-
-export std::string loadFile(std::string fileName) {
+std::string loadFile(std::string fileName) {
 	std::string ret;
 	std::ifstream file(fileName);
 	if (file.is_open()) {
