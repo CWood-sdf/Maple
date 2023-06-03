@@ -1,0 +1,85 @@
+int x = 4323
+char c = '5'
+float q = (x - 2161 * 2) * 2
+
+fn yeetFn (int x, char c) void {
+	int usdf = 0;
+}
+
+yeetFn(2, 'c')
+
+At line: 1
+int
+At line: 1
+char
+At line: 2
+float
+At line: 3
+
+
+At line: 4
+fn
+At line: 5
+int
+At line: 6
+
+
+At line: 6
+}
+At line: 7
+
+
+At line: 7
+
+
+At line: 8
+yeetFn
+At line: 9
+int x = 4323
+char c = '5'
+float q = (x - 2161 * 2) * 2
+
+fn yeetFn (int x, char c) void {
+	int usdf = 0;
+}
+
+yeetFn(2, 'c')
+
+At line: 1
+int
+At line: 1
+char
+At line: 2
+float
+At line: 3
+
+
+At line: 4
+fn
+At line: 5
+int
+At line: 6
+
+
+At line: 6
+}
+At line: 7
+
+
+At line: 7
+
+
+At line: 8
+yeetFn
+At line: 9
+
+At line: 10
+
+At line: 10
+x: 
+4323
+
+q: 
+2.000000
+
+Done

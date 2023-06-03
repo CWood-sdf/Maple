@@ -1,6 +1,13 @@
 #pragma once
+#include "AST.h"
 #include <memory>
 #include <string>
-#include "AST.h"
-void interpret(std::shared_ptr<AST::AST> ast);
+enum BlockExit {
+    Return,
+    Break,
+    Continue,
+    None
+};
+
+std::pair<std::shared_ptr<MemorySlot>, BlockExit> interpret(std::vector<std::shared_ptr<AST::ASTNode>> ast);
 void interpret(std::string file);

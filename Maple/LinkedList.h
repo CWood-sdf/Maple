@@ -327,10 +327,7 @@ public:
 		if (!bound) {
 			destructor();
 		}
-		else {
-			int g = 0;
-			g++;
-		}
+		
 	}
 	/**
 	 * @brief Returns the first node that matches the given value

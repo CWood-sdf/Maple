@@ -1,18 +1,12 @@
-#include <string>
-#include <memory>
-#include <vector>
-#include "AST.h"
-#include "String.h"
 #include "Error.h"
+#include "Lexer.h"
+#include "String.h"
+#include <memory>
+#include <string>
+#include <vector>
+
 namespace AST {
-namespace Parse {
-	std::shared_ptr<AST> parsePartialExpression();
-	std::shared_ptr<AST> parseParentheses();
-	std::shared_ptr<AST> parseBinaryOperator(int precedence, std::shared_ptr<AST> left);
-	
-	std::shared_ptr<AST> parseDefinition();
-	
-	std::shared_ptr<AST> parseStatement();
-	std::vector<std::shared_ptr<AST>> parse();
-}
-}
+    namespace Parse {
+        std::vector<std::shared_ptr<ASTNode>> parse(bool topLevel);
+    } // namespace Parse
+} // namespace AST

@@ -1,0 +1,46 @@
+{
+    "C_Cpp.enhancedColorization": "enabled",
+    "editor.semanticTokenColorCustomizations": {
+        "[Tokyo Night]": {
+            "rules": {
+                "variable.global": "#ce8787",
+                "class": "#df776f",
+                "enumMember": "#d49490"
+            }
+        },
+        "[Tomorrow Night]": {
+            "rules": {
+                "variable.global": "#ce8787",
+                "enumMember": "#db892c"
+            }
+        },
+        "[Syntax Material Dark Level 1 (beta)]": {
+            "rules": {
+                "property": "#efbea5"
+            }
+        },
+    },
+    "workbench.colorCustomizations": {
+        "[Tokyo Night]": {
+            "editorLineNumber.foreground": "#575d7c",
+            "editorLineNumber.activeForeground": "#9199c2"
+        }
+    },
+    "editor.tokenColorCustomizations": {
+        "[Tokyo Night]": {
+            "textMateRules": [
+                {
+                    "scope": "comment.block",
+                    "settings": {
+                        "foreground": "#8694b9"
+                    }
+                }
+            ],
+            "types": "#df776f",
+            "comments": "#7781af"
+        }
+    },
+    "files.associations": {
+        "iostream": "cpp"
+    }
+}

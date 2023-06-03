@@ -3,77 +3,109 @@
 
 #include "String.h"
 #include <memory>
+namespace AST {
+    class FunctionAST;
+}
 class MemorySlot {
 public:
-	MemorySlot() {}
-	enum class Type {
-		Value,
-		Variable,
-		Undefined
-	};
-	virtual Type getMemType() = 0;
-	virtual String getTypeName() = 0;
+    MemorySlot() {}
+    enum class Type {
+        Value,
+        Variable,
+        Undefined,
+        Void,
+        Function
+    };
+    virtual Type getMemType() = 0;
+    virtual String getTypeName() = 0;
+};
+class VoidSpot : public MemorySlot {
+public:
+    VoidSpot() {}
+    Type getMemType() {
+        return Type::Void;
+    }
+    String getTypeName() {
+        return "void";
+    }
 };
 class Undefined : public MemorySlot {
 public:
-	Undefined() {}
-	Type getMemType() override;
-	String getTypeName() override;
+    virtual ~Undefined() = default;
+    Undefined() {}
+    Type getMemType() override;
+    String getTypeName() override;
 };
 class Value : public MemorySlot {
-	union Val {
-		friend class Value;
-		double floatVal;
-		int intVal;
-		char charVal;
-		bool boolVal;
-		Val(){
-			
-		}
-	public:
-		Val(double f);
-		Val(int i);
-		Val(char c);
-		Val(bool b);
-	};
+    union Val {
+        friend class Value;
+        double floatVal;
+        int intVal;
+        char charVal;
+        bool boolVal;
+        Val() {
+        }
+
+    public:
+        Val(double f);
+        Val(int i);
+        Val(char c);
+        Val(bool b);
+    };
+
 public:
-	enum class Types {
-		Double,
-		Int,
-		Char,
-		Bool
-	};
+    enum class Types {
+        Double,
+        Int,
+        Char,
+        Bool
+    };
+
 private:
-	Val value;
-	Types type;
-	String typeName;
+    Val value;
+    Types type;
+    String typeName;
+
 public:
-	Value(double d);
-	Value(int f);
-	Value(char c);
-	Value(bool b);
-	Types getType();
-	virtual Type getMemType();
-	Val& getValue();
-	template<class T>
-	T getAs();
-	double getAsFloat();
-	int getAsInt();
-	char getAsChar();
-	bool getAsBool();
-	virtual String getTypeName();
+    Value(double d);
+    Value(int f);
+    Value(char c);
+    Value(bool b);
+    virtual ~Value() = default;
+    Types getType();
+    virtual Type getMemType();
+    Val& getValue();
+    template <class T>
+    T getAs();
+    double getAsFloat();
+    int getAsInt();
+    char getAsChar();
+    bool getAsBool();
+    virtual String getTypeName();
 };
 class Variable : public MemorySlot {
-	std::shared_ptr<MemorySlot> value;
-	String name;
-	String type;
-public:
-	Variable(String name, String type);
-	void setValue(std::shared_ptr<MemorySlot> v);
-	String getName();
-	virtual String getTypeName();
-	virtual Type getMemType();
-	std::shared_ptr<MemorySlot> getValue();
-};
+    std::shared_ptr<MemorySlot> value;
+    String name;
+    String type;
 
+public:
+    Variable(String name, String type);
+    virtual ~Variable() = default;
+    void setValue(std::shared_ptr<MemorySlot> v);
+    String getName();
+    virtual String getTypeName();
+    virtual Type getMemType();
+    std::shared_ptr<MemorySlot> getValue();
+};
+class Function : public MemorySlot {
+    std::shared_ptr<AST::FunctionAST> function;
+    String name;
+    String type;
+
+public:
+    Function(String name, std::shared_ptr<AST::FunctionAST> function);
+    std::shared_ptr<AST::FunctionAST> getFunction();
+    virtual String getTypeName();
+    virtual Type getMemType();
+};
 #endif // VARIABLE_H
