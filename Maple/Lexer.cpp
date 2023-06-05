@@ -51,10 +51,13 @@ AST::Type AST::getNextToken() {
         return getNextToken();
     }
     // If it's a newline, return end of statement
-    if (file[i] == '\n') {
+    if (file[i] == '\n' || file[i] == '\r') {
         currentLine++;
         // Safe inc
         i++;
+        if (i < file.size() && (file[i] == '\n' || file[i] == '\r') && file[i] != file[i - 1]) {
+            i++;
+        }
         currentToken = Token(Type::EndOfStatement, String("\n"));
         return Type::EndOfStatement;
     }
@@ -129,8 +132,9 @@ AST::Type AST::getNextToken() {
                 break;
             }
         }
-        currentLine++;
-        // Don't increase i, so that getNextToken() returns EOF or EndOfStatement
+        // don't increase line because the newline will do that
+        //  currentLine++;
+        //  Don't increase i, so that getNextToken() returns EOF or EndOfStatement
         return getNextToken();
     }
     // Skip multiline comments

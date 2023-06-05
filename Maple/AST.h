@@ -120,6 +120,7 @@ namespace AST {
 
     class FunctionAST : public ASTNode {
     public:
+        std::shared_ptr<FunctionAST> selfReference;
         String returnType;
         std::vector<std::shared_ptr<ASTNode>> arguments;
         std::vector<std::shared_ptr<ASTNode>> statements;
@@ -131,6 +132,7 @@ namespace AST {
         std::shared_ptr<MemorySlot> getValue() override;
         std::shared_ptr<MemorySlot> call(std::vector<std::shared_ptr<ASTNode>> arguments);
         String getType();
+        void setSelfReference(std::shared_ptr<FunctionAST> selfReference);
     };
     class FunctionCallAST : public ASTNode {
     public:

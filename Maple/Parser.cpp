@@ -5,6 +5,8 @@
 using std::operator"" s;
 using namespace AST;
 
+// TODO: Make sure every function is starting on the token it needs
+
 std::shared_ptr<AST::ASTNode> parseParentheses();
 
 std::shared_ptr<AST::ASTNode> parseBinaryOperator(int precedence, std::shared_ptr<ASTNode> left);
@@ -158,7 +160,7 @@ std::shared_ptr<AST::ASTNode> parseDefinition() {
     } else if (nextToken == Type::EndOfStatement) {
         return node;
     } else {
-        throwError("Invalid token after variable declaration: " + getCurrentToken().str.getReference() + "\n  note: maybe you forgot an EndOfStatement", getCurrentToken().originLine);
+        throwError("Invalid token after variable declaration: " + getCurrentToken().str.getReference() + "\n  note: maybe you forgot a newline", getCurrentToken().originLine);
     }
     return node;
 }
@@ -215,28 +217,41 @@ std::shared_ptr<ASTNode> parseFunctionDefinition() {
     String returnType = getCurrentToken().str;
     // eat return type
     getNextToken();
-    // eat '{'
-    if (getCurrentToken().type != (Type)'{') {
-        throwError("Expected '{' after function return type", getCurrentToken().originLine);
-    }
-    getNextToken();
-    // Get the statements
+
+    //  Get the statements
     std::vector<std::shared_ptr<ASTNode>> statements = Parse::parse(false);
-    // eat '}'
-    getNextToken();
+
     // Make the AST node
-    std::shared_ptr<ASTNode> node = std::make_shared<FunctionAST>(returnType, parameters, statements, name);
+    std::shared_ptr<FunctionAST> node = std::make_shared<FunctionAST>(returnType, parameters, statements, name);
+    node->setSelfReference(node);
     return node;
 }
 
 std::vector<std::shared_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
     std::vector<std::shared_ptr<ASTNode>> code;
     std::shared_ptr<ASTNode> currentNode = nullptr;
+    if (topLevel) {
+        // Get the first token
+        getNextToken();
+    } else {
+        // eat '{'
+        if (getCurrentToken().type != (Type)'{') {
+            throwError("Expected '{' to start code block", getCurrentToken().originLine);
+        }
+        if (getNextToken() != Type::EndOfStatement) {
+            throwError("Expected newline after '{'", getCurrentToken().originLine);
+        }
+        // eat newline
+        getNextToken();
+    }
     while (true) {
         // Get the next Token
-        Type type = getNextToken();
+        Type type = getCurrentToken().type;
         writeOutput(getCurrentToken().str.getReference());
         if (type == Type::EndOfFile) {
+            if (!topLevel) {
+                throwError("Unexpected end of file while parsing code block (AKA unmatched '{')", getCurrentToken().originLine);
+            }
             break;
         }
         switch (type) {
@@ -255,20 +270,41 @@ std::vector<std::shared_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
             if (topLevel) {
                 throwError("Unexpected top level '}'\n  note: this may be caused by excess closing braces", getLine());
             } else {
-                break;
+                goto END;
             }
             break;
         case Type::EndOfStatement:
             // Ignore empty statements
+            // Eat the token
+            getNextToken();
             continue;
-            break;
+            // break;
         default:
             throwError("Unable to parse statement starting with '"s + getCurrentToken().str.getReference() + "'", getLine());
         }
         if (currentNode) {
             code.push_back(currentNode);
         }
+        if (getCurrentToken().type != Type::EndOfStatement && getCurrentToken().type != Type::EndOfFile) {
+            throwError("Expected '\\n' after statement\n  note: got \""s + getCurrentToken().str.getReference() + "\"", getCurrentToken().originLine);
+            getNextToken();
+        } else {
+            getNextToken();
+        }
+    }
+END:
+    if (!topLevel) {
+        // eat '}'
+        if (getCurrentToken().type != (Type)'}') {
+            throwError("Expected '}' at end of code block", getCurrentToken().originLine);
+        }
+        getNextToken();
+        if (getCurrentToken().type != Type::EndOfStatement) {
+            throwError("Expected newline after '}'", getCurrentToken().originLine);
+        }
+        // eat newline
+        getNextToken();
     }
     return code;
 }
-// #pragma clang diagnostic pop
+#pragma clang diagnostic pop

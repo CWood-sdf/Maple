@@ -7,14 +7,17 @@
 #include "Interpret.h"
 #include "Parser.h"
 #include "Scope.h"
+#include <chrono>
 #include <iostream>
 #include <string>
 
 int main() {
-    std::string file = loadFile("C:/Users/woodc/maple.mpl");
+    // start timer
+    std::string file = loadFile("./Maple/maple.mpl");
     AST::prepareInterpreter(file);
+    auto start = std::chrono::high_resolution_clock::now();
     initScope();
-    writeOutput(file); //
+    writeOutput(file);
     /*while (AST::getNextToken() != AST::Type::EndOfFile) {
             std::cout << "Token: " << AST::getCurrentToken().second.getReference()
     << ", " << (int)AST::getCurrentToken().first << std::endl;
@@ -23,14 +26,19 @@ int main() {
     for (auto& b : block) {
         b->getValue();
     }
-    auto xvar = getVariable("x");
-    writeOutputNoLine("x: ");
-    writeOutputNoLine(std::to_string(*(long*)(&((Value*)xvar->getValue().get())->getValue())) + "\n");
-    auto qvar = getVariable("q");
-    writeOutputNoLine("q: ");
-    writeOutputNoLine(std::to_string(*(double*)(&((Value*)qvar->getValue().get())->getValue())) + "\n");
+    auto xvar = getVariable("x", 0);
+    writeOutputNoLine("x: "s + std::to_string(*(long*)(&((Value*)xvar->getValue().get())->getValue())) + "\n");
+    auto qvar = getVariable("q", 0);
+    writeOutputNoLine("q: "s + std::to_string(*(double*)(&((Value*)qvar->getValue().get())->getValue())) + "\n");
 
-    writeOutputNoLine("Done");
+    // end timer
+    auto end = std::chrono::high_resolution_clock::now();
+    auto duration =
+        std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    writeOutputNoLine("Done in " + std::to_string(duration.count() / 1000.0) + " ms\n");
+    // std::cout << "Done in " << duration.count() / 1000.0 << " ms" << std::endl;
+    std::cout << "Press enter to exit..." << std::endl;
+    std::cin.get();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

@@ -278,7 +278,7 @@ std::shared_ptr<MemorySlot> AST::UnaryOperatorAST::getValue() {
 }
 AST::VariableAST::VariableAST(String name, std::size_t line) : ASTNode(line), name(name) {}
 std::shared_ptr<MemorySlot> AST::VariableAST::getValue() {
-    return getVariable(name);
+    return getVariable(name, this->line);
 }
 AST::VariableDeclarationAST::VariableDeclarationAST(std::vector<String> types,
     String type, String name, std::size_t line)
@@ -297,11 +297,14 @@ AST::FunctionAST::FunctionAST(String returnType,
 std::shared_ptr<MemorySlot> AST::FunctionAST::getValue() {
     auto var = std::make_shared<Variable>(name, getType());
     addVariable(var, this->line);
-    var->setValue(std::make_shared<Function>(name, this));
+    var->setValue(std::make_shared<Function>(name, this->selfReference));
     return var;
 }
 std::shared_ptr<MemorySlot> AST::FunctionAST::call(std::vector<std::shared_ptr<ASTNode>> args) {
     return std::make_shared<Undefined>();
+}
+void AST::FunctionAST::setSelfReference(std::shared_ptr<FunctionAST> self) {
+    this->selfReference = self;
 }
 String AST::FunctionAST::getType() {
     std::string type = returnType.getReference() + "(";

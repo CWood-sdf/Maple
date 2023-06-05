@@ -1,0 +1,645 @@
+make: Warning: File 'Makefile' has modification time 70204 s in the future
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__cxx_global_var_init':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/iostream:74: undefined reference to `std::ios_base::Init::Init()'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__cxx_global_var_init':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:(.text.startup+0x13): undefined reference to `std::ios_base::Init::~Init()'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `evalOperatorEql(std::shared_ptr<MemorySlot>, std::shared_ptr<MemorySlot>)':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:24: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:24: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:24: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::literals::string_literals::operator"" s[abi:cxx11](char const*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:6961: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:6961: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:6961: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `evalOperatorPls(std::shared_ptr<MemorySlot>, std::shared_ptr<MemorySlot>)':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:70: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:70: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:70: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:78: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:78: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:78: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `evalOperatorMns(std::shared_ptr<MemorySlot>, std::shared_ptr<MemorySlot>)':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:119: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:119: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:119: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:127: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:127: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:127: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `evalOperatorMult(std::shared_ptr<MemorySlot>, std::shared_ptr<MemorySlot>)':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:168: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:168: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:168: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:176: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:176: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:176: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `AST::FunctionAST::getType()':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/AST.cpp:312: undefined reference to `__dynamic_cast'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `~FloatAST':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/AST.h:54: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `~IntAST':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/AST.h:62: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `~StringAST':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/AST.h:76: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `~CharacterAST':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/AST.h:84: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `~BinaryOperatorAST':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/AST.h:94: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o:/mnt/c/Users/woodc/source/repos/Maple/Maple/AST.h:108: more undefined references to `operator delete(void*)' follow
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__clang_call_terminate':
+AST.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0x5): undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: AST.cpp:(.text.__clang_call_terminate[__clang_call_terminate]+0xa): undefined reference to `std::terminate()'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Rb_tree_node<String> >::deallocate(std::_Rb_tree_node<String>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Rb_tree_node<char> >::deallocate(std::_Rb_tree_node<char>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<String const, int> > >::deallocate(std::_Rb_tree_node<std::pair<String const, int> >*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<char const, char> > >::deallocate(std::_Rb_tree_node<std::pair<char const, char> >*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `_Alloc_hider':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:165: undefined reference to `std::allocator<char>::allocator(std::allocator<char> const&)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `~_Alloc_hider':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:158: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char const*>(char const*, char const*, std::forward_iterator_tag)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.tcc:212: undefined reference to `std::__throw_logic_error(char const*)'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.tcc:225: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.tcc:229: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.tcc:230: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_create(unsigned long&, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.tcc:138: undefined reference to `std::__throw_length_error(char const*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<char>::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<char>::deallocate(char*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `double __gnu_cxx::__stoa<double, double, char>(double (*)(char const*, char**), char const*, char const*, unsigned long*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/string_conversions.h:83: undefined reference to `std::__throw_invalid_argument(char const*)'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/string_conversions.h:86: undefined reference to `std::__throw_out_of_range(char const*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `int __gnu_cxx::__stoa<long, int, char, int>(long (*)(char const*, char**, int), char const*, char const*, unsigned long*, int)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/string_conversions.h:83: undefined reference to `std::__throw_invalid_argument(char const*)'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/string_conversions.h:86: undefined reference to `std::__throw_out_of_range(char const*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `basic_string':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:457: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:457: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `_Alloc_hider':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:168: undefined reference to `std::allocator<char>::allocator(std::allocator<char> const&)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::allocator_traits<std::allocator<char> >::select_on_container_copy_construction(std::allocator<char> const&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/alloc_traits.h:563: undefined reference to `std::allocator<char>::allocator(std::allocator<char> const&)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `void std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_construct<char*>(char*, char*, std::forward_iterator_tag)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.tcc:212: undefined reference to `std::__throw_logic_error(char const*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_check_length(unsigned long, unsigned long, char const*) const':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:331: undefined reference to `std::__throw_length_error(char const*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::_Rb_tree_iterator<String> std::_Rb_tree<String, String, std::_Identity<String>, std::less<String>, std::allocator<String> >::_M_insert_<String const&, std::_Rb_tree<String, String, std::_Identity<String>, std::less<String>, std::allocator<String> >::_Alloc_node>(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, String const&, std::_Rb_tree<String, String, std::_Identity<String>, std::less<String>, std::allocator<String> >::_Alloc_node&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:1786: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::_Rb_tree_iterator<String>::operator--()':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:302: undefined reference to `std::_Rb_tree_decrement(std::_Rb_tree_node_base*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::_Rb_tree_iterator<String>::operator++()':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:287: undefined reference to `std::_Rb_tree_increment(std::_Rb_tree_node_base*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `void std::_Rb_tree<String, String, std::_Identity<String>, std::less<String>, std::allocator<String> >::_M_construct_node<String const&>(std::_Rb_tree_node<String>*, String const&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:598: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:603: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:604: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Rb_tree_node<String> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::_Rb_tree_iterator<std::pair<String const, int> > std::_Rb_tree<String, std::pair<String const, int>, std::_Select1st<std::pair<String const, int> >, std::less<String>, std::allocator<std::pair<String const, int> > >::_M_insert_<std::pair<String const, int> const&, std::_Rb_tree<String, std::pair<String const, int>, std::_Select1st<std::pair<String const, int> >, std::less<String>, std::allocator<std::pair<String const, int> > >::_Alloc_node>(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::pair<String const, int> const&, std::_Rb_tree<String, std::pair<String const, int>, std::_Select1st<std::pair<String const, int> >, std::less<String>, std::allocator<std::pair<String const, int> > >::_Alloc_node&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:1786: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::_Rb_tree_iterator<std::pair<String const, int> >::operator--()':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:302: undefined reference to `std::_Rb_tree_decrement(std::_Rb_tree_node_base*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::_Rb_tree_iterator<std::pair<String const, int> >::operator++()':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:287: undefined reference to `std::_Rb_tree_increment(std::_Rb_tree_node_base*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `void std::_Rb_tree<String, std::pair<String const, int>, std::_Select1st<std::pair<String const, int> >, std::less<String>, std::allocator<std::pair<String const, int> > >::_M_construct_node<std::pair<String const, int> const&>(std::_Rb_tree_node<std::pair<String const, int> >*, std::pair<String const, int> const&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:598: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:603: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:604: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<String const, int> > >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::_Rb_tree_iterator<std::pair<char const, char> > std::_Rb_tree<char, std::pair<char const, char>, std::_Select1st<std::pair<char const, char> >, std::less<char>, std::allocator<std::pair<char const, char> > >::_M_insert_<std::pair<char const, char> const&, std::_Rb_tree<char, std::pair<char const, char>, std::_Select1st<std::pair<char const, char> >, std::less<char>, std::allocator<std::pair<char const, char> > >::_Alloc_node>(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::pair<char const, char> const&, std::_Rb_tree<char, std::pair<char const, char>, std::_Select1st<std::pair<char const, char> >, std::less<char>, std::allocator<std::pair<char const, char> > >::_Alloc_node&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:1786: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::_Rb_tree_iterator<std::pair<char const, char> >::operator--()':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:302: undefined reference to `std::_Rb_tree_decrement(std::_Rb_tree_node_base*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::_Rb_tree_iterator<std::pair<char const, char> >::operator++()':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:287: undefined reference to `std::_Rb_tree_increment(std::_Rb_tree_node_base*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<char const, char> > >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<Value, std::allocator<Value>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<Value, std::allocator<Value>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<Value, std::allocator<Value>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::_Rb_tree_iterator<std::pair<String const, int> > std::_Rb_tree<String, std::pair<String const, int>, std::_Select1st<std::pair<String const, int> >, std::less<String>, std::allocator<std::pair<String const, int> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<String const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<String const, int> >, std::piecewise_construct_t const&, std::tuple<String const&>&&, std::tuple<>&&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:2442: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:2446: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:2447: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::_Rb_tree<String, std::pair<String const, int>, std::_Select1st<std::pair<String const, int> >, std::less<String>, std::allocator<std::pair<String const, int> > >::_M_insert_node(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node<std::pair<String const, int> >*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:2337: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `void std::_Rb_tree<String, std::pair<String const, int>, std::_Select1st<std::pair<String const, int> >, std::less<String>, std::allocator<std::pair<String const, int> > >::_M_construct_node<std::piecewise_construct_t const&, std::tuple<String const&>, std::tuple<> >(std::_Rb_tree_node<std::pair<String const, int> >*, std::piecewise_construct_t const&, std::tuple<String const&>&&, std::tuple<>&&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:598: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:603: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:604: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<Undefined, std::allocator<Undefined>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<Undefined, std::allocator<Undefined>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<Undefined, std::allocator<Undefined>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<String>::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `String* std::__uninitialized_copy<false>::__uninit_copy<__gnu_cxx::__normal_iterator<String const*, std::vector<String, std::allocator<String> > >, String*>(__gnu_cxx::__normal_iterator<String const*, std::vector<String, std::allocator<String> > >, __gnu_cxx::__normal_iterator<String const*, std::vector<String, std::allocator<String> > >, String*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_uninitialized.h:94: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_uninitialized.h:98: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_uninitialized.h:99: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<String>::deallocate(String*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<Variable, std::allocator<Variable>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<Variable, std::allocator<Variable>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<Variable, std::allocator<Variable>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::shared_ptr<AST::ASTNode> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `std::shared_ptr<AST::ASTNode>* std::__uninitialized_copy<false>::__uninit_copy<__gnu_cxx::__normal_iterator<std::shared_ptr<AST::ASTNode> const*, std::vector<std::shared_ptr<AST::ASTNode>, std::allocator<std::shared_ptr<AST::ASTNode> > > >, std::shared_ptr<AST::ASTNode>*>(__gnu_cxx::__normal_iterator<std::shared_ptr<AST::ASTNode> const*, std::vector<std::shared_ptr<AST::ASTNode>, std::allocator<std::shared_ptr<AST::ASTNode> > > >, __gnu_cxx::__normal_iterator<std::shared_ptr<AST::ASTNode> const*, std::vector<std::shared_ptr<AST::ASTNode>, std::allocator<std::shared_ptr<AST::ASTNode> > > >, std::shared_ptr<AST::ASTNode>*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_uninitialized.h:94: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_uninitialized.h:98: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_uninitialized.h:99: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::shared_ptr<AST::ASTNode> >::deallocate(std::shared_ptr<AST::ASTNode>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<Function, std::allocator<Function>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<Function, std::allocator<Function>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<Function, std::allocator<Function>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTIN3AST7ASTNodeE[_ZTIN3AST7ASTNodeE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTIN3AST22VariableDeclarationASTE+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTIN3AST8FloatASTE+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTIN3AST6IntASTE+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTIN3AST7BoolASTE+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTIN3AST9StringASTE+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTIN3AST12CharacterASTE+0x0): more undefined references to `vtable for __cxxabiv1::__si_class_type_info' follow
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTVN3AST7ASTNodeE[_ZTVN3AST7ASTNodeE]+0x10): undefined reference to `__cxa_pure_virtual'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt11_Mutex_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTISt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceI5ValueSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceI5ValueSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x20): undefined reference to `__cxa_pure_virtual'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE[_ZTVSt16_Sp_counted_baseILN9__gnu_cxx12_Lock_policyE2EE]+0x30): undefined reference to `__cxa_pure_virtual'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTISt19_Sp_make_shared_tag[_ZTISt19_Sp_make_shared_tag]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceI9UndefinedSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceI9UndefinedSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTV10MemorySlot[_ZTV10MemorySlot]+0x10): undefined reference to `__cxa_pure_virtual'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTV10MemorySlot[_ZTV10MemorySlot]+0x18): undefined reference to `__cxa_pure_virtual'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTI10MemorySlot[_ZTI10MemorySlot]+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceI8VariableSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceI8VariableSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceI8FunctionSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceI8FunctionSaIS0_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/AST..o:(.data.DW.ref.__gxx_personality_v0[DW.ref.__gxx_personality_v0]+0x0): undefined reference to `__gxx_personality_v0'
+/usr/bin/ld: Maple/out-linux/Error..o: in function `__cxx_global_var_init':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/iostream:74: undefined reference to `std::ios_base::Init::Init()'
+/usr/bin/ld: Maple/out-linux/Error..o: in function `__cxx_global_var_init':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:(.text.startup+0x13): undefined reference to `std::ios_base::Init::~Init()'
+/usr/bin/ld: Maple/out-linux/Error..o: in function `throwError(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned long)':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:4: undefined reference to `std::cerr'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:4: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <char, std::char_traits<char>, std::allocator<char> >(std::basic_ostream<char, std::char_traits<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:4: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:4: undefined reference to `std::ostream::operator<<(std::ostream& (*)(std::ostream&))'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:5: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:5: undefined reference to `std::ostream::operator<<(unsigned long)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:5: undefined reference to `std::ostream::operator<<(std::ostream& (*)(std::ostream&))'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:7: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::basic_ofstream(char const*, std::_Ios_Openmode)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:8: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::is_open()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:9: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <char, std::char_traits<char>, std::allocator<char> >(std::basic_ostream<char, std::char_traits<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:9: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:9: undefined reference to `std::ostream::operator<<(std::ostream& (*)(std::ostream&))'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:10: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:10: undefined reference to `std::ostream::operator<<(unsigned long)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:10: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:10: undefined reference to `std::ostream::operator<<(std::ostream& (*)(std::ostream&))'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:11: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::close()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:14: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::~basic_ofstream()'
+/usr/bin/ld: Maple/out-linux/Error..o: in function `writeOutput(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, unsigned long)':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:16: undefined reference to `std::cout'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:16: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <char, std::char_traits<char>, std::allocator<char> >(std::basic_ostream<char, std::char_traits<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:16: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:16: undefined reference to `std::ostream::operator<<(std::ostream& (*)(std::ostream&))'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:17: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:17: undefined reference to `std::ostream::operator<<(unsigned long)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:17: undefined reference to `std::ostream::operator<<(std::ostream& (*)(std::ostream&))'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:19: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::basic_ofstream(char const*, std::_Ios_Openmode)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:20: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::is_open()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:21: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <char, std::char_traits<char>, std::allocator<char> >(std::basic_ostream<char, std::char_traits<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:21: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:21: undefined reference to `std::ostream::operator<<(std::ostream& (*)(std::ostream&))'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:22: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&, char const*)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:22: undefined reference to `std::ostream::operator<<(unsigned long)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:22: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:22: undefined reference to `std::ostream::operator<<(std::ostream& (*)(std::ostream&))'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:23: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::close()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:25: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::~basic_ofstream()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:25: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::~basic_ofstream()'
+/usr/bin/ld: Maple/out-linux/Error..o: in function `writeOutputNoLine(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:27: undefined reference to `std::cout'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:27: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <char, std::char_traits<char>, std::allocator<char> >(std::basic_ostream<char, std::char_traits<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:27: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:27: undefined reference to `std::ostream::operator<<(std::ostream& (*)(std::ostream&))'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:29: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::basic_ofstream(char const*, std::_Ios_Openmode)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:30: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::is_open()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:31: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::operator<< <char, std::char_traits<char>, std::allocator<char> >(std::basic_ostream<char, std::char_traits<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:31: undefined reference to `std::basic_ostream<char, std::char_traits<char> >& std::endl<char, std::char_traits<char> >(std::basic_ostream<char, std::char_traits<char> >&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:31: undefined reference to `std::ostream::operator<<(std::ostream& (*)(std::ostream&))'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:32: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::close()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:34: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::~basic_ofstream()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Error.cpp:34: undefined reference to `std::basic_ofstream<char, std::char_traits<char> >::~basic_ofstream()'
+/usr/bin/ld: Maple/out-linux/FileLoad..o: in function `__cxx_global_var_init':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/iostream:74: undefined reference to `std::ios_base::Init::Init()'
+/usr/bin/ld: Maple/out-linux/FileLoad..o: in function `__cxx_global_var_init':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/FileLoad.cpp:(.text.startup+0x13): undefined reference to `std::ios_base::Init::~Init()'
+/usr/bin/ld: Maple/out-linux/FileLoad..o: in function `loadFile(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >)':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/FileLoad.cpp:5: undefined reference to `std::basic_ifstream<char, std::char_traits<char> >::basic_ifstream(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&, std::_Ios_Openmode)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/FileLoad.cpp:6: undefined reference to `std::basic_ifstream<char, std::char_traits<char> >::is_open()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/FileLoad.cpp:8: undefined reference to `std::basic_istream<char, std::char_traits<char> >& std::getline<char, std::char_traits<char>, std::allocator<char> >(std::basic_istream<char, std::char_traits<char> >&, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/FileLoad.cpp:8: undefined reference to `std::basic_ios<char, std::char_traits<char> >::operator bool() const'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/FileLoad.cpp:11: undefined reference to `std::basic_ifstream<char, std::char_traits<char> >::close()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/FileLoad.cpp:17: undefined reference to `std::basic_ifstream<char, std::char_traits<char> >::~basic_ifstream()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/FileLoad.cpp:17: undefined reference to `std::basic_ifstream<char, std::char_traits<char> >::~basic_ifstream()'
+/usr/bin/ld: Maple/out-linux/FileLoad..o: in function `basic_string':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:441: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:441: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/Function..o: in function `__cxx_global_var_init':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/iostream:74: undefined reference to `std::ios_base::Init::Init()'
+/usr/bin/ld: Maple/out-linux/Function..o: in function `__cxx_global_var_init':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Function.cpp:(.text.startup+0x13): undefined reference to `std::ios_base::Init::~Init()'
+/usr/bin/ld: Maple/out-linux/Function..o:(.data.rel.ro._ZTI8Function+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/Interpret..o: in function `__cxx_global_var_init':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/iostream:74: undefined reference to `std::ios_base::Init::Init()'
+/usr/bin/ld: Maple/out-linux/Interpret..o: in function `__cxx_global_var_init':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Interpret.cpp:(.text.startup+0x13): undefined reference to `std::ios_base::Init::~Init()'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<char const, int> > >::deallocate(std::_Rb_tree_node<std::pair<char const, int> >*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::_MakeUniq<(anonymous namespace)::FunctionAST>::__single_object std::make_unique<(anonymous namespace)::FunctionAST, std::unique_ptr<(anonymous namespace)::PrototypeAST, std::default_delete<(anonymous namespace)::PrototypeAST> >, std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> > >(std::unique_ptr<(anonymous namespace)::PrototypeAST, std::default_delete<(anonymous namespace)::PrototypeAST> >&&, std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> >&&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::_MakeUniq<(anonymous namespace)::PrototypeAST>::__single_object std::make_unique<(anonymous namespace)::PrototypeAST, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `void std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_realloc_insert<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&>(__gnu_cxx::__normal_iterator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/vector.tcc:484: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/vector.tcc:494: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/vector.tcc:493: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >::_M_check_len(unsigned long, char const*) const':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_vector.h:1759: undefined reference to `std::__throw_length_error(char const*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `__gnu_cxx::new_allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `__gnu_cxx::new_allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > >::deallocate(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::_MakeUniq<(anonymous namespace)::VariableExprAST>::__single_object std::make_unique<(anonymous namespace)::VariableExprAST, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&>(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::_MakeUniq<(anonymous namespace)::CallExprAST>::__single_object std::make_unique<(anonymous namespace)::CallExprAST, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::vector<std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> >, std::allocator<std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> > > > >(std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >&, std::vector<std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> >, std::allocator<std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> > > >&&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `~VariableExprAST':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/LLVM.cpp:103: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `~ExprAST':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/LLVM.cpp:91: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::vector<std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> >, std::allocator<std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> > > >::_M_check_len(unsigned long, char const*) const':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_vector.h:1759: undefined reference to `std::__throw_length_error(char const*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `__gnu_cxx::new_allocator<std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> > >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `__gnu_cxx::new_allocator<std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> > >::deallocate(std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> >*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `~CallExprAST':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/LLVM.cpp:122: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::_MakeUniq<(anonymous namespace)::NumberExprAST>::__single_object std::make_unique<(anonymous namespace)::NumberExprAST, double&>(double&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `~NumberExprAST':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/LLVM.cpp:95: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::_MakeUniq<(anonymous namespace)::BinaryExprAST>::__single_object std::make_unique<(anonymous namespace)::BinaryExprAST, int&, std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> >, std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> > >(int&, std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> >&&, std::unique_ptr<(anonymous namespace)::ExprAST, std::default_delete<(anonymous namespace)::ExprAST> >&&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `~BinaryExprAST':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/LLVM.cpp:111: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::default_delete<(anonymous namespace)::PrototypeAST>::operator()((anonymous namespace)::PrototypeAST*) const':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::default_delete<(anonymous namespace)::FunctionAST>::operator()((anonymous namespace)::FunctionAST*) const':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:85: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::_MakeUniq<(anonymous namespace)::PrototypeAST>::__single_object std::make_unique<(anonymous namespace)::PrototypeAST, char const (&) [12], std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > > >(char const (&) [12], std::vector<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, std::allocator<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > > >&&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/unique_ptr.h:962: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::_Rb_tree_iterator<std::pair<char const, int> > std::_Rb_tree<char, std::pair<char const, int>, std::_Select1st<std::pair<char const, int> >, std::less<char>, std::allocator<std::pair<char const, int> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<char&&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<char const, int> >, std::piecewise_construct_t const&, std::tuple<char&&>&&, std::tuple<>&&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:2442: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:2446: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:2447: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::_Rb_tree<char, std::pair<char const, int>, std::_Select1st<std::pair<char const, int> >, std::less<char>, std::allocator<std::pair<char const, int> > >::_M_insert_node(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node<std::pair<char const, int> >*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:2337: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `void std::_Rb_tree<char, std::pair<char const, int>, std::_Select1st<std::pair<char const, int> >, std::less<char>, std::allocator<std::pair<char const, int> > >::_M_construct_node<std::piecewise_construct_t const&, std::tuple<char&&>, std::tuple<> >(std::_Rb_tree_node<std::pair<char const, int> >*, std::piecewise_construct_t const&, std::tuple<char&&>&&, std::tuple<>&&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:598: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:603: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:604: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `__gnu_cxx::new_allocator<std::_Rb_tree_node<std::pair<char const, int> > >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::_Rb_tree_iterator<std::pair<char const, int> >::operator--()':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:302: undefined reference to `std::_Rb_tree_decrement(std::_Rb_tree_node_base*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o: in function `std::_Rb_tree_iterator<std::pair<char const, int> >::operator++()':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:287: undefined reference to `std::_Rb_tree_increment(std::_Rb_tree_node_base*)'
+/usr/bin/ld: Maple/out-linux/LLVM..o:(.data.rel.ro._ZTIN12_GLOBAL__N_17ExprASTE+0x0): undefined reference to `vtable for __cxxabiv1::__class_type_info'
+/usr/bin/ld: Maple/out-linux/LLVM..o:(.data.rel.ro._ZTIN12_GLOBAL__N_115VariableExprASTE+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/LLVM..o:(.data.rel.ro._ZTIN12_GLOBAL__N_111CallExprASTE+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/LLVM..o:(.data.rel.ro._ZTIN12_GLOBAL__N_113NumberExprASTE+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/LLVM..o:(.data.rel.ro._ZTIN12_GLOBAL__N_113BinaryExprASTE+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `__cxx_global_var_init':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/iostream:74: undefined reference to `std::ios_base::Init::Init()'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `__cxx_global_var_init':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:(.text.startup+0x13): undefined reference to `std::ios_base::Init::~Init()'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `__cxx_global_var_init.1':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:4: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:4: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:4: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `std::_Rb_tree_const_iterator<String>::operator++()':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:368: undefined reference to `std::_Rb_tree_increment(std::_Rb_tree_node_base const*)'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `AST::getNextToken()':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:64: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:64: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:64: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:89: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:89: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:89: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:144: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:144: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:144: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:152: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:152: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:152: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:186: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:186: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:186: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:188: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:188: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:189: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:189: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:188: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:189: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:203: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:203: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:203: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:221: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:221: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:221: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:223: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:223: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:228: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:228: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:223: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:228: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:237: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:237: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Lexer.cpp:237: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > std::operator+<char, std::char_traits<char>, std::allocator<char> >(char const*, std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > const&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.tcc:1179: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.tcc:1179: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.tcc:1179: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `std::_Rb_tree_iterator<char> std::_Rb_tree<char, char, std::_Identity<char>, std::less<char>, std::allocator<char> >::_M_insert_<char const&, std::_Rb_tree<char, char, std::_Identity<char>, std::less<char>, std::allocator<char> >::_Alloc_node>(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, char const&, std::_Rb_tree<char, char, std::_Identity<char>, std::less<char>, std::allocator<char> >::_Alloc_node&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:1786: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `std::_Rb_tree_iterator<char>::operator--()':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:302: undefined reference to `std::_Rb_tree_decrement(std::_Rb_tree_node_base*)'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `__gnu_cxx::new_allocator<std::_Rb_tree_node<char> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::get_allocator() const':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:2352: undefined reference to `std::allocator<char>::allocator(std::allocator<char> const&)'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >::_M_check(unsigned long, char const*) const':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:321: undefined reference to `std::__throw_out_of_range_fmt(char const*, ...)'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `basic_string':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:486: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:486: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:486: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `std::_Rb_tree_iterator<std::pair<char const, char> > std::_Rb_tree<char, std::pair<char const, char>, std::_Select1st<std::pair<char const, char> >, std::less<char>, std::allocator<std::pair<char const, char> > >::_M_emplace_hint_unique<std::piecewise_construct_t const&, std::tuple<char const&>, std::tuple<> >(std::_Rb_tree_const_iterator<std::pair<char const, char> >, std::piecewise_construct_t const&, std::tuple<char const&>&&, std::tuple<>&&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:2442: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:2446: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:2447: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `std::_Rb_tree<char, std::pair<char const, char>, std::_Select1st<std::pair<char const, char> >, std::less<char>, std::allocator<std::pair<char const, char> > >::_M_insert_node(std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node<std::pair<char const, char> >*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:2337: undefined reference to `std::_Rb_tree_insert_and_rebalance(bool, std::_Rb_tree_node_base*, std::_Rb_tree_node_base*, std::_Rb_tree_node_base&)'
+/usr/bin/ld: Maple/out-linux/Lexer..o: in function `void std::_Rb_tree<char, std::pair<char const, char>, std::_Select1st<std::pair<char const, char> >, std::less<char>, std::allocator<std::pair<char const, char> > >::_M_construct_node<std::piecewise_construct_t const&, std::tuple<char const&>, std::tuple<> >(std::_Rb_tree_node<std::pair<char const, char> >*, std::piecewise_construct_t const&, std::tuple<char const&>&&, std::tuple<>&&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:598: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:603: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tree.h:604: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/Maple..o: in function `__cxx_global_var_init':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/iostream:74: undefined reference to `std::ios_base::Init::Init()'
+/usr/bin/ld: Maple/out-linux/Maple..o: in function `__cxx_global_var_init':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:(.text.startup+0x13): undefined reference to `std::ios_base::Init::~Init()'
+/usr/bin/ld: Maple/out-linux/Maple..o: in function `main':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:14: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:14: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:14: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:27: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:27: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:30: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:30: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:33: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:33: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:27: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:30: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Maple.cpp:33: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/Maple..o: in function `std::__cxx11::to_string(long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:6684: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:6684: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:6684: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/Maple..o: in function `std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> > __gnu_cxx::__to_xstring<std::__cxx11::basic_string<char, std::char_traits<char>, std::allocator<char> >, char>(int (*)(char*, unsigned long, char const*, __va_list_tag*), unsigned long, char const*, ...)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/string_conversions.h:115: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/string_conversions.h:115: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/string_conversions.h:115: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__cxx_global_var_init':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/iostream:74: undefined reference to `std::ios_base::Init::Init()'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__cxx_global_var_init':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:(.text.startup+0x13): undefined reference to `std::ios_base::Init::~Init()'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `parsePartialDefinition()':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:134: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:134: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:134: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `parseFunctionDefinition()':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:187: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:187: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:187: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:194: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:194: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:194: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:206: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:206: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:206: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:213: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:213: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:213: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:220: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:220: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:220: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `AST::Parse::parse(bool)':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:257: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:257: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/Parser.cpp:257: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::CharacterAST, std::allocator<AST::CharacterAST>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::CharacterAST, std::allocator<AST::CharacterAST>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<AST::CharacterAST, std::allocator<AST::CharacterAST>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::StringAST, std::allocator<AST::StringAST>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::StringAST, std::allocator<AST::StringAST>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<AST::StringAST, std::allocator<AST::StringAST>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::IntAST, std::allocator<AST::IntAST>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::IntAST, std::allocator<AST::IntAST>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<AST::IntAST, std::allocator<AST::IntAST>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::FloatAST, std::allocator<AST::FloatAST>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::FloatAST, std::allocator<AST::FloatAST>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<AST::FloatAST, std::allocator<AST::FloatAST>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::VariableAST, std::allocator<AST::VariableAST>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::VariableAST, std::allocator<AST::VariableAST>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<AST::VariableAST, std::allocator<AST::VariableAST>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `std::vector<std::shared_ptr<AST::ASTNode>, std::allocator<std::shared_ptr<AST::ASTNode> > >::_M_check_len(unsigned long, char const*) const':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_vector.h:1759: undefined reference to `std::__throw_length_error(char const*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::FunctionCallAST, std::allocator<AST::FunctionCallAST>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::FunctionCallAST, std::allocator<AST::FunctionCallAST>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<AST::FunctionCallAST, std::allocator<AST::FunctionCallAST>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::BinaryOperatorAST, std::allocator<AST::BinaryOperatorAST>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::BinaryOperatorAST, std::allocator<AST::BinaryOperatorAST>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<AST::BinaryOperatorAST, std::allocator<AST::BinaryOperatorAST>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `std::vector<String, std::allocator<String> >::_M_check_len(unsigned long, char const*) const':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_vector.h:1759: undefined reference to `std::__throw_length_error(char const*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::VariableDeclarationAST, std::allocator<AST::VariableDeclarationAST>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::VariableDeclarationAST, std::allocator<AST::VariableDeclarationAST>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<AST::VariableDeclarationAST, std::allocator<AST::VariableDeclarationAST>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::FunctionAST, std::allocator<AST::FunctionAST>, (__gnu_cxx::_Lock_policy)2> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `~_Sp_counted_ptr_inplace':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:523: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o: in function `__gnu_cxx::new_allocator<std::_Sp_counted_ptr_inplace<AST::FunctionAST, std::allocator<AST::FunctionAST>, (__gnu_cxx::_Lock_policy)2> >::deallocate(std::_Sp_counted_ptr_inplace<AST::FunctionAST, std::allocator<AST::FunctionAST>, (__gnu_cxx::_Lock_policy)2>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Parser..o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceIN3AST12CharacterASTESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceIN3AST12CharacterASTESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/Parser..o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceIN3AST9StringASTESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceIN3AST9StringASTESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/Parser..o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceIN3AST6IntASTESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceIN3AST6IntASTESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/Parser..o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceIN3AST8FloatASTESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceIN3AST8FloatASTESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/Parser..o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceIN3AST11VariableASTESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceIN3AST11VariableASTESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/Parser..o:(.data.rel.ro._ZTISt23_Sp_counted_ptr_inplaceIN3AST15FunctionCallASTESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE[_ZTISt23_Sp_counted_ptr_inplaceIN3AST15FunctionCallASTESaIS1_ELN9__gnu_cxx12_Lock_policyE2EE]+0x0): more undefined references to `vtable for __cxxabiv1::__si_class_type_info' follow
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `__cxx_global_var_init':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/iostream:74: undefined reference to `std::ios_base::Init::Init()'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `__cxx_global_var_init':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Scope.cpp:(.text.startup+0x13): undefined reference to `std::ios_base::Init::~Init()'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `BasicLinkedList<Scope, Scope&, Scope*, Scope>::popBase()':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/LinkedList.h:703: undefined reference to `operator delete(void*)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/LinkedList.h:713: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `void std::_Hashtable<String, std::pair<String const, std::shared_ptr<Variable> >, std::allocator<std::pair<String const, std::shared_ptr<Variable> > >, std::__detail::_Select1st, std::equal_to<String>, StringHash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> >::_M_assign<std::_Hashtable<String, std::pair<String const, std::shared_ptr<Variable> >, std::allocator<std::pair<String const, std::shared_ptr<Variable> > >, std::__detail::_Select1st, std::equal_to<String>, StringHash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> > const&, std::__detail::_AllocNode<std::allocator<std::__detail::_Hash_node<std::pair<String const, std::shared_ptr<Variable> >, true> > > >(std::_Hashtable<String, std::pair<String const, std::shared_ptr<Variable> >, std::allocator<std::pair<String const, std::shared_ptr<Variable> > >, std::__detail::_Select1st, std::equal_to<String>, StringHash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> > const&, std::__detail::_AllocNode<std::allocator<std::__detail::_Hash_node<std::pair<String const, std::shared_ptr<Variable> >, true> > > const&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable.h:1322: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable.h:1329: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable.h:1328: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `__gnu_cxx::new_allocator<std::__detail::_Hash_node_base*>::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `std::__detail::_Hash_node<std::pair<String const, std::shared_ptr<Variable> >, true>* std::__detail::_Hashtable_alloc<std::allocator<std::__detail::_Hash_node<std::pair<String const, std::shared_ptr<Variable> >, true> > >::_M_allocate_node<std::pair<String const, std::shared_ptr<Variable> > const&>(std::pair<String const, std::shared_ptr<Variable> > const&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable_policy.h:1882: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable_policy.h:1886: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable_policy.h:1887: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `__gnu_cxx::new_allocator<std::__detail::_Hash_node<std::pair<String const, std::shared_ptr<Variable> >, true> >::allocate(unsigned long, void const*)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:116: undefined reference to `std::__throw_bad_array_new_length()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:117: undefined reference to `std::__throw_bad_alloc()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:127: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `__gnu_cxx::new_allocator<std::__detail::_Hash_node<std::pair<String const, std::shared_ptr<Variable> >, true> >::deallocate(std::__detail::_Hash_node<std::pair<String const, std::shared_ptr<Variable> >, true>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `__gnu_cxx::new_allocator<std::__detail::_Hash_node_base*>::deallocate(std::__detail::_Hash_node_base**, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ext/new_allocator.h:145: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `BasicLinkedList<Scope, Scope&, Scope*, Scope>::pushBase(Scope&)':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/LinkedList.h:615: undefined reference to `operator new(unsigned long)'
+/usr/bin/ld: /mnt/c/Users/woodc/source/repos/Maple/Maple/LinkedList.h:615: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `std::_Hash_impl::hash(void const*, unsigned long, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/functional_hash.h:198: undefined reference to `std::_Hash_bytes(void const*, unsigned long, unsigned long)'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `std::_Hashtable<String, std::pair<String const, std::shared_ptr<Variable> >, std::allocator<std::pair<String const, std::shared_ptr<Variable> > >, std::__detail::_Select1st, std::equal_to<String>, StringHash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> >::_M_insert_unique_node(unsigned long, unsigned long, std::__detail::_Hash_node<std::pair<String const, std::shared_ptr<Variable> >, true>*, unsigned long)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable.h:2016: undefined reference to `std::__detail::_Prime_rehash_policy::_M_need_rehash(unsigned long, unsigned long, unsigned long) const'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `std::__detail::_Hash_node<std::pair<String const, std::shared_ptr<Variable> >, true>* std::__detail::_Hashtable_alloc<std::allocator<std::__detail::_Hash_node<std::pair<String const, std::shared_ptr<Variable> >, true> > >::_M_allocate_node<std::piecewise_construct_t const&, std::tuple<String const&>, std::tuple<> >(std::piecewise_construct_t const&, std::tuple<String const&>&&, std::tuple<>&&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable_policy.h:1882: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable_policy.h:1886: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable_policy.h:1887: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/Scope..o: in function `std::_Hashtable<String, std::pair<String const, std::shared_ptr<Variable> >, std::allocator<std::pair<String const, std::shared_ptr<Variable> > >, std::__detail::_Select1st, std::equal_to<String>, StringHash, std::__detail::_Mod_range_hashing, std::__detail::_Default_ranged_hash, std::__detail::_Prime_rehash_policy, std::__detail::_Hashtable_traits<true, false, true> >::_M_rehash(unsigned long, unsigned long const&)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable.h:2362: undefined reference to `__cxa_begin_catch'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable.h:2368: undefined reference to `__cxa_rethrow'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/hashtable.h:2369: undefined reference to `__cxa_end_catch'
+/usr/bin/ld: Maple/out-linux/String..o: in function `std::__cxx11::to_string(int)':
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:6665: undefined reference to `std::allocator<char>::allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:6665: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/basic_string.h:6665: undefined reference to `std::allocator<char>::~allocator()'
+/usr/bin/ld: Maple/out-linux/Variable..o: in function `~Undefined':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Variable.h:34: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Variable..o: in function `~Value':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Variable.h:74: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Variable..o: in function `~Variable':
+/mnt/c/Users/woodc/source/repos/Maple/Maple/Variable.h:93: undefined reference to `operator delete(void*)'
+/usr/bin/ld: Maple/out-linux/Variable..o:(.data.rel.ro._ZTI9Undefined+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/Variable..o:(.data.rel.ro._ZTI5Value+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+/usr/bin/ld: Maple/out-linux/Variable..o:(.data.rel.ro._ZTI8Variable+0x0): undefined reference to `vtable for __cxxabiv1::__si_class_type_info'
+clang: error: linker command failed with exit code 1 (use -v to see invocation)
+make: *** [Makefile:25: Maple/out-linux/main] Error 1

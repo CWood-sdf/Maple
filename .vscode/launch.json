@@ -11,7 +11,7 @@
             "program": "${workspaceFolder}/Maple/out/main.exe",
             "args": [],
             "stopAtEntry": false,
-            "cwd": "${workspaceFolder}/Maple/out",
+            "cwd": "${workspaceFolder}",
             "environment": [],
             "symbolSearchPath": "${workspaceFolder}/Maple/out",
             "preLaunchTask": "build",
