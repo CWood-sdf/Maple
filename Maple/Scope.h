@@ -7,9 +7,12 @@
 #include "Variable.h"
 #include <stack>
 #include <unordered_map>
-
+enum class VariableType {
+    Variable,
+    Function
+};
 class Scope {
-    std::unordered_map<String, std::shared_ptr<Variable>, StringHash> variables;
+    std::unordered_map<String, std::pair<std::shared_ptr<Variable>, VariableType>, StringHash> variables;
     std::unordered_map<String, std::shared_ptr<Variable>, StringHash> functionVariables;
     String name;
 
