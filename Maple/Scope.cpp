@@ -91,6 +91,18 @@ std::shared_ptr<Variable> Scope::getGeneralVariable(String name) {
     }
     return nullptr;
 }
+void Scope::setReturnRegister(std::shared_ptr<MemorySlot> reg) {
+    returnRegister = reg;
+}
+std::shared_ptr<MemorySlot> Scope::getReturnRegister() {
+    return returnRegister;
+}
+bool Scope::isExit() {
+    return exitType != ExitType::None;
+}
+void Scope::setExit(ExitType type) {
+    exitType = type;
+}
 void Scope::addVariable(String name, std::shared_ptr<Variable> variable, std::size_t line) {
     if (variables.find(name) != variables.end()) {
         throwError("Variable " + variable->getName().getReference() + " already exists in the current scope", line);

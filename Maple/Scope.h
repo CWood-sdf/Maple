@@ -11,15 +11,28 @@ enum class VariableType {
     Variable,
     Function
 };
+enum class ExitType {
+    Return,
+    Break,
+    Continue,
+    None
+};
+
 class Scope {
     std::unordered_map<String, std::pair<std::shared_ptr<Variable>, VariableType>, StringHash> variables;
     String name;
+    std::shared_ptr<MemorySlot> returnRegister;
+    ExitType exitType;
 
 public:
     Scope(String scopeName);
     std::shared_ptr<Variable> getVariable(String name);
     std::shared_ptr<Variable> getFunctionVariable(String name);
     std::shared_ptr<Variable> getGeneralVariable(String name);
+    void setReturnRegister(std::shared_ptr<MemorySlot> reg);
+    std::shared_ptr<MemorySlot> getReturnRegister();
+    bool isExit();
+    void setExit(ExitType type);
     void addVariable(String name, std::shared_ptr<Variable> variable, std::size_t line);
     void addFunctionVariable(String name, std::shared_ptr<Variable> variable, std::size_t line);
 };
