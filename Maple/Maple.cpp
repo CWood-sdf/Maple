@@ -36,9 +36,10 @@ int main() {
     auto duration =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
     writeOutputNoLine("Done in " + std::to_string(duration.count() / 1000.0) + " ms\n");
-    // std::cout << "Done in " << duration.count() / 1000.0 << " ms" << std::endl;
-    std::cout << "Press enter to exit..." << std::endl;
-    std::cin.get();
+    std::cout << "Done in " << duration.count() / 1000.0 << " ms" << std::endl;
+
+    // std::cout << "Press enter to exit..." << std::endl;
+    // std::cin.get();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu

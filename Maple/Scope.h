@@ -13,18 +13,19 @@ enum class VariableType {
 };
 class Scope {
     std::unordered_map<String, std::pair<std::shared_ptr<Variable>, VariableType>, StringHash> variables;
-    std::unordered_map<String, std::shared_ptr<Variable>, StringHash> functionVariables;
     String name;
 
 public:
     Scope(String scopeName);
     std::shared_ptr<Variable> getVariable(String name);
     std::shared_ptr<Variable> getFunctionVariable(String name);
+    std::shared_ptr<Variable> getGeneralVariable(String name);
     void addVariable(String name, std::shared_ptr<Variable> variable, std::size_t line);
     void addFunctionVariable(String name, std::shared_ptr<Variable> variable, std::size_t line);
 };
 extern std::LinkedList<Scope> globalScope;
 void addVariable(std::shared_ptr<Variable> v, std::size_t line);
+void addFunction(std::shared_ptr<Variable> v, std::size_t line);
 void initScope();
 void addScope(String name);
 void removeScope();

@@ -257,6 +257,12 @@ AST::BinaryOperatorAST::BinaryOperatorAST(std::shared_ptr<ASTNode> left,
 std::shared_ptr<MemorySlot> AST::BinaryOperatorAST::getValue() {
     auto leftValue = left->getValue();
     auto rightValue = right->getValue();
+    if (!leftValue) {
+        throwError("Using void return value as left hand side of binary operator \""s + op.getReference() + "\"", line);
+    }
+    if (!rightValue) {
+        throwError("Using void return value as right hand side of binary operator \""s + op.getReference() + "\"", line);
+    }
     // Somehow invoke the operator
     if (op == "="s) {
         return evalOperatorEql(leftValue, rightValue);
@@ -296,12 +302,27 @@ AST::FunctionAST::FunctionAST(String returnType,
     name(name) {}
 std::shared_ptr<MemorySlot> AST::FunctionAST::getValue() {
     auto var = std::make_shared<Variable>(name, getType());
-    addVariable(var, this->line);
+    addFunction(var, this->line);
     var->setValue(std::make_shared<Function>(name, this->selfReference));
     return var;
 }
-std::shared_ptr<MemorySlot> AST::FunctionAST::call(std::vector<std::shared_ptr<ASTNode>> args) {
-    return std::make_shared<Undefined>();
+std::shared_ptr<MemorySlot> AST::FunctionAST::call(std::vector<std::shared_ptr<ASTNode>> args, std::size_t callLine) {
+    if (args.size() != arguments.size()) {
+        throwError("Invalid number of arguments in call to function "s + name.getReference() + "\n  note: expected "s +
+                       std::to_string(arguments.size()) + " arguments, got "s + std::to_string(args.size()) + "\n  note: function declared at line "s + std::to_string(this->line),
+            callLine);
+    }
+    addScope(name);
+    for (size_t i = 0; i < args.size(); i++) {
+        auto argAST = arguments[i];
+        auto equals = std::make_shared<BinaryOperatorAST>(
+            argAST, args[i], "="s, callLine);
+        equals->getValue();
+    }
+    for (auto statement : statements) {
+        statement->getValue();
+    }
+    return nullptr;
 }
 void AST::FunctionAST::setSelfReference(std::shared_ptr<FunctionAST> self) {
     this->selfReference = self;
@@ -319,8 +340,17 @@ String AST::FunctionAST::getType() {
     return returnType;
 }
 AST::FunctionCallAST::FunctionCallAST(
-    std::shared_ptr<ASTNode> function, std::vector<std::shared_ptr<ASTNode>> arguments, std::size_t line)
-  : ASTNode(line), function(function), arguments(arguments) {}
+    String name, std::vector<std::shared_ptr<ASTNode>> arguments, std::size_t line)
+  : ASTNode(line), name(name), arguments(arguments) {}
 std::shared_ptr<MemorySlot> AST::FunctionCallAST::getValue() {
-    return std::make_shared<Undefined>();
+    // Get function
+    auto func = getFunctionVariable(name, this->line);
+    // Get function AST5
+    auto fn = dynamic_cast<Function*>(func->getValue().get());
+    if (fn == nullptr) {
+        throwError("Function "s + name.getReference() + " is not defined"s, this->line);
+    }
+    // Call function
+    auto fnAST = fn->getFunction();
+    return fnAST->call(arguments, this->line);
 }

@@ -6,7 +6,10 @@ void addVariable(std::shared_ptr<Variable> v, std::size_t line) {
     String name = v->getName();
     globalScope.getBase()->addVariable(name, v, line);
 }
-
+void addFunction(std::shared_ptr<Variable> v, std::size_t line) {
+    String name = v->getName();
+    globalScope.getBase()->addFunctionVariable(name, v, line);
+}
 void initScope() {
     globalScope.pushBase(Scope("$_globalScope"));
 }
@@ -41,23 +44,12 @@ std::shared_ptr<Variable> getFunctionVariable(String name, std::size_t line) {
             return var;
         }
     }
-    if (variableExists(name)) {
-        throwError("Variable " + name.getReference() + " is not a function", line);
-    } else {
-        throwError("Could not find function " + name.getReference(), line);
-    }
+    throwError("Could not find function " + name.getReference(), line);
     return nullptr;
 }
 std::shared_ptr<Variable> getVariable(String name, std::size_t line) {
     for (auto i : globalScope) {
-        auto var = i.getVariable(name);
-        if (var) {
-            return var;
-        }
-    }
-    // Need this because first class functions
-    for (auto i : globalScope) {
-        auto var = i.getFunctionVariable(name);
+        auto var = i.getGeneralVariable(name);
         if (var) {
             return var;
         }
@@ -68,37 +60,46 @@ std::shared_ptr<Variable> getVariable(String name, std::size_t line) {
 
 Scope::Scope(String scopeName) {
     name = scopeName;
-    variables = std::unordered_map<String, std::shared_ptr<Variable>, StringHash>();
+    variables = std::unordered_map<String, std::pair<std::shared_ptr<Variable>, VariableType>, StringHash>();
 }
 
 std::shared_ptr<Variable> Scope::getVariable(String name) {
     if (variables.find(name) != variables.end()) {
-        return variables[name];
+        auto var = variables[name];
+        if (var.second == VariableType::Variable) {
+            return var.first;
+        } else {
+            return nullptr;
+        }
     }
     return nullptr;
 }
 std::shared_ptr<Variable> Scope::getFunctionVariable(String name) {
-    if (functionVariables.find(name) != functionVariables.end()) {
-        return functionVariables[name];
+    if (variables.find(name) != variables.end()) {
+        auto var = variables[name];
+        if (var.second == VariableType::Function) {
+            return var.first;
+        } else {
+            return nullptr;
+        }
     }
     return nullptr;
 }
-
+std::shared_ptr<Variable> Scope::getGeneralVariable(String name) {
+    if (variables.find(name) != variables.end()) {
+        return variables[name].first;
+    }
+    return nullptr;
+}
 void Scope::addVariable(String name, std::shared_ptr<Variable> variable, std::size_t line) {
     if (variables.find(name) != variables.end()) {
         throwError("Variable " + variable->getName().getReference() + " already exists in the current scope", line);
     }
-    if (functionVariables.find(name) != functionVariables.end()) {
-        throwError("Attempting to override function " + variable->getName().getReference() + " as a variable", line);
-    }
-    variables[name] = variable;
+    variables[name] = std::pair(variable, VariableType::Variable);
 }
 void Scope::addFunctionVariable(String name, std::shared_ptr<Variable> variable, std::size_t line) {
-    if (functionVariables.find(name) != functionVariables.end()) {
+    if (variables.find(name) != variables.end()) {
         throwError("Function " + variable->getName().getReference() + " already exists in the current scope", line);
     }
-    if (variables.find(name) != variables.end()) {
-        throwError("Attempting to override variable " + variable->getName().getReference() + " as a function", line);
-    }
-    functionVariables[name] = variable;
+    variables[name] = std::pair(variable, VariableType::Function);
 }

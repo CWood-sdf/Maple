@@ -1,6 +1,7 @@
 #include "Error.h"
 #include <fstream>
-#define FILE_WRITE 1
+#define FILE_WRITE 0
+#define STD_OUT 0
 void throwError(std::string message, std::size_t line) {
     std::cerr << message << std::endl;
     std::cerr << "At line: " << line << std::endl;
@@ -18,8 +19,10 @@ void throwError(std::string message, std::size_t line) {
     exit(1);
 }
 void writeOutput(std::string message, std::size_t line) {
+#if STD_OUT == 1
     std::cout << message << std::endl;
     std::cout << "At line: " << line << std::endl;
+#endif
 // Write output to file
 #if FILE_WRITE == 1
     std::ofstream outputFile("./output.txt", std::ios::app);
@@ -31,7 +34,9 @@ void writeOutput(std::string message, std::size_t line) {
 #endif
 }
 void writeOutputNoLine(std::string message) {
+#if STD_OUT == 1
     std::cout << message << std::endl;
+#endif
 // Write output to file
 #if FILE_WRITE == 1
     std::ofstream outputFile("./output.txt", std::ios::app);

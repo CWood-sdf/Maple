@@ -130,15 +130,15 @@ namespace AST {
             std::vector<std::shared_ptr<ASTNode>> statements, String name, std::size_t line = getLine());
         virtual ~FunctionAST() = default;
         std::shared_ptr<MemorySlot> getValue() override;
-        std::shared_ptr<MemorySlot> call(std::vector<std::shared_ptr<ASTNode>> arguments);
+        std::shared_ptr<MemorySlot> call(std::vector<std::shared_ptr<ASTNode>> arguments, std::size_t callLine);
         String getType();
         void setSelfReference(std::shared_ptr<FunctionAST> selfReference);
     };
     class FunctionCallAST : public ASTNode {
     public:
-        std::shared_ptr<ASTNode> function;
+        String name;
         std::vector<std::shared_ptr<ASTNode>> arguments;
-        FunctionCallAST(std::shared_ptr<ASTNode> function,
+        FunctionCallAST(String name,
             std::vector<std::shared_ptr<ASTNode>> arguments, std::size_t line = getLine());
         std::shared_ptr<MemorySlot> getValue() override;
     };

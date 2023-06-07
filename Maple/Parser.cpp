@@ -24,6 +24,7 @@ std::shared_ptr<AST::ASTNode> parsePartialExpression() {
     std::shared_ptr<AST::ASTNode> ret = nullptr;
     auto c = getCurrentToken().type;
     bool wasName = false;
+    String name = "";
     switch (c) {
     case Type::CharacterLiteral:
         ret = std::make_shared<CharacterAST>(getCurrentToken().str);
@@ -38,8 +39,9 @@ std::shared_ptr<AST::ASTNode> parsePartialExpression() {
         ret = std::make_shared<FloatAST>(getCurrentToken().str);
         break;
     case Type::Name:
+        name = getCurrentToken().str;
         wasName = true;
-        ret = std::make_shared<VariableAST>(getCurrentToken().str);
+        ret = std::make_shared<VariableAST>(name);
         break;
     case (Type)'(':
         ret = parseParentheses();
@@ -69,7 +71,7 @@ std::shared_ptr<AST::ASTNode> parsePartialExpression() {
         }
         // eat the ')'
         getNextToken();
-        ret = std::make_shared<FunctionCallAST>(ret, args);
+        ret = std::make_shared<FunctionCallAST>(name, args);
     }
     return ret;
 }
