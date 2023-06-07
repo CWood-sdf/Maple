@@ -1,27 +1,0 @@
-Unable to parse statement starting with '{'
-At line: 5
-Expected '\n' after statement
-  note: got ";"
-At line: 6
-Expected '\n' after statement
-  note: got ""
-At line: 1
-Expected '\n' after statement
-  note: got ""
-At line: 1
-Expected '\n' after statement
-  note: got ""
-At line: 1
-Expected '\n' after statement
-  note: got ""
-At line: 1
-Expected newline after '{'
-At line: 4
-Expected newline after '{'
-At line: 4
-Expected '\n' after statement
-  note: got "}"
-At line: 5
-Expected '\n' after statement
-  note: got "}"
-At line: 5
