@@ -44,11 +44,14 @@ AST::Type AST::getNextToken() {
         currentToken = Token(Type::EndOfFile, String(""));
         return Type::EndOfFile;
     }
-    if (file[i] == ' ' || file[i] == '\t') {
+    while (file[i] == ' ' || file[i] == '\t') {
         // Safe increasing of i, because if we overshoot, next executed command
         // would be EOF
         i++;
-        return getNextToken();
+        if (i >= file.length()) {
+            currentToken = Token(Type::EndOfFile, String(""));
+            return Type::EndOfFile;
+        }
     }
     // If it's a newline, return end of statement
     if (file[i] == '\n' || file[i] == '\r') {
@@ -101,6 +104,9 @@ AST::Type AST::getNextToken() {
         if (identifier == "fn") {
             currentToken = Token(Type::FunctionDefinition, identifier);
             return Type::FunctionDefinition;
+        } else if (isExitStatement(identifier)) {
+            currentToken = Token(Type::Exit, identifier);
+            return Type::Exit;
         } else if (identifier == "void") {
             currentToken = Token(Type::Void, identifier);
             return Type::Void;

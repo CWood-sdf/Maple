@@ -14,12 +14,29 @@ void initScope() {
     globalScope.pushBase(Scope("$_globalScope"));
 }
 
+std::pair<ExitType, std::shared_ptr<MemorySlot>> handleReturnRegister() {
+    auto reg = getReturnRegister();
+    auto type = getExitType();
+    // Reset the exit type and return register so that they don't get shifted
+    setExit(ExitType::None);
+    setReturnRegister(nullptr);
+    return std::make_pair(type, reg);
+}
+
 void addScope(String name) {
     globalScope.pushBase(Scope(name));
 }
 
 void removeScope() {
+    auto ret = handleReturnRegister();
     globalScope.popBase();
+    if (ret.first != ExitType::None) {
+        if (globalScope.empty()) {
+            throwError("Cannot return from global scope", 0);
+        }
+        setExit(ret.first);
+        setReturnRegister(ret.second);
+    }
 }
 bool variableExists(String name) {
     for (auto i : globalScope) {
@@ -57,7 +74,21 @@ std::shared_ptr<Variable> getVariable(String name, std::size_t line) {
     throwError("Could not find variable " + name.getReference(), line);
     return nullptr;
 }
-
+void setReturnRegister(std::shared_ptr<MemorySlot> reg) {
+    globalScope.getBase()->setReturnRegister(reg);
+}
+std::shared_ptr<MemorySlot> getReturnRegister() {
+    return globalScope.getBase()->getReturnRegister();
+}
+void setExit(ExitType type) {
+    globalScope.getBase()->setExit(type);
+}
+bool isExit() {
+    return globalScope.getBase()->isExit();
+}
+ExitType getExitType() {
+    return globalScope.getBase()->getExitType();
+}
 Scope::Scope(String scopeName) {
     name = scopeName;
     variables = std::unordered_map<String, std::pair<std::shared_ptr<Variable>, VariableType>, StringHash>();
@@ -102,6 +133,9 @@ bool Scope::isExit() {
 }
 void Scope::setExit(ExitType type) {
     exitType = type;
+}
+ExitType Scope::getExitType() {
+    return exitType;
 }
 void Scope::addVariable(String name, std::shared_ptr<Variable> variable, std::size_t line) {
     if (variables.find(name) != variables.end()) {

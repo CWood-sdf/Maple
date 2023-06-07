@@ -1,13 +1,17 @@
 #include "AST.h"
+#include "Interpret.h"
+#include "Scope.h"
 #include <memory>
 // #include <vcruntime.h>
 std::set<String> identifiers = {"char", "int", "float", "bool", "var"};
 std::set<String> identifierModifiers = {"const", "static", "global"};
-std::set<String> controlFlow = {"if", "else", "while", "for",
+std::set<String> controlFlow = {
+    "if", "else", "while", "for",
     /*"switch",
     "case",
     "default",*/
-    "break", "continue", "return"};
+};
+std::set<String> exitStatements = {"break", "continue", "return"};
 std::set<String> operators = {"=", "+", "-", "*", "==", ">"};
 std::set<char> operatorFirstCharacters = {};
 std::map<String, int> operatorPrecedence = {{"*", 5}, {"+", 6}, {"-", 6},
@@ -24,6 +28,12 @@ evalOperatorEql(std::shared_ptr<MemorySlot> leftValue,
         throwError("Assignment operator must be called on a variable", 0);
     }
     Variable* v = (Variable*)leftValue.get();
+    if (rightValue->getMemType() == MemorySlot::Type::Variable) {
+        rightValue = ((Variable*)rightValue.get())->getValue();
+        if (!rightValue) {
+            throw std::runtime_error("Variable has no value");
+        }
+    }
     if (rightValue->getMemType() == MemorySlot::Type::Value) {
         Value* val = (Value*)rightValue.get();
         if (v->getTypeName() == "float"s) {
@@ -107,7 +117,7 @@ evalOperatorPls(std::shared_ptr<MemorySlot> leftValue,
 }
 std::shared_ptr<MemorySlot>
 evalOperatorMns(std::shared_ptr<MemorySlot> leftValue,
-    std::shared_ptr<MemorySlot> rightValue) {
+    std::shared_ptr<MemorySlot> rightValue) { /*{{{*/ /*{{{*/
     Value* left = nullptr;
     Value* right = nullptr;
     // Get left as a value
@@ -153,10 +163,10 @@ evalOperatorMns(std::shared_ptr<MemorySlot> leftValue,
         int rightValue = right->getAsBool();
         return std::make_shared<Value>(leftValue - rightValue);
     }
-}
-std::shared_ptr<MemorySlot>
+} /*}}}*/
+std::shared_ptr<MemorySlot> /*}}}*/
 evalOperatorMult(std::shared_ptr<MemorySlot> leftValue,
-    std::shared_ptr<MemorySlot> rightValue) {
+    std::shared_ptr<MemorySlot> rightValue) { /*{{{*/
     Value* left = nullptr;
     Value* right = nullptr;
     // Get left as a value
@@ -223,6 +233,9 @@ bool AST::isOperator(String str) {
 }
 bool AST::isBooleanLiteral(String str) {
     return str.getReference() == "true" || str.getReference() == "false";
+}
+bool AST::isExitStatement(String str) {
+    return exitStatements.find(str) != exitStatements.end();
 }
 
 AST::FloatAST::FloatAST(double value, std::size_t line) : ASTNode(line), value(value) {}
@@ -312,17 +325,33 @@ std::shared_ptr<MemorySlot> AST::FunctionAST::call(std::vector<std::shared_ptr<A
                        std::to_string(arguments.size()) + " arguments, got "s + std::to_string(args.size()) + "\n  note: function declared at line "s + std::to_string(this->line),
             callLine);
     }
+    // Preprocess the arguments before new scope is added
+    std::vector<std::shared_ptr<MemSlotAST>> argASTs = {};
+    for (auto arg : args) {
+        argASTs.push_back(std::make_shared<MemSlotAST>(arg->getValue()));
+    }
     addScope(name);
-    for (size_t i = 0; i < args.size(); i++) {
-        auto argAST = arguments[i];
+    for (size_t i = 0; i < argASTs.size(); i++) {
+        auto declAST = arguments[i];
         auto equals = std::make_shared<BinaryOperatorAST>(
-            argAST, args[i], "="s, callLine);
+            declAST, argASTs[i], "="s, callLine);
         equals->getValue();
     }
-    for (auto statement : statements) {
-        statement->getValue();
+    interpret(statements);
+    std::shared_ptr<MemorySlot> ret = nullptr;
+    if (getExitType() == ExitType::Return) {
+        ret = handleReturnRegister().second;
+        if (ret->getTypeName() != returnType) {
+            throwError("Invalid return type in function "s + name.getReference() + "\n  note: expected "s + returnType.getReference() + ", got "s + ret->getTypeName().getReference(), callLine);
+        }
+    } else if (getExitType() != ExitType::None) {
+        throwError("Invalid exit type in function "s + name.getReference() + "  note: only valid type is 'return'", callLine);
     }
-    return nullptr;
+    removeScope();
+    if (ret == nullptr && returnType != "void"s) {
+        throwError("Missing return statement in function "s + name.getReference(), callLine);
+    }
+    return ret;
 }
 void AST::FunctionAST::setSelfReference(std::shared_ptr<FunctionAST> self) {
     this->selfReference = self;
@@ -353,4 +382,20 @@ std::shared_ptr<MemorySlot> AST::FunctionCallAST::getValue() {
     // Call function
     auto fnAST = fn->getFunction();
     return fnAST->call(arguments, this->line);
+}
+
+AST::ExitAST::ExitAST(ExitType t, std::shared_ptr<ASTNode> value, std::size_t line)
+  : ASTNode(line),
+    type(t),
+    value(value) {
+}
+
+std::shared_ptr<MemorySlot> AST::ExitAST::getValue() {
+    std::shared_ptr<MemorySlot> ret = nullptr;
+    if (value) {
+        ret = value->getValue();
+    }
+    setExit(type);
+    setReturnRegister(ret);
+    return ret;
 }

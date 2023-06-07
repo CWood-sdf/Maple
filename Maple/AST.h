@@ -5,6 +5,7 @@
 #include "Scope.h"
 #include "String.h"
 #include "Variable.h"
+#include <memory>
 #include <set>
 #include <string>
 
@@ -12,10 +13,12 @@ using std::operator"" s;
 extern std::set<String> identifiers;
 extern std::set<String> identifierModifiers;
 extern std::set<String> controlFlow;
+extern std::set<String> exitStatements;
 extern std::set<String> operators;
 extern std::set<char> operatorFirstCharacters;
 extern std::map<String, int> operatorPrecedence;
 extern std::map<char, char> escapeCharacters;
+// extern std::unor
 // extern u i;
 std::shared_ptr<MemorySlot>
 evalOperatorEql(std::shared_ptr<MemorySlot> leftValue,
@@ -36,6 +39,7 @@ namespace AST {
     bool isControlFlow(String str);
     bool isOperator(String str);
     bool isBooleanLiteral(String str);
+    bool isExitStatement(String str);
     size_t getLine();
 
     class ASTNode {
@@ -141,6 +145,21 @@ namespace AST {
         FunctionCallAST(String name,
             std::vector<std::shared_ptr<ASTNode>> arguments, std::size_t line = getLine());
         std::shared_ptr<MemorySlot> getValue() override;
+    };
+    class ExitAST : public ASTNode {
+    public:
+        ExitType type;
+        std::shared_ptr<ASTNode> value;
+        ExitAST(ExitType t, std::shared_ptr<ASTNode> value, std::size_t line = getLine());
+        std::shared_ptr<MemorySlot> getValue() override;
+    };
+    class MemSlotAST : public ASTNode {
+    public:
+        std::shared_ptr<MemorySlot> value;
+        MemSlotAST(std::shared_ptr<MemorySlot> value, std::size_t line = getLine()) : ASTNode(line), value(value) {}
+        std::shared_ptr<MemorySlot> getValue() override {
+            return value;
+        }
     };
 
 } // namespace AST

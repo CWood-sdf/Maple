@@ -229,6 +229,34 @@ std::shared_ptr<ASTNode> parseFunctionDefinition() {
     return node;
 }
 
+// parseExitStatement
+/// <summary>
+/// Parses an exit statement
+///		::= return expression
+///     ::= break expression
+///     ::= return
+///     ::= break
+///     ::= continue
+/// </summary>
+std::shared_ptr<ASTNode> parseExitStatement() {
+    auto name = getCurrentToken().str;
+    ExitType type = ExitType::Return;
+    if (name == "break"s) {
+        type = ExitType::Break;
+    } else if (name == "continue"s) {
+        type = ExitType::Continue;
+    }
+    getNextToken();
+    if (getCurrentToken().type == Type::EndOfStatement) {
+        return std::make_shared<ExitAST>(type, nullptr);
+    }
+    if (type == ExitType::Continue) {
+        throwError("Invalid token after continue statement: " + getCurrentToken().str.getReference() + "\n  note: expected a newline because continue can not emit a value", getCurrentToken().originLine);
+    }
+    auto node = parsePartialExpression();
+    return std::make_shared<ExitAST>(type, node);
+}
+
 std::vector<std::shared_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
     std::vector<std::shared_ptr<ASTNode>> code;
     std::shared_ptr<ASTNode> currentNode = nullptr;
@@ -257,6 +285,9 @@ std::vector<std::shared_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
             break;
         }
         switch (type) {
+        case Type::Exit:
+            currentNode = parseExitStatement();
+            break;
         case Type::Identifier:
         case Type::IdentifierModifier:
             currentNode = parseDefinition();

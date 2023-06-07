@@ -26,20 +26,22 @@ int main() {
     for (auto& b : block) {
         b->getValue();
     }
-    auto xvar = getVariable("x", 0);
-    writeOutputNoLine("x: "s + std::to_string(*(long*)(&((Value*)xvar->getValue().get())->getValue())) + "\n");
-    auto qvar = getVariable("q", 0);
-    writeOutputNoLine("q: "s + std::to_string(*(double*)(&((Value*)qvar->getValue().get())->getValue())) + "\n");
 
     // end timer
     auto end = std::chrono::high_resolution_clock::now();
     auto duration =
         std::chrono::duration_cast<std::chrono::microseconds>(end - start);
+    auto xvar = getVariable("x", 0);
+    std::cout << "x: " << *(long*)(&((Value*)xvar->getValue().get())->getValue()) << std::endl;
+    auto qvar = getVariable("q", 0);
+    std::cout << "q: " << *(float*)(&((Value*)qvar->getValue().get())->getValue()) << std::endl;
+    auto stupid = getVariable("stupid", 0);
+    std::cout << "stupid: " << *(long*)(&((Value*)stupid->getValue().get())->getValue()) << std::endl;
     writeOutputNoLine("Done in " + std::to_string(duration.count() / 1000.0) + " ms\n");
     std::cout << "Done in " << duration.count() / 1000.0 << " ms" << std::endl;
 
-    // std::cout << "Press enter to exit..." << std::endl;
-    // std::cin.get();
+    std::cout << "Press enter to exit..." << std::endl;
+    std::cin.get();
 }
 
 // Run program: Ctrl + F5 or Debug > Start Without Debugging menu
