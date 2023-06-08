@@ -1,4 +1,5 @@
 #include "Variable.h"
+using std::operator"" s;
 MemorySlot::Type Undefined::getMemType() {
     return Type::Undefined;
 }
@@ -105,7 +106,11 @@ String Variable::getName() {
 }
 
 String Variable::getTypeName() {
-    return type;
+    if (this->type == "var"s) {
+        return value->getTypeName();
+    } else {
+        return type;
+    }
 }
 
 MemorySlot::Type Variable::getMemType() {

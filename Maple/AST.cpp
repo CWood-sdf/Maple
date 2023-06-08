@@ -6,7 +6,7 @@
 std::set<String> identifiers = {"char", "int", "float", "bool", "var"};
 std::set<String> identifierModifiers = {"const", "static", "global"};
 std::set<String> controlFlow = {
-    "if", "else", "while", "for",
+    "if", "while", "for",
     /*"switch",
     "case",
     "default",*/
@@ -398,4 +398,74 @@ std::shared_ptr<MemorySlot> AST::ExitAST::getValue() {
     setExit(type);
     setReturnRegister(ret);
     return ret;
+}
+
+AST::MemSlotAST::MemSlotAST(std::shared_ptr<MemorySlot> value, std::size_t line) : ASTNode(line), value(value) {}
+
+std::shared_ptr<MemorySlot> AST::MemSlotAST::getValue() {
+    return value;
+}
+
+AST::IfAST::IfAST(std::shared_ptr<ASTNode> condition,
+    std::vector<std::shared_ptr<ASTNode>> statements, bool isAlone, std::size_t line)
+  : ASTNode(line),
+    condition(condition),
+    statements(statements),
+    isAlone(isAlone) {
+}
+
+std::shared_ptr<MemorySlot> AST::IfAST::getValue() {
+    auto conditionRet = condition->getValue();
+    if (conditionRet->getTypeName() != "bool"s) {
+        throwError("Invalid type in if statement\n  note: expected \"bool\" but got \"" + conditionRet->getTypeName().getReference() + "\"", this->line);
+    }
+    std::shared_ptr<MemorySlot> value = nullptr;
+    if (conditionRet->getMemType() == MemorySlot::Type::Variable) {
+        value = dynamic_cast<Variable*>(conditionRet.get())->getValue();
+    } else {
+        value = conditionRet;
+    }
+    bool isTrue = dynamic_cast<Value*>(value.get())->getAs<bool>();
+    if (isTrue) {
+        addScope("if");
+        interpret(statements);
+        std::shared_ptr<MemorySlot> ret = nullptr;
+        removeScope();
+        return ret;
+    } else {
+        for (auto elseIf : elseIfs) {
+            auto elseIfRet = elseIf->condition->getValue();
+            if (elseIfRet->getTypeName() != "bool"s) {
+                throwError("Invalid type in else if statement\n  note: expected \"bool\" but got \"" + elseIfRet->getTypeName().getReference() + "\"", this->line);
+            }
+            std::shared_ptr<MemorySlot> value = nullptr;
+            if (elseIfRet->getMemType() == MemorySlot::Type::Variable) {
+                value = dynamic_cast<Variable*>(elseIfRet.get())->getValue();
+            } else {
+                value = elseIfRet;
+            }
+            bool isTrue = dynamic_cast<Value*>(value.get())->getAs<bool>();
+            if (isTrue) {
+                addScope("if");
+                interpret(elseIf->statements);
+                removeScope();
+                return nullptr;
+            }
+        }
+        if (elseStatements.size() > 0) {
+            addScope("if");
+            interpret(elseStatements);
+            removeScope();
+            return nullptr;
+        }
+    }
+    return nullptr;
+}
+
+void AST::IfAST::addElseIf(std::shared_ptr<IfAST> elseIf) {
+    elseIfs.push_back(elseIf);
+}
+
+void AST::IfAST::addElse(std::vector<std::shared_ptr<ASTNode>> elseStatements) {
+    this->elseStatements = elseStatements;
 }

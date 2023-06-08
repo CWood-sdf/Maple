@@ -156,10 +156,21 @@ namespace AST {
     class MemSlotAST : public ASTNode {
     public:
         std::shared_ptr<MemorySlot> value;
-        MemSlotAST(std::shared_ptr<MemorySlot> value, std::size_t line = getLine()) : ASTNode(line), value(value) {}
-        std::shared_ptr<MemorySlot> getValue() override {
-            return value;
-        }
+        MemSlotAST(std::shared_ptr<MemorySlot> value, std::size_t line = getLine());
+        std::shared_ptr<MemorySlot> getValue() override;
+    };
+    class IfAST : public ASTNode {
+    public:
+        std::shared_ptr<ASTNode> condition;
+        std::vector<std::shared_ptr<ASTNode>> statements;
+        std::vector<std::shared_ptr<IfAST>> elseIfs = {};
+        std::vector<std::shared_ptr<ASTNode>> elseStatements = {};
+        bool isAlone;
+        IfAST(std::shared_ptr<ASTNode> condition,
+            std::vector<std::shared_ptr<ASTNode>> statements, bool isAlone, std::size_t line = getLine());
+        std::shared_ptr<MemorySlot> getValue() override;
+        void addElseIf(std::shared_ptr<IfAST> elseIf);
+        void addElse(std::vector<std::shared_ptr<ASTNode>> elseStatements);
     };
 
 } // namespace AST

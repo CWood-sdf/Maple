@@ -15,3 +15,9 @@ fn returnIntArg(int x) int {
 x = yeetFn(x, c)
 
 int stupid = returnIntArg(5)
+
+bool b = true
+
+if b {
+	stupid = 10
+}

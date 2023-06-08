@@ -38,6 +38,9 @@ std::shared_ptr<AST::ASTNode> parsePartialExpression() {
     case Type::FloatLiteral:
         ret = std::make_shared<FloatAST>(getCurrentToken().str);
         break;
+    case Type::BooleanLiteral:
+        ret = std::make_shared<BoolAST>(getCurrentToken().str);
+        break;
     case Type::Name:
         name = getCurrentToken().str;
         wasName = true;
@@ -222,6 +225,11 @@ std::shared_ptr<ASTNode> parseFunctionDefinition() {
 
     //  Get the statements
     std::vector<std::shared_ptr<ASTNode>> statements = Parse::parse(false);
+    if (getCurrentToken().type != Type::EndOfStatement) {
+        throwError("Expected newline after function block", getCurrentToken().originLine);
+    }
+    // eat newline
+    getNextToken();
 
     // Make the AST node
     std::shared_ptr<FunctionAST> node = std::make_shared<FunctionAST>(returnType, parameters, statements, name);
@@ -257,6 +265,75 @@ std::shared_ptr<ASTNode> parseExitStatement() {
     return std::make_shared<ExitAST>(type, node);
 }
 
+// parseIfStatement
+/// <summary>
+/// Parses an if statement
+///		::= if expression '{' statements '}' else '{' statements '}'
+///		::= if expression '{' statements '}'
+/// </summary>
+std::shared_ptr<ASTNode> parseIfStatement(bool isAlone) {
+    // eat the keyword
+    auto keyword = getCurrentToken().str;
+    getNextToken();
+    // Get the expression
+    auto expression = parsePartialExpression();
+    // Ignore newlines
+    while (getCurrentToken().type == Type::EndOfStatement) {
+        getNextToken();
+    }
+    // Get the statements
+    std::vector<std::shared_ptr<ASTNode>> statements = Parse::parse(false);
+    // Ignore newlines
+    while (getCurrentToken().type == Type::EndOfStatement) {
+        getNextToken();
+    }
+    std::shared_ptr<IfAST> ret = std::make_shared<IfAST>(expression, statements, isAlone);
+
+    while (getCurrentToken().str == "elseif"s) {
+        getNextToken();
+        // Get the expression
+        auto elseIfCondition = parsePartialExpression();
+        // Get the statements
+        std::vector<std::shared_ptr<ASTNode>> elseifStatements = Parse::parse(false);
+        // Ignore newlines
+        while (getCurrentToken().type == Type::EndOfStatement) {
+            getNextToken();
+        }
+
+        ret->addElseIf(std::make_shared<IfAST>(elseIfCondition, elseifStatements, isAlone));
+    }
+    // Check if there's an else statement
+    if (getCurrentToken().str == "else"s) {
+        getNextToken();
+        // Ignore newlines
+        while (getCurrentToken().type == Type::EndOfStatement) {
+            getNextToken();
+        }
+
+        // Get the else statements
+        std::vector<std::shared_ptr<ASTNode>> elseStatements = Parse::parse(false);
+
+        ret->addElse(elseStatements);
+    }
+    return ret;
+}
+
+// parseControlFlow
+/// <summary>
+/// Parses a control flow statement
+///		::= if expression '{' statements '}' else '{' statements '}'
+///		::= if expression '{' statements '}'
+///		::= while expression '{' statements '}'
+/// </summary>
+std::shared_ptr<ASTNode> parseControlFlow(bool isAlone) {
+    // eat the keyword
+    auto keyword = getCurrentToken().str;
+    getNextToken();
+    if (keyword == "if"s) {
+        return parseIfStatement(isAlone);
+    }
+}
+
 std::vector<std::shared_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
     std::vector<std::shared_ptr<ASTNode>> code;
     std::shared_ptr<ASTNode> currentNode = nullptr;
@@ -285,6 +362,9 @@ std::vector<std::shared_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
             break;
         }
         switch (type) {
+        case Type::ControlFlow:
+            currentNode = parseControlFlow(false);
+            break;
         case Type::Exit:
             currentNode = parseExitStatement();
             break;
@@ -331,11 +411,6 @@ END:
         if (getCurrentToken().type != (Type)'}') {
             throwError("Expected '}' at end of code block", getCurrentToken().originLine);
         }
-        getNextToken();
-        if (getCurrentToken().type != Type::EndOfStatement) {
-            throwError("Expected newline after '}'", getCurrentToken().originLine);
-        }
-        // eat newline
         getNextToken();
     }
     return code;
