@@ -1,5 +1,6 @@
 #include "Parser.h"
 #include <memory>
+#include <ranges>
 #pragma clang diagnostic push
 #pragma clang diagnostic ignored "-Wswitch"
 using std::operator"" s;
@@ -9,7 +10,8 @@ using namespace AST;
 
 std::shared_ptr<AST::ASTNode> parseParentheses();
 
-std::shared_ptr<AST::ASTNode> parseBinaryOperator(int precedence, std::shared_ptr<ASTNode> left);
+std::shared_ptr<AST::ASTNode> parseBinaryOperator(
+    int precedence, std::shared_ptr<ASTNode> left);
 
 std::shared_ptr<AST::ASTNode> parseDefinition();
 
@@ -20,7 +22,7 @@ std::shared_ptr<AST::ASTNode> parseStatement();
 ///		::= literal
 /// </summary>
 /// <returns></returns>
-std::shared_ptr<AST::ASTNode> parsePartialExpression() {
+std::shared_ptr<AST::ASTNode> parsePartialExpression(int maxPrecedence = 0) {
     std::shared_ptr<AST::ASTNode> ret = nullptr;
     auto c = getCurrentToken().type;
     bool wasName = false;
@@ -50,15 +52,14 @@ std::shared_ptr<AST::ASTNode> parsePartialExpression() {
         ret = parseParentheses();
         break;
     default:
-        throwError("Unexpected token "s + getCurrentToken().str.getReference(), getCurrentToken().originLine);
+        throwError("Unexpected token "s + getCurrentToken().str.getReference(),
+            getCurrentToken().originLine);
         ret = nullptr;
         break;
     }
     // eat the token
     getNextToken();
-    if (getCurrentToken().type == Type::Operator) {
-        ret = parseBinaryOperator(getPrecedence(getCurrentToken().str), ret);
-    } else if (wasName && getCurrentToken().type == (Type)'(') {
+    if (wasName && getCurrentToken().type == (Type)'(') {
         // eat the '('
         getNextToken();
         std::vector<std::shared_ptr<ASTNode>> args;
@@ -69,12 +70,17 @@ std::shared_ptr<AST::ASTNode> parsePartialExpression() {
             } else if (getCurrentToken().type == (Type)')') {
                 break;
             } else {
-                throwError("Expected ',' or ')', got "s + getCurrentToken().str.getReference(), getCurrentToken().originLine);
+                throwError("Expected ',' or ')', got "s +
+                               getCurrentToken().str.getReference(),
+                    getCurrentToken().originLine);
             }
         }
         // eat the ')'
         getNextToken();
         ret = std::make_shared<FunctionCallAST>(name, args);
+    }
+    if (getCurrentToken().type == Type::Operator && maxPrecedence == 0) {
+        ret = parseBinaryOperator(getPrecedence(getCurrentToken().str), ret);
     }
     return ret;
 }
@@ -94,25 +100,27 @@ std::shared_ptr<AST::ASTNode> parseParentheses() {
 /// Parses a binary operator
 ///		::= partialExpression binaryOperator partialExpression
 /// </summary>
-std::shared_ptr<AST::ASTNode> parseBinaryOperator(int precedence, std::shared_ptr<ASTNode> left) {
+std::shared_ptr<AST::ASTNode> parseBinaryOperator(
+    int precedence, std::shared_ptr<ASTNode> left) {
     // Store the operator
     String op = getCurrentToken().str;
     int currentPrecedence = getPrecedence(op);
     getNextToken();
     // Get the right expression
-    auto right = parsePartialExpression();
+    auto right = parsePartialExpression(currentPrecedence);
     auto tokenType = getCurrentToken().type;
     if (tokenType == Type::Operator) {
         int nextOpPrecedence = getPrecedence(getCurrentToken().str);
-        if (nextOpPrecedence < currentPrecedence) {
+        if (nextOpPrecedence <= currentPrecedence) {
             right = parseBinaryOperator(nextOpPrecedence, right);
-        }
-        if (nextOpPrecedence > precedence) {
-            std::shared_ptr<ASTNode> ret = std::make_shared<BinaryOperatorAST>(left, right, op);
+        } else if (nextOpPrecedence > precedence) {
+            std::shared_ptr<ASTNode> ret =
+                std::make_shared<BinaryOperatorAST>(left, right, op);
             return parseBinaryOperator(nextOpPrecedence, ret);
         }
     }
-    std::shared_ptr<ASTNode> ret = std::make_shared<BinaryOperatorAST>(left, right, op);
+    std::shared_ptr<ASTNode> ret =
+        std::make_shared<BinaryOperatorAST>(left, right, op);
     return ret;
 }
 /// <summary>
@@ -129,10 +137,14 @@ std::shared_ptr<ASTNode> parsePartialDefinition() {
             typeCount++;
             type = getCurrentToken().str;
             if (typeCount > 1) {
-                throwError("Too many types given in variable declaration: " + getCurrentToken().str.getReference(), getCurrentToken().originLine);
+                throwError("Too many types given in variable declaration: " +
+                               getCurrentToken().str.getReference(),
+                    getCurrentToken().originLine);
             }
         } else if (getCurrentToken().type != Type::IdentifierModifier) {
-            throwError("Invalid token in type definition: "s + getCurrentToken().str.getReference(), getCurrentToken().originLine);
+            throwError("Invalid token in type definition: "s +
+                           getCurrentToken().str.getReference(),
+                getCurrentToken().originLine);
         } else {
             modifiers.push_back(getCurrentToken().str);
         }
@@ -142,7 +154,8 @@ std::shared_ptr<ASTNode> parsePartialDefinition() {
     }
     String name = getCurrentToken().str;
     // Make the AST node
-    std::shared_ptr<ASTNode> node = std::make_shared<VariableDeclarationAST>(modifiers, type, name);
+    std::shared_ptr<ASTNode> node =
+        std::make_shared<VariableDeclarationAST>(modifiers, type, name);
     // eat the name
     getNextToken();
     return node;
@@ -160,12 +173,17 @@ std::shared_ptr<AST::ASTNode> parseDefinition() {
         if (getCurrentToken().str.getReference() == "=") {
             return parseBinaryOperator(getPrecedence("="), node);
         } else {
-            throwError("Invalid operator after variable declaration: " + getCurrentToken().str.getReference(), getCurrentToken().originLine);
+            throwError("Invalid operator after variable declaration: " +
+                           getCurrentToken().str.getReference(),
+                getCurrentToken().originLine);
         }
     } else if (nextToken == Type::EndOfStatement) {
         return node;
     } else {
-        throwError("Invalid token after variable declaration: " + getCurrentToken().str.getReference() + "\n  note: maybe you forgot a newline", getCurrentToken().originLine);
+        throwError("Invalid token after variable declaration: " +
+                       getCurrentToken().str.getReference() +
+                       "\n  note: maybe you forgot a newline",
+            getCurrentToken().originLine);
     }
     return node;
 }
@@ -198,7 +216,8 @@ std::shared_ptr<ASTNode> parseFunctionDefinition() {
     getNextToken();
     // eat '('
     if (getCurrentToken().type != (Type)'(') {
-        throwError("Expected '(' after function name", getCurrentToken().originLine);
+        throwError(
+            "Expected '(' after function name", getCurrentToken().originLine);
     }
     getNextToken();
     // Get the parameters
@@ -210,14 +229,17 @@ std::shared_ptr<ASTNode> parseFunctionDefinition() {
         } else if (getCurrentToken().type == (Type)')') {
             break;
         } else {
-            throwError("Expected ',' or ')' after function parameter", getCurrentToken().originLine);
+            throwError("Expected ',' or ')' after function parameter",
+                getCurrentToken().originLine);
         }
     }
     // eat ')'
     getNextToken();
     // Get the return type
-    if (getCurrentToken().type != Type::Identifier && getCurrentToken().type != Type::Void) {
-        throwError("Expected return type after function parameters", getCurrentToken().originLine);
+    if (getCurrentToken().type != Type::Identifier &&
+        getCurrentToken().type != Type::Void) {
+        throwError("Expected return type after function parameters",
+            getCurrentToken().originLine);
     }
     String returnType = getCurrentToken().str;
     // eat return type
@@ -226,13 +248,15 @@ std::shared_ptr<ASTNode> parseFunctionDefinition() {
     //  Get the statements
     std::vector<std::shared_ptr<ASTNode>> statements = Parse::parse(false);
     if (getCurrentToken().type != Type::EndOfStatement) {
-        throwError("Expected newline after function block", getCurrentToken().originLine);
+        throwError("Expected newline after function block",
+            getCurrentToken().originLine);
     }
     // eat newline
     getNextToken();
 
     // Make the AST node
-    std::shared_ptr<FunctionAST> node = std::make_shared<FunctionAST>(returnType, parameters, statements, name);
+    std::shared_ptr<FunctionAST> node =
+        std::make_shared<FunctionAST>(returnType, parameters, statements, name);
     node->setSelfReference(node);
     return node;
 }
@@ -259,7 +283,11 @@ std::shared_ptr<ASTNode> parseExitStatement() {
         return std::make_shared<ExitAST>(type, nullptr);
     }
     if (type == ExitType::Continue) {
-        throwError("Invalid token after continue statement: " + getCurrentToken().str.getReference() + "\n  note: expected a newline because continue can not emit a value", getCurrentToken().originLine);
+        throwError("Invalid token after continue statement: " +
+                       getCurrentToken().str.getReference() +
+                       "\n  note: expected a newline because continue can not "
+                       "emit a value",
+            getCurrentToken().originLine);
     }
     auto node = parsePartialExpression();
     return std::make_shared<ExitAST>(type, node);
@@ -272,35 +300,31 @@ std::shared_ptr<ASTNode> parseExitStatement() {
 ///		::= if expression '{' statements '}'
 /// </summary>
 std::shared_ptr<ASTNode> parseIfStatement(bool isAlone) {
-    // eat the keyword
-    auto keyword = getCurrentToken().str;
-    getNextToken();
     // Get the expression
     auto expression = parsePartialExpression();
-    // Ignore newlines
-    while (getCurrentToken().type == Type::EndOfStatement) {
-        getNextToken();
-    }
     // Get the statements
     std::vector<std::shared_ptr<ASTNode>> statements = Parse::parse(false);
     // Ignore newlines
     while (getCurrentToken().type == Type::EndOfStatement) {
         getNextToken();
     }
-    std::shared_ptr<IfAST> ret = std::make_shared<IfAST>(expression, statements, isAlone);
+    std::shared_ptr<IfAST> ret =
+        std::make_shared<IfAST>(expression, statements, isAlone);
 
     while (getCurrentToken().str == "elseif"s) {
         getNextToken();
         // Get the expression
         auto elseIfCondition = parsePartialExpression();
         // Get the statements
-        std::vector<std::shared_ptr<ASTNode>> elseifStatements = Parse::parse(false);
+        std::vector<std::shared_ptr<ASTNode>> elseifStatements =
+            Parse::parse(false);
         // Ignore newlines
         while (getCurrentToken().type == Type::EndOfStatement) {
             getNextToken();
         }
 
-        ret->addElseIf(std::make_shared<IfAST>(elseIfCondition, elseifStatements, isAlone));
+        ret->addElseIf(std::make_shared<IfAST>(
+            elseIfCondition, elseifStatements, isAlone));
     }
     // Check if there's an else statement
     if (getCurrentToken().str == "else"s) {
@@ -311,7 +335,8 @@ std::shared_ptr<ASTNode> parseIfStatement(bool isAlone) {
         }
 
         // Get the else statements
-        std::vector<std::shared_ptr<ASTNode>> elseStatements = Parse::parse(false);
+        std::vector<std::shared_ptr<ASTNode>> elseStatements =
+            Parse::parse(false);
 
         ret->addElse(elseStatements);
     }
@@ -343,10 +368,12 @@ std::vector<std::shared_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
     } else {
         // eat '{'
         if (getCurrentToken().type != (Type)'{') {
-            throwError("Expected '{' to start code block", getCurrentToken().originLine);
+            throwError("Expected '{' to start code block",
+                getCurrentToken().originLine);
         }
         if (getNextToken() != Type::EndOfStatement) {
-            throwError("Expected newline after '{'", getCurrentToken().originLine);
+            throwError(
+                "Expected newline after '{'", getCurrentToken().originLine);
         }
         // eat newline
         getNextToken();
@@ -357,13 +384,15 @@ std::vector<std::shared_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
         writeOutput(getCurrentToken().str.getReference());
         if (type == Type::EndOfFile) {
             if (!topLevel) {
-                throwError("Unexpected end of file while parsing code block (AKA unmatched '{')", getCurrentToken().originLine);
+                throwError("Unexpected end of file while parsing code block "
+                           "(AKA unmatched '{')",
+                    getCurrentToken().originLine);
             }
             break;
         }
         switch (type) {
         case Type::ControlFlow:
-            currentNode = parseControlFlow(false);
+            currentNode = parseControlFlow(true);
             break;
         case Type::Exit:
             currentNode = parseExitStatement();
@@ -381,7 +410,9 @@ std::vector<std::shared_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
             break;
         case (Type)'}':
             if (topLevel) {
-                throwError("Unexpected top level '}'\n  note: this may be caused by excess closing braces", getLine());
+                throwError("Unexpected top level '}'\n  note: this may be "
+                           "caused by excess closing braces",
+                    getLine());
             } else {
                 goto END;
             }
@@ -393,13 +424,18 @@ std::vector<std::shared_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
             continue;
             // break;
         default:
-            throwError("Unable to parse statement starting with '"s + getCurrentToken().str.getReference() + "'", getLine());
+            throwError("Unable to parse statement starting with '"s +
+                           getCurrentToken().str.getReference() + "'",
+                getLine());
         }
         if (currentNode) {
             code.push_back(currentNode);
         }
-        if (getCurrentToken().type != Type::EndOfStatement && getCurrentToken().type != Type::EndOfFile) {
-            throwError("Expected '\\n' after statement\n  note: got \""s + getCurrentToken().str.getReference() + "\"", getCurrentToken().originLine);
+        if (getCurrentToken().type != Type::EndOfStatement &&
+            getCurrentToken().type != Type::EndOfFile) {
+            throwError("Expected '\\n' after statement\n  note: got \""s +
+                           getCurrentToken().str.getReference() + "\"",
+                getCurrentToken().originLine);
             getNextToken();
         } else {
             getNextToken();
@@ -409,7 +445,8 @@ END:
     if (!topLevel) {
         // eat '}'
         if (getCurrentToken().type != (Type)'}') {
-            throwError("Expected '}' at end of code block", getCurrentToken().originLine);
+            throwError("Expected '}' at end of code block",
+                getCurrentToken().originLine);
         }
         getNextToken();
     }

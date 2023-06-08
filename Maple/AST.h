@@ -8,6 +8,7 @@
 #include <memory>
 #include <set>
 #include <string>
+#include <unordered_set>
 
 using std::operator"" s;
 extern std::set<String> identifiers;
@@ -17,21 +18,11 @@ extern std::set<String> exitStatements;
 extern std::set<String> operators;
 extern std::set<char> operatorFirstCharacters;
 extern std::map<String, int> operatorPrecedence;
+extern std::set<String> unaryOperators;
+extern std::map<String, int> unaryOperatorPrecedence;
 extern std::map<char, char> escapeCharacters;
 // extern std::unor
 // extern u i;
-std::shared_ptr<MemorySlot>
-evalOperatorEql(std::shared_ptr<MemorySlot> leftValue,
-    std::shared_ptr<MemorySlot> rightValue);
-std::shared_ptr<MemorySlot>
-evalOperatorPls(std::shared_ptr<MemorySlot> leftValue,
-    std::shared_ptr<MemorySlot> rightValue);
-std::shared_ptr<MemorySlot>
-evalOperatorMns(std::shared_ptr<MemorySlot> leftValue,
-    std::shared_ptr<MemorySlot> rightValue);
-std::shared_ptr<MemorySlot>
-evalOperatorMult(std::shared_ptr<MemorySlot> leftValue,
-    std::shared_ptr<MemorySlot> rightValue);
 namespace AST {
     int getPrecedence(String op);
     bool isIdentifier(String str);
@@ -93,8 +84,9 @@ namespace AST {
         std::shared_ptr<ASTNode> left;
         std::shared_ptr<ASTNode> right;
         String op;
-        BinaryOperatorAST(std::shared_ptr<ASTNode> left, std::shared_ptr<ASTNode> right,
-            String op, std::size_t line = getLine());
+        BinaryOperatorAST(std::shared_ptr<ASTNode> left,
+            std::shared_ptr<ASTNode> right, String op,
+            std::size_t line = getLine());
         virtual ~BinaryOperatorAST() = default;
         std::shared_ptr<MemorySlot> getValue() override;
     };
@@ -102,7 +94,8 @@ namespace AST {
     public:
         std::shared_ptr<ASTNode> value;
         String op;
-        UnaryOperatorAST(std::shared_ptr<ASTNode> value, String op, std::size_t line = getLine());
+        UnaryOperatorAST(std::shared_ptr<ASTNode> value, String op,
+            std::size_t line = getLine());
         std::shared_ptr<MemorySlot> getValue() override;
     };
     class VariableAST : public ASTNode {
@@ -117,7 +110,8 @@ namespace AST {
         std::vector<String> modifiers;
         String type;
         String name;
-        VariableDeclarationAST(std::vector<String> types, String type, String name, std::size_t line = getLine());
+        VariableDeclarationAST(std::vector<String> types, String type,
+            String name, std::size_t line = getLine());
         virtual ~VariableDeclarationAST() = default;
         std::shared_ptr<MemorySlot> getValue() override;
     };
@@ -131,10 +125,13 @@ namespace AST {
         String name;
         FunctionAST(String returnType,
             std::vector<std::shared_ptr<ASTNode>> arguments,
-            std::vector<std::shared_ptr<ASTNode>> statements, String name, std::size_t line = getLine());
+            std::vector<std::shared_ptr<ASTNode>> statements, String name,
+            std::size_t line = getLine());
         virtual ~FunctionAST() = default;
         std::shared_ptr<MemorySlot> getValue() override;
-        std::shared_ptr<MemorySlot> call(std::vector<std::shared_ptr<ASTNode>> arguments, std::size_t callLine);
+        std::shared_ptr<MemorySlot> call(
+            std::vector<std::shared_ptr<ASTNode>> arguments,
+            std::size_t callLine);
         String getType();
         void setSelfReference(std::shared_ptr<FunctionAST> selfReference);
     };
@@ -143,20 +140,23 @@ namespace AST {
         String name;
         std::vector<std::shared_ptr<ASTNode>> arguments;
         FunctionCallAST(String name,
-            std::vector<std::shared_ptr<ASTNode>> arguments, std::size_t line = getLine());
+            std::vector<std::shared_ptr<ASTNode>> arguments,
+            std::size_t line = getLine());
         std::shared_ptr<MemorySlot> getValue() override;
     };
     class ExitAST : public ASTNode {
     public:
         ExitType type;
         std::shared_ptr<ASTNode> value;
-        ExitAST(ExitType t, std::shared_ptr<ASTNode> value, std::size_t line = getLine());
+        ExitAST(ExitType t, std::shared_ptr<ASTNode> value,
+            std::size_t line = getLine());
         std::shared_ptr<MemorySlot> getValue() override;
     };
     class MemSlotAST : public ASTNode {
     public:
         std::shared_ptr<MemorySlot> value;
-        MemSlotAST(std::shared_ptr<MemorySlot> value, std::size_t line = getLine());
+        MemSlotAST(
+            std::shared_ptr<MemorySlot> value, std::size_t line = getLine());
         std::shared_ptr<MemorySlot> getValue() override;
     };
     class IfAST : public ASTNode {
@@ -167,7 +167,8 @@ namespace AST {
         std::vector<std::shared_ptr<ASTNode>> elseStatements = {};
         bool isAlone;
         IfAST(std::shared_ptr<ASTNode> condition,
-            std::vector<std::shared_ptr<ASTNode>> statements, bool isAlone, std::size_t line = getLine());
+            std::vector<std::shared_ptr<ASTNode>> statements, bool isAlone,
+            std::size_t line = getLine());
         std::shared_ptr<MemorySlot> getValue() override;
         void addElseIf(std::shared_ptr<IfAST> elseIf);
         void addElse(std::vector<std::shared_ptr<ASTNode>> elseStatements);
