@@ -11,20 +11,23 @@ fn returnIntArg(int x) int {
 	return x
 }
 
-fn not(bool b) bool {
-	if b {
-		return false
-	} else {
-		return true
-	}
-}
 // yuhh
 x = yeetFn(x, c)
 int one = 1
-int stupid = returnIntArg(5) + 2
+int stupid = -returnIntArg(5) + 2
 
-bool b = true
+bool b = false 
 
-if not(b) {
+if !!b {
 	stupid = 10
 }
+elseif stupid == -4 {
+	stupid = 20
+}
+stupid = 0
+int yeet = 11
+while yeet > 0 {
+	yeet = yeet - 1
+	stupid = stupid + 1
+}
+stupid = 0 - 5 + 2

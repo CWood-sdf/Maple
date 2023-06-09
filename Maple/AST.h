@@ -19,7 +19,6 @@ extern std::set<String> operators;
 extern std::set<char> operatorFirstCharacters;
 extern std::map<String, int> operatorPrecedence;
 extern std::set<String> unaryOperators;
-extern std::map<String, int> unaryOperatorPrecedence;
 extern std::map<char, char> escapeCharacters;
 // extern std::unor
 // extern u i;
@@ -31,6 +30,8 @@ namespace AST {
     bool isOperator(String str);
     bool isBooleanLiteral(String str);
     bool isExitStatement(String str);
+    bool isUnaryOperator(String str);
+    int getUnaryPrecedence(String op);
     size_t getLine();
 
     class ASTNode {
@@ -172,6 +173,16 @@ namespace AST {
         std::shared_ptr<MemorySlot> getValue() override;
         void addElseIf(std::shared_ptr<IfAST> elseIf);
         void addElse(std::vector<std::shared_ptr<ASTNode>> elseStatements);
+    };
+
+    class WhileAST : public ASTNode {
+    public:
+        std::shared_ptr<ASTNode> condition;
+        std::vector<std::shared_ptr<ASTNode>> statements;
+        WhileAST(std::shared_ptr<ASTNode> condition,
+            std::vector<std::shared_ptr<ASTNode>> statements,
+            std::size_t line = getLine());
+        std::shared_ptr<MemorySlot> getValue() override;
     };
 
 } // namespace AST

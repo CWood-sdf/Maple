@@ -1,4 +1,6 @@
 #include "Lexer.h"
+#include <queue>
+std::queue<AST::Token> fakeTokens;
 uint32_t i = 0;
 uint32_t indentationLevel = 0;
 std::string file = "";
@@ -30,15 +32,32 @@ void AST::prepareInterpreter(std::string f) {
     currentLine = 1;
     operatorFirstCharacters.clear();
     for (auto& op : operators) {
-        // If the operator is not letter based, then add the first character to the
-        // set
+        // If the operator is not letter based, then add the first character to
+        // the set
+        if ((op[0] >= 'a' && op[0] <= 'z') || (op[0] >= 'A' && op[0] <= 'Z')) {
+            continue;
+        }
+        operatorFirstCharacters.insert(op[0]);
+    }
+    for (auto& op : unaryOperators) {
+        // If the operator is not letter based, then add the first character to
+        // the set
         if ((op[0] >= 'a' && op[0] <= 'z') || (op[0] >= 'A' && op[0] <= 'Z')) {
             continue;
         }
         operatorFirstCharacters.insert(op[0]);
     }
 }
+void AST::addFakeToken(Type t, String s) {
+    fakeTokens.push(Token(t, s));
+    fakeTokens.push(currentToken);
+}
 AST::Type AST::getNextToken() {
+    if (!fakeTokens.empty()) {
+        currentToken = fakeTokens.front();
+        fakeTokens.pop();
+        return currentToken.type;
+    }
     // EOF
     if (i >= file.length()) {
         currentToken = Token(Type::EndOfFile, String(""));
@@ -58,7 +77,8 @@ AST::Type AST::getNextToken() {
         currentLine++;
         // Safe inc
         i++;
-        if (i < file.size() && (file[i] == '\n' || file[i] == '\r') && file[i] != file[i - 1]) {
+        if (i < file.size() && (file[i] == '\n' || file[i] == '\r') &&
+            file[i] != file[i - 1]) {
             i++;
         }
         currentToken = Token(Type::EndOfStatement, String("\n"));
@@ -130,8 +150,8 @@ AST::Type AST::getNextToken() {
         currentToken = Token(Type::Name, identifier);
         return Type::Name;
     }
-    // Comments must be handled before operators, because they can start with the
-    // same character Skip comments
+    // Comments must be handled before operators, because they can start with
+    // the same character Skip comments
     if (file[i] == '/' && file[i + 1] == '/') {
         while (file[i] != '\n') {
             if (!incI()) {
@@ -140,7 +160,8 @@ AST::Type AST::getNextToken() {
         }
         // don't increase line because the newline will do that
         //  currentLine++;
-        //  Don't increase i, so that getNextToken() returns EOF or EndOfStatement
+        //  Don't increase i, so that getNextToken() returns EOF or
+        //  EndOfStatement
         return getNextToken();
     }
     // Skip multiline comments
@@ -158,13 +179,14 @@ AST::Type AST::getNextToken() {
         return getNextToken();
     }
     // If it's a potential operator
-    if (operatorFirstCharacters.find(file[i]) != operatorFirstCharacters.end()) {
+    if (operatorFirstCharacters.find(file[i]) !=
+        operatorFirstCharacters.end()) {
         std::string op = "";
         int count = 0;
         do {
             op += file[i];
-            // Have to increment i before checking count, otherwise we could get count
-            // forcing a break 	before i is incremented
+            // Have to increment i before checking count, otherwise we could get
+            // count forcing a break 	before i is incremented
             bool inc = incI();
             count++;
             if (count > 3) {
@@ -173,8 +195,23 @@ AST::Type AST::getNextToken() {
             if (!inc) {
                 break;
             }
-        } while (!isOperator(op));
-        if (isOperator(op)) {
+        } while (!isOperator(op) && !isUnaryOperator(op));
+        do {
+            op += file[i];
+            // Have to increment i before checking count, otherwise we could get
+            // count forcing a break 	before i is incremented
+            bool inc = incI();
+            count++;
+            if (count > 3) {
+                break;
+            }
+            if (!inc) {
+                break;
+            }
+        } while (isOperator(op) || isUnaryOperator(op));
+        op = op.substr(0, op.size() - 1);
+        i--;
+        if (isOperator(op) || isUnaryOperator(op)) {
             currentToken = Token(Type::Operator, op);
             return Type::Operator;
         }
@@ -210,12 +247,14 @@ AST::Type AST::getNextToken() {
                 str += escapeCharacters[file[i]];
             }
             if (file[i] == '\n') {
-                throwError("Unclosed string literal (newlines can't be in strings)",
+                throwError(
+                    "Unclosed string literal (newlines can't be in strings)",
                     getLine());
                 currentLine++;
             }
             if (!incI()) {
-                throwError("Unclosed string literal at end of file: \"" + actualStr,
+                throwError(
+                    "Unclosed string literal at end of file: \"" + actualStr,
                     getLine());
             }
         }
@@ -235,7 +274,8 @@ AST::Type AST::getNextToken() {
         char lastChar = ' ';
         while (file[i] != '\'') {
             if (file[i] == '\n') {
-                throwError("Unclosed character literal (newlines can't be in character "
+                throwError("Unclosed character literal (newlines can't be in "
+                           "character "
                            "literals)",
                     getLine());
                 currentLine++;
@@ -247,26 +287,29 @@ AST::Type AST::getNextToken() {
                 throwError("Unclosed character literal", getLine());
             }
         }
-        // If the count is greater than 1, then it's an invalid character literal,
-        // unless it's escape
+        // If the count is greater than 1, then it's an invalid character
+        // literal, unless it's escape
         if (count > 1 && str[0] != '\\') {
             throwError("Invalid character literal: '" + str + "'", getLine());
         }
-        // If the count is greater than 2, then it's an invalid character literal
+        // If the count is greater than 2, then it's an invalid character
+        // literal
         else if (count > 2) {
             throwError("Invalid character literal: '" + str + "'", getLine());
         }
         if (lastChar == '\\') {
             if (i >= file.size() - 1) {
-                // Since we're here, we can't check if there is another ', thus there
-                // isnt one
-                throwError("Unclosed character literal: '" + str + "'", getLine());
+                // Since we're here, we can't check if there is another ', thus
+                // there isnt one
+                throwError(
+                    "Unclosed character literal: '" + str + "'", getLine());
             } else if (file[i + 1] == '\'') {
                 // Eat the first of the two ', the second one will be done later
                 str += file[i];
                 i++;
             } else {
-                throwError("Unclosed character literal: '" + str + "'", getLine());
+                throwError(
+                    "Unclosed character literal: '" + str + "'", getLine());
             }
         }
         if (str[0] == '\\') {

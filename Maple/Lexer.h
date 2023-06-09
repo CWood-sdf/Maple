@@ -25,7 +25,6 @@ namespace AST {
         FunctionDefinition = -14,
         Void = -15,
         Exit = -16,
-        UnaryOperator = -17,
     };
     bool operator==(const Type& value, char c);
     class Token {
@@ -34,15 +33,13 @@ namespace AST {
         String str;
         int originLine;
         Token(Type t, String s);
-        Token(const Token&) = default;
-        Token& operator=(Token&&) = default;
     };
 
     size_t getLine();
     Token getCurrentToken();
     uint32_t getIndentationLevel();
     void prepareInterpreter(std::string f);
-
+    void addFakeToken(Type t, String s);
     Type getNextToken();
 } // namespace AST
 

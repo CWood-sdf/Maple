@@ -12,13 +12,30 @@ std::set<String> controlFlow = {
     "default",*/
 };
 std::set<String> exitStatements = {"break", "continue", "return"};
-std::set<String> operators = {"=", "+", "-", "*", "==", ">"};
+std::set<String> operators = {"=", "+", "-", "*", "==", ">", "||", "&&"};
 std::set<char> operatorFirstCharacters = {};
+std::map<String, int> unaryPrecedence = {
+    {"!", 3},
+    {"-", 3},
+};
+
 std::map<String, int> operatorPrecedence = {
-    {"*", 5}, {"+", 6}, {"-", 6}, {">", 9}, {"==", 10}, {"=", 16}};
+    {"*", 5},
+    {"+", 6},
+    {"-", 6},
+    {">", 9},
+    {"==", 10},
+    {"=", 16},
+    {"||", 15},
+    {"&&", 14},
+    {"!=", 10},
+    {">=", 9},
+};
 std::map<char, char> escapeCharacters = {{'n', '\n'}, {'t', '\t'}, {'r', '\r'},
     {'b', '\b'}, {'f', '\f'}, {'v', '\v'}, {'a', '\a'}, {'\\', '\\'},
     {'\'', '\''}, {'\"', '\"'}, {'?', '\?'}, {'0', '\0'}};
+
+std::set<String> unaryOperators = {"!"};
 
 std::shared_ptr<MemorySlot> evalOperatorEql(
     std::shared_ptr<MemorySlot> leftValue,
@@ -124,6 +141,42 @@ std::shared_ptr<MemorySlot> doOperator(std::shared_ptr<MemorySlot> leftValue,
         return std::make_shared<Value>(opBool(leftValue, rightValue));
     }
 }
+
+template <typename TFloat, typename TInt, typename TChar, typename TBool>
+std::shared_ptr<MemorySlot> doUnaryOperator(std::shared_ptr<MemorySlot> value,
+    TFloat (*opFloat)(double), TInt (*opInt)(int), TChar (*opChar)(char),
+    TBool (*opBool)(bool), std::size_t line) {
+    Value* val = nullptr;
+    if (value->getMemType() == MemorySlot::Type::Variable) {
+        value = ((Variable*)value.get())->getValue();
+    }
+    // Get left as a value
+    if (value->getMemType() == MemorySlot::Type::Value) {
+        val = (Value*)value.get();
+    } else if (value->getMemType() == MemorySlot::Type::Variable) {
+        val = (Value*)((Variable*)value.get())->getValue().get();
+    } else {
+        throwError("Cannot call unary operators on non-value types", line);
+    }
+    // If one is a double, cast both to double
+    if (val->getType() == Value::Types::Double) {
+        double leftVal = val->getAsFloat();
+        return std::make_shared<Value>(opFloat(leftVal));
+    }
+    // If one is an int, cast both to int
+    else if (val->getType() == Value::Types::Int) {
+        int leftVal = val->getAsInt();
+        return std::make_shared<Value>(opInt(leftVal));
+    }
+    // If one is a char, cast both to char
+    else if (val->getType() == Value::Types::Char) {
+        char leftVal = val->getAsChar();
+        return std::make_shared<Value>(opChar(leftVal));
+    } else {
+        bool leftVal = val->getAsBool();
+        return std::make_shared<Value>(opBool(leftVal));
+    }
+}
 std::shared_ptr<MemorySlot> evalOperatorPls(
     std::shared_ptr<MemorySlot> leftValue,
     std::shared_ptr<MemorySlot> rightValue, std::size_t line) {
@@ -145,9 +198,9 @@ std::shared_ptr<MemorySlot> evalOperatorMns(
     int (*lambdaBool)(bool, bool) = [](bool a, bool b) { return a - b; };
     return doOperator(leftValue, rightValue, lambdaFloat, lambdaInt, lambdaChar,
         lambdaBool, line);
-} /*}}}*/
-std::shared_ptr<MemorySlot> /*}}}*/
-evalOperatorMult(std::shared_ptr<MemorySlot> leftValue,
+}
+std::shared_ptr<MemorySlot> evalOperatorMult(
+    std::shared_ptr<MemorySlot> leftValue,
     std::shared_ptr<MemorySlot> rightValue, std::size_t line) { /*{{{*/
     double (*lambdaFloat)(
         double, double) = [](double a, double b) { return a * b; };
@@ -157,12 +210,104 @@ evalOperatorMult(std::shared_ptr<MemorySlot> leftValue,
     return doOperator(leftValue, rightValue, lambdaFloat, lambdaInt, lambdaChar,
         lambdaBool, line);
 }
-
+std::shared_ptr<MemorySlot> evalOperatorGtr(
+    std::shared_ptr<MemorySlot> leftValue,
+    std::shared_ptr<MemorySlot> rightValue, std::size_t line) { /*{{{*/
+    bool (*lambdaFloat)(
+        double, double) = [](double a, double b) { return a > b; };
+    bool (*lambdaInt)(int, int) = [](int a, int b) { return a > b; };
+    bool (*lambdaChar)(char, char) = [](char a, char b) { return a > b; };
+    bool (*lambdaBool)(bool, bool) = [](bool a, bool b) { return a > b; };
+    return doOperator(leftValue, rightValue, lambdaFloat, lambdaInt, lambdaChar,
+        lambdaBool, line);
+}
+std::shared_ptr<MemorySlot> evalOperatorGtrEql(
+    std::shared_ptr<MemorySlot> leftValue,
+    std::shared_ptr<MemorySlot> rightValue, std::size_t line) { /*{{{*/
+    bool (*lambdaFloat)(
+        double, double) = [](double a, double b) { return a >= b; };
+    bool (*lambdaInt)(int, int) = [](int a, int b) { return a >= b; };
+    bool (*lambdaChar)(char, char) = [](char a, char b) { return a >= b; };
+    bool (*lambdaBool)(bool, bool) = [](bool a, bool b) { return a >= b; };
+    return doOperator(leftValue, rightValue, lambdaFloat, lambdaInt, lambdaChar,
+        lambdaBool, line);
+}
+std::shared_ptr<MemorySlot> evalOperatorEqlEql(
+    std::shared_ptr<MemorySlot> leftValue,
+    std::shared_ptr<MemorySlot> rightValue, std::size_t line) { /*{{{*/
+    bool (*lambdaFloat)(
+        double, double) = [](double a, double b) { return a == b; };
+    bool (*lambdaInt)(int, int) = [](int a, int b) { return a == b; };
+    bool (*lambdaChar)(char, char) = [](char a, char b) { return a == b; };
+    bool (*lambdaBool)(bool, bool) = [](bool a, bool b) { return a == b; };
+    return doOperator(leftValue, rightValue, lambdaFloat, lambdaInt, lambdaChar,
+        lambdaBool, line);
+}
+std::shared_ptr<MemorySlot> evalOperatorNotEql(
+    std::shared_ptr<MemorySlot> leftValue,
+    std::shared_ptr<MemorySlot> rightValue, std::size_t line) { /*{{{*/
+    bool (*lambdaFloat)(
+        double, double) = [](double a, double b) { return a != b; };
+    bool (*lambdaInt)(int, int) = [](int a, int b) { return a != b; };
+    bool (*lambdaChar)(char, char) = [](char a, char b) { return a != b; };
+    bool (*lambdaBool)(bool, bool) = [](bool a, bool b) { return a != b; };
+    return doOperator(leftValue, rightValue, lambdaFloat, lambdaInt, lambdaChar,
+        lambdaBool, line);
+}
+std::shared_ptr<MemorySlot> evalOperatorAnd(
+    std::shared_ptr<MemorySlot> leftValue,
+    std::shared_ptr<MemorySlot> rightValue, std::size_t line) { /*{{{*/
+    bool (*lambdaFloat)(
+        double, double) = [](double a, double b) { return a && b; };
+    bool (*lambdaInt)(int, int) = [](int a, int b) { return a && b; };
+    bool (*lambdaChar)(char, char) = [](char a, char b) { return a && b; };
+    bool (*lambdaBool)(bool, bool) = [](bool a, bool b) { return a && b; };
+    return doOperator(leftValue, rightValue, lambdaFloat, lambdaInt, lambdaChar,
+        lambdaBool, line);
+}
+std::shared_ptr<MemorySlot> evalOperatorOr(
+    std::shared_ptr<MemorySlot> leftValue,
+    std::shared_ptr<MemorySlot> rightValue, std::size_t line) { /*{{{*/
+    bool (*lambdaFloat)(
+        double, double) = [](double a, double b) { return a || b; };
+    bool (*lambdaInt)(int, int) = [](int a, int b) { return a || b; };
+    bool (*lambdaChar)(char, char) = [](char a, char b) { return a || b; };
+    bool (*lambdaBool)(bool, bool) = [](bool a, bool b) { return a || b; };
+    return doOperator(leftValue, rightValue, lambdaFloat, lambdaInt, lambdaChar,
+        lambdaBool, line);
+}
+std::shared_ptr<MemorySlot> evalOperatorNeg(
+    std::shared_ptr<MemorySlot> value, std::size_t line) { /*{{{*/
+    double (*lambdaFloat)(double) = [](double a) { return -a; };
+    int (*lambdaInt)(int) = [](int a) { return -a; };
+    int (*lambdaChar)(char) = [](char a) { return -a; };
+    int (*lambdaBool)(bool) = [](bool a) { return -a; };
+    return doUnaryOperator(
+        value, lambdaFloat, lambdaInt, lambdaChar, lambdaBool, line);
+}
+std::shared_ptr<MemorySlot> evalOperatorNot(
+    std::shared_ptr<MemorySlot> value, std::size_t line) { /*{{{*/
+    bool (*lambdaFloat)(double) = [](double a) { return !(bool)a; };
+    bool (*lambdaInt)(int) = [](int a) { return !a; };
+    bool (*lambdaChar)(char) = [](char a) { return !a; };
+    bool (*lambdaBool)(bool) = [](bool a) { return !a; };
+    return doUnaryOperator(
+        value, lambdaFloat, lambdaInt, lambdaChar, lambdaBool, line);
+}
 int AST::getPrecedence(String op) {
     if (operatorPrecedence.find(op) == operatorPrecedence.end()) {
         return -1;
     }
     return operatorPrecedence[op];
+}
+int AST::getUnaryPrecedence(String op) {
+    if (unaryPrecedence.find(op) == unaryPrecedence.end()) {
+        return -1;
+    }
+    return unaryPrecedence[op];
+}
+bool AST::isUnaryOperator(String str) {
+    return unaryOperators.find(str) != unaryOperators.end();
 }
 bool AST::isIdentifier(String str) {
     return identifiers.find(str) != identifiers.end();
@@ -243,6 +388,23 @@ std::shared_ptr<MemorySlot> AST::BinaryOperatorAST::getValue() {
         return evalOperatorMns(leftValue, rightValue, line);
     } else if (op == "*"s) {
         return evalOperatorMult(leftValue, rightValue, line);
+    } else if (op == ">"s) {
+        return evalOperatorGtr(leftValue, rightValue, line);
+    } else if (op == "=="s) {
+        return evalOperatorEqlEql(leftValue, rightValue, line);
+    } else if (op == "||"s) {
+        return evalOperatorOr(leftValue, rightValue, line);
+    } else if (op == "&&"s) {
+        return evalOperatorAnd(leftValue, rightValue, line);
+    } else if (op == "!="s) {
+        return evalOperatorNotEql(leftValue, rightValue, line);
+    } else if (op == ">="s) {
+        return evalOperatorGtrEql(leftValue, rightValue, line);
+    } else {
+        throwError("Binary operator \""s + op.getReference() +
+                       "\" has undefined behavior\n  note: this is an internal "
+                       "interpreter error",
+            line);
     }
     return std::make_shared<Undefined>();
 }
@@ -251,6 +413,21 @@ AST::UnaryOperatorAST::UnaryOperatorAST(
   : ASTNode(line), value(value), op(op) {}
 std::shared_ptr<MemorySlot> AST::UnaryOperatorAST::getValue() {
     auto opValue = value->getValue();
+    if (!opValue) {
+        throwError("Using void return value as operand of unary operator \""s +
+                       op.getReference() + "\"",
+            line);
+    }
+    if (op == "!"s) {
+        return evalOperatorNot(opValue, line);
+    } else if (op == "-"s) {
+        return evalOperatorNeg(opValue, line);
+    } else {
+        throwError("Unary operator \""s + op.getReference() +
+                       "\" has undefined behavior\n  note: this is an internal "
+                       "interpreter error",
+            line);
+    }
     // Somehow invoke the operator
     return std::make_shared<Undefined>();
 }
@@ -398,7 +575,7 @@ std::shared_ptr<MemorySlot> AST::IfAST::getValue() {
     } else {
         value = conditionRet;
     }
-    bool isTrue = dynamic_cast<Value*>(value.get())->getAs<bool>();
+    bool isTrue = dynamic_cast<Value*>(value.get())->getAsBool();
     if (isTrue) {
         addScope("if");
         interpret(statements);
@@ -420,7 +597,7 @@ std::shared_ptr<MemorySlot> AST::IfAST::getValue() {
             } else {
                 value = elseIfRet;
             }
-            bool isTrue = dynamic_cast<Value*>(value.get())->getAs<bool>();
+            bool isTrue = dynamic_cast<Value*>(value.get())->getAsBool();
             if (isTrue) {
                 addScope("if");
                 interpret(elseIf->statements);
@@ -444,4 +621,56 @@ void AST::IfAST::addElseIf(std::shared_ptr<IfAST> elseIf) {
 
 void AST::IfAST::addElse(std::vector<std::shared_ptr<ASTNode>> elseStatements) {
     this->elseStatements = elseStatements;
+}
+
+AST::WhileAST::WhileAST(std::shared_ptr<ASTNode> condition,
+    std::vector<std::shared_ptr<ASTNode>> statements, std::size_t line)
+  : ASTNode(line), condition(condition), statements(statements) {}
+
+std::shared_ptr<MemorySlot> AST::WhileAST::getValue() {
+    auto conditionRet = condition->getValue();
+    if (conditionRet->getTypeName() != "bool"s) {
+        throwError("Invalid type in while statement\n  note: expected \"bool\" "
+                   "but got \"" +
+                       conditionRet->getTypeName().getReference() + "\"",
+            this->line);
+    }
+    std::shared_ptr<MemorySlot> value = nullptr;
+    if (conditionRet->getMemType() == MemorySlot::Type::Variable) {
+        value = dynamic_cast<Variable*>(conditionRet.get())->getValue();
+    } else {
+        value = conditionRet;
+    }
+    bool isTrue = dynamic_cast<Value*>(value.get())->getAsBool();
+    while (isTrue) {
+        addScope("while");
+        interpret(statements);
+        if (getExitType() == ExitType::Return) {
+            removeScope();
+            return nullptr;
+        } else if (getExitType() == ExitType::Break) {
+            auto ret = handleReturnRegister();
+            removeScope();
+            return ret.second;
+        } else if (getExitType() == ExitType::Continue) {
+            removeScope();
+            continue;
+        }
+        removeScope();
+        conditionRet = condition->getValue();
+        if (conditionRet->getTypeName() != "bool"s) {
+            throwError(
+                "Invalid type in while statement condition\n  note: expected "
+                "\"bool\" but got \"" +
+                    conditionRet->getTypeName().getReference() + "\"",
+                this->line);
+        }
+        if (conditionRet->getMemType() == MemorySlot::Type::Variable) {
+            value = dynamic_cast<Variable*>(conditionRet.get())->getValue();
+        } else {
+            value = conditionRet;
+        }
+        isTrue = dynamic_cast<Value*>(value.get())->getAsBool();
+    }
+    return nullptr;
 }

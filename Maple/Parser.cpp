@@ -11,22 +11,36 @@ using namespace AST;
 std::shared_ptr<AST::ASTNode> parseParentheses();
 
 std::shared_ptr<AST::ASTNode> parseBinaryOperator(
-    int precedence, std::shared_ptr<ASTNode> left);
+    std::shared_ptr<ASTNode> left);
 
 std::shared_ptr<AST::ASTNode> parseDefinition();
-
+std::shared_ptr<AST::ASTNode> parsePartialExpression(int maxPrecedence = -1);
 std::shared_ptr<AST::ASTNode> parseStatement();
+
+/// <summary>
+/// A unary prefix operator expression
+///		::= op partialExpression
+/// </summary>
+std::shared_ptr<AST::ASTNode> parseUnaryOperator() {
+    auto op = getCurrentToken().str;
+    getNextToken();
+    auto precedence = getUnaryPrecedence(op);
+    auto right = parsePartialExpression(precedence);
+    return std::make_shared<UnaryOperatorAST>(right, op);
+}
+
 /// <summary>
 /// A partial expression
 ///		::= variable
 ///		::= literal
 /// </summary>
 /// <returns></returns>
-std::shared_ptr<AST::ASTNode> parsePartialExpression(int maxPrecedence = 0) {
+std::shared_ptr<AST::ASTNode> parsePartialExpression(int maxPrecedence) {
     std::shared_ptr<AST::ASTNode> ret = nullptr;
     auto c = getCurrentToken().type;
     bool wasName = false;
     String name = "";
+    bool eat = true;
     switch (c) {
     case Type::CharacterLiteral:
         ret = std::make_shared<CharacterAST>(getCurrentToken().str);
@@ -48,17 +62,24 @@ std::shared_ptr<AST::ASTNode> parsePartialExpression(int maxPrecedence = 0) {
         wasName = true;
         ret = std::make_shared<VariableAST>(name);
         break;
+    case Type::Operator:
+        eat = false;
+        ret = parseUnaryOperator();
+        break;
     case (Type)'(':
         ret = parseParentheses();
         break;
     default:
-        throwError("Unexpected token "s + getCurrentToken().str.getReference(),
+        throwError("Unexpected token \""s +
+                       getCurrentToken().str.getReference() + "\""s,
             getCurrentToken().originLine);
         ret = nullptr;
         break;
     }
     // eat the token
-    getNextToken();
+    if (eat) {
+        getNextToken();
+    }
     if (wasName && getCurrentToken().type == (Type)'(') {
         // eat the '('
         getNextToken();
@@ -70,8 +91,9 @@ std::shared_ptr<AST::ASTNode> parsePartialExpression(int maxPrecedence = 0) {
             } else if (getCurrentToken().type == (Type)')') {
                 break;
             } else {
-                throwError("Expected ',' or ')', got "s +
-                               getCurrentToken().str.getReference(),
+                throwError(
+                    "Expected ',' or ')' in function argument list, got "s +
+                        getCurrentToken().str.getReference(),
                     getCurrentToken().originLine);
             }
         }
@@ -79,8 +101,18 @@ std::shared_ptr<AST::ASTNode> parsePartialExpression(int maxPrecedence = 0) {
         getNextToken();
         ret = std::make_shared<FunctionCallAST>(name, args);
     }
-    if (getCurrentToken().type == Type::Operator && maxPrecedence == 0) {
-        ret = parseBinaryOperator(getPrecedence(getCurrentToken().str), ret);
+    if (getCurrentToken().type == Type::Operator && maxPrecedence == -1) {
+        // New binary operator
+        ret = parseBinaryOperator(ret);
+    } else if (getCurrentToken().type == Type::Operator &&
+               getPrecedence(getCurrentToken().str) < maxPrecedence) {
+        // ret = parseBinaryOperator(getPrecedence(getCurrentToken().str), ret);
+        auto op = getCurrentToken().str;
+        int precedence = getPrecedence(op);
+        getNextToken();
+        auto left = ret;
+        auto right = parsePartialExpression(precedence);
+        ret = std::make_shared<BinaryOperatorAST>(left, right, op);
     }
     return ret;
 }
@@ -101,22 +133,25 @@ std::shared_ptr<AST::ASTNode> parseParentheses() {
 ///		::= partialExpression binaryOperator partialExpression
 /// </summary>
 std::shared_ptr<AST::ASTNode> parseBinaryOperator(
-    int precedence, std::shared_ptr<ASTNode> left) {
+    std::shared_ptr<ASTNode> left) {
     // Store the operator
     String op = getCurrentToken().str;
-    int currentPrecedence = getPrecedence(op);
+    int precedence = getPrecedence(op);
     getNextToken();
     // Get the right expression
-    auto right = parsePartialExpression(currentPrecedence);
+    auto right = parsePartialExpression(precedence);
     auto tokenType = getCurrentToken().type;
     if (tokenType == Type::Operator) {
         int nextOpPrecedence = getPrecedence(getCurrentToken().str);
-        if (nextOpPrecedence <= currentPrecedence) {
-            right = parseBinaryOperator(nextOpPrecedence, right);
+        if (nextOpPrecedence <= precedence) {
+            // make sure this operator is evaluated first
+            right = parseBinaryOperator(right);
         } else if (nextOpPrecedence > precedence) {
+            // turn current nodes into tree then attach so that they evaluated
+            //   first
             std::shared_ptr<ASTNode> ret =
                 std::make_shared<BinaryOperatorAST>(left, right, op);
-            return parseBinaryOperator(nextOpPrecedence, ret);
+            return parseBinaryOperator(ret);
         }
     }
     std::shared_ptr<ASTNode> ret =
@@ -171,7 +206,7 @@ std::shared_ptr<AST::ASTNode> parseDefinition() {
     // If it's an assignment, then we need to parse the expression
     if (nextToken == Type::Operator) {
         if (getCurrentToken().str.getReference() == "=") {
-            return parseBinaryOperator(getPrecedence("="), node);
+            return parseBinaryOperator(node);
         } else {
             throwError("Invalid operator after variable declaration: " +
                            getCurrentToken().str.getReference(),
@@ -340,7 +375,26 @@ std::shared_ptr<ASTNode> parseIfStatement(bool isAlone) {
 
         ret->addElse(elseStatements);
     }
+    addFakeToken(Type::EndOfStatement, "\n");
+    getNextToken();
     return ret;
+}
+/// parseWhileStatement
+/// <summary>
+/// Parses a while statement
+///		::= while expression '{' statements '}'
+/// </summary>
+std::shared_ptr<ASTNode> parseWhileStatement(bool isAlone) {
+    // // eat while
+    // getNextToken();
+    // Get the expression
+    auto expression = parsePartialExpression();
+    // Get the statements
+    std::vector<std::shared_ptr<ASTNode>> statements = Parse::parse(false);
+    // Make the AST node
+    std::shared_ptr<WhileAST> node =
+        std::make_shared<WhileAST>(expression, statements, isAlone);
+    return node;
 }
 
 // parseControlFlow
@@ -356,7 +410,10 @@ std::shared_ptr<ASTNode> parseControlFlow(bool isAlone) {
     getNextToken();
     if (keyword == "if"s) {
         return parseIfStatement(isAlone);
+    } else if (keyword == "while"s) {
+        return parseWhileStatement(isAlone);
     }
+    return nullptr;
 }
 
 std::vector<std::shared_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
