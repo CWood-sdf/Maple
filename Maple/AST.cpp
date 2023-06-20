@@ -1,6 +1,7 @@
 #include "AST.h"
 #include "Interpret.h"
 #include "Scope.h"
+#include "Variable.h"
 #include <memory>
 // #include <vcruntime.h>
 std::set<String> identifiers = {"char", "int", "float", "bool", "var"};
@@ -525,7 +526,11 @@ AST::FunctionCallAST::FunctionCallAST(String name,
 std::shared_ptr<MemorySlot> AST::FunctionCallAST::getValue() {
     // Get function
     auto func = getFunctionVariable(name, this->line);
-    // Get function AST5
+    // Get function AST
+    if (func->getMemType() == MemorySlot::Type::BuiltinFunction) {
+        auto builtin = dynamic_cast<BuiltinFunction*>(func->getValue().get());
+        return builtin->call(arguments, this->line);
+    }
     auto fn = dynamic_cast<Function*>(func->getValue().get());
     if (fn == nullptr) {
         throwError("Function "s + name.getReference() + " is not defined"s,

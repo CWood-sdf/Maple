@@ -40,6 +40,9 @@ clean:
 
 compile_objects: $(OBJ)
 
+run: $(EXEC)
+	$(EXEC)
+
 test:
 	@echo $(notdir C:/Users/woodc/Documents/Maple/Maple.cpp)
 	@echo $(OS)
