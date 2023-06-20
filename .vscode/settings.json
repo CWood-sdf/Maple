@@ -42,5 +42,12 @@
     },
     "files.associations": {
         "iostream": "cpp"
-    }
+    },
+    "makefile.launchConfigurations": [
+        {
+            "cwd": "c:\\Users\\woodc\\source\\repos\\Maple\\Maple\\out",
+            "binaryPath": "c:\\Users\\woodc\\source\\repos\\Maple\\Maple\\out\\main.exe",
+            "binaryArgs": []
+        }
+    ]
 }

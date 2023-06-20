@@ -107,11 +107,11 @@ class BuiltinFunction : public MemorySlot {
         std::vector<std::shared_ptr<MemorySlot>>);
     FunctionType function;
     std::vector<String> argTypes;
-    int argCount;
+    size_t argCount;
     String returnType;
 
 public:
-    BuiltinFunction(String name, FunctionType function, int argCount,
+    BuiltinFunction(String name, FunctionType function, size_t argCount,
         String returnType, std::vector<String> argTypes);
     virtual String getTypeName();
     virtual Type getMemType();
