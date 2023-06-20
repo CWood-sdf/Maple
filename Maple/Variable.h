@@ -4,6 +4,7 @@
 #include "String.h"
 #include <memory>
 namespace AST {
+    class ASTNode;
     class FunctionAST;
 }
 class MemorySlot {
@@ -115,6 +116,6 @@ public:
     virtual String getTypeName();
     virtual Type getMemType();
     std::shared_ptr<MemorySlot> call(
-        std::vector<std::shared_ptr<MemorySlot>> args, size_t line);
+        std::vector<std::shared_ptr<AST::ASTNode>> args, size_t line);
 };
 #endif // VARIABLE_H

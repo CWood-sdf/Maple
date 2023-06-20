@@ -1,0 +1,85 @@
+In file included from Maple/AST.cpp:1:
+In file included from Maple/AST.h:5:
+In file included from Maple/Scope.h:7:
+Maple/Variable.h:119:42: error: no member named 'ASTNode' in namespace 'AST'
+  119 |         std::vector<std::shared_ptr<AST::ASTNode>> args, size_t line);
+      |                                     ~~~~~^
+In file included from Maple/AST.cpp:1:
+In file included from Maple/AST.h:4:
+In file included from Maple/Error.h:4:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/iostream:39:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ostream:38:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/ios:42:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/ios_base.h:41:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/locale_classes.h:40:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/string:52:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_algo.h:62:
+In file included from /usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_tempbuf.h:60:
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_construct.h:88:2: warning: destructor called on non-final 'Function' that has virtual functions but non-virtual destructor [-Wdelete-non-abstract-non-virtual-dtor]
+   88 |         __location->~_Tp();
+      |         ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/alloc_traits.h:537:9: note: in instantiation of function template specialization 'std::destroy_at<Function>' requested here
+  537 |           std::destroy_at(__p);
+      |                ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:528:28: note: in instantiation of function template specialization 'std::allocator_traits<std::allocator<Function>>::destroy<Function>' requested here
+  528 |         allocator_traits<_Alloc>::destroy(_M_impl._M_alloc(), _M_ptr());
+      |                                   ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:514:2: note: in instantiation of member function 'std::_Sp_counted_ptr_inplace<Function, std::allocator<Function>, __gnu_cxx::_S_atomic>::_M_dispose' requested here
+  514 |         _Sp_counted_ptr_inplace(_Alloc __a, _Args&&... __args)
+      |         ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:651:6: note: in instantiation of function template specialization 'std::_Sp_counted_ptr_inplace<Function, std::allocator<Function>, __gnu_cxx::_S_atomic>::_Sp_counted_ptr_inplace<String &, std::shared_ptr<AST::FunctionAST> &>' requested here
+  651 |             _Sp_cp_type(__a._M_a, std::forward<_Args>(__args)...);
+      |             ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1342:14: note: in instantiation of function template specialization 'std::__shared_count<>::__shared_count<Function, std::allocator<Function>, String &, std::shared_ptr<AST::FunctionAST> &>' requested here
+ 1342 |         : _M_ptr(), _M_refcount(_M_ptr, __tag, std::forward<_Args>(__args)...)
+      |                     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:409:4: note: in instantiation of function template specialization 'std::__shared_ptr<Function>::__shared_ptr<std::allocator<Function>, String &, std::shared_ptr<AST::FunctionAST> &>' requested here
+  409 |         : __shared_ptr<_Tp>(__tag, std::forward<_Args>(__args)...)
+      |           ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:862:14: note: in instantiation of function template specialization 'std::shared_ptr<Function>::shared_ptr<std::allocator<Function>, String &, std::shared_ptr<AST::FunctionAST> &>' requested here
+  862 |       return shared_ptr<_Tp>(_Sp_alloc_shared_tag<_Alloc>{__a},
+      |              ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:878:19: note: in instantiation of function template specialization 'std::allocate_shared<Function, std::allocator<Function>, String &, std::shared_ptr<AST::FunctionAST> &>' requested here
+  878 |       return std::allocate_shared<_Tp>(std::allocator<_Tp_nc>(),
+      |                   ^
+Maple/AST.cpp:457:24: note: in instantiation of function template specialization 'std::make_shared<Function, String &, std::shared_ptr<AST::FunctionAST> &>' requested here
+  457 |     var->setValue(std::make_shared<Function>(name, this->selfReference));
+      |                        ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_construct.h:88:15: note: qualify call to silence this warning
+   88 |         __location->~_Tp();
+      |                      ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_construct.h:88:2: warning: destructor called on non-final 'AST::MemSlotAST' that has virtual functions but non-virtual destructor [-Wdelete-non-abstract-non-virtual-dtor]
+   88 |         __location->~_Tp();
+      |         ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/alloc_traits.h:537:9: note: in instantiation of function template specialization 'std::destroy_at<AST::MemSlotAST>' requested here
+  537 |           std::destroy_at(__p);
+      |                ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:528:28: note: in instantiation of function template specialization 'std::allocator_traits<std::allocator<AST::MemSlotAST>>::destroy<AST::MemSlotAST>' requested here
+  528 |         allocator_traits<_Alloc>::destroy(_M_impl._M_alloc(), _M_ptr());
+      |                                   ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:514:2: note: in instantiation of member function 'std::_Sp_counted_ptr_inplace<AST::MemSlotAST, std::allocator<AST::MemSlotAST>, __gnu_cxx::_S_atomic>::_M_dispose' requested here
+  514 |         _Sp_counted_ptr_inplace(_Alloc __a, _Args&&... __args)
+      |         ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:651:6: note: in instantiation of function template specialization 'std::_Sp_counted_ptr_inplace<AST::MemSlotAST, std::allocator<AST::MemSlotAST>, __gnu_cxx::_S_atomic>::_Sp_counted_ptr_inplace<std::shared_ptr<MemorySlot>>' requested here
+  651 |             _Sp_cp_type(__a._M_a, std::forward<_Args>(__args)...);
+      |             ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr_base.h:1342:14: note: in instantiation of function template specialization 'std::__shared_count<>::__shared_count<AST::MemSlotAST, std::allocator<AST::MemSlotAST>, std::shared_ptr<MemorySlot>>' requested here
+ 1342 |         : _M_ptr(), _M_refcount(_M_ptr, __tag, std::forward<_Args>(__args)...)
+      |                     ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:409:4: note: in instantiation of function template specialization 'std::__shared_ptr<AST::MemSlotAST>::__shared_ptr<std::allocator<AST::MemSlotAST>, std::shared_ptr<MemorySlot>>' requested here
+  409 |         : __shared_ptr<_Tp>(__tag, std::forward<_Args>(__args)...)
+      |           ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:862:14: note: in instantiation of function template specialization 'std::shared_ptr<AST::MemSlotAST>::shared_ptr<std::allocator<AST::MemSlotAST>, std::shared_ptr<MemorySlot>>' requested here
+  862 |       return shared_ptr<_Tp>(_Sp_alloc_shared_tag<_Alloc>{__a},
+      |              ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/shared_ptr.h:878:19: note: in instantiation of function template specialization 'std::allocate_shared<AST::MemSlotAST, std::allocator<AST::MemSlotAST>, std::shared_ptr<MemorySlot>>' requested here
+  878 |       return std::allocate_shared<_Tp>(std::allocator<_Tp_nc>(),
+      |                   ^
+Maple/AST.cpp:474:32: note: in instantiation of function template specialization 'std::make_shared<AST::MemSlotAST, std::shared_ptr<MemorySlot>>' requested here
+  474 |         argASTs.push_back(std::make_shared<MemSlotAST>(arg->getValue()));
+      |                                ^
+/usr/lib/gcc/x86_64-linux-gnu/11/../../../../include/c++/11/bits/stl_construct.h:88:15: note: qualify call to silence this warning
+   88 |         __location->~_Tp();
+      |                      ^
+2 warnings and 1 error generated.
+make: *** [Makefile:36: Maple/out-linux/AST.o] Error 1

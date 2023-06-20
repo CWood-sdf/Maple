@@ -33,7 +33,7 @@ BuiltinFunction::Type BuiltinFunction::getMemType() {
 }
 
 std::shared_ptr<MemorySlot> BuiltinFunction::call(
-    std::vector<std::shared_ptr<MemorySlot>> args, std::size_t line) {
+    std::vector<std::shared_ptr<AST::ASTNode>> args, std::size_t line) {
     // Check if the number of arguments is correct
     // Assert the types are correct too
     // Call the function
