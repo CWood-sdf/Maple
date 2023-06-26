@@ -38,8 +38,8 @@ std::shared_ptr<MemorySlot> BuiltinFunction::call(
     std::vector<std::shared_ptr<AST::ASTNode>> args, std::size_t line) {
     // Check if the number of arguments is correct
     if (args.size() != argCount) {
-        throwError("Incorrect number of arguments for builtin function " +
-                       name.getReference() + "\n  note: expected " +
+        throwError("Incorrect number of arguments for builtin function '" +
+                       name.getReference() + "'\n  note: expected " +
                        std::to_string(args.size()) + " arguments but got " +
                        std::to_string(argCount),
             line);
@@ -48,19 +48,24 @@ std::shared_ptr<MemorySlot> BuiltinFunction::call(
     std::vector<std::shared_ptr<MemorySlot>> argValues = {};
     for (std::shared_ptr<AST::ASTNode> arg : args) {
         argValues.push_back(arg->getValue());
+
         if (!argValues.back()) {
             throwError("Atttempting to use a void return value as an argument "
-                       "for builtin function " +
+                       "for builtin function '" +
                            name.getReference() +
-                           "\n  note: void value passed as parameter number " +
+                           "'\n  note: void value passed as parameter number " +
                            std::to_string(argValues.size()),
                 line);
+        }
+        if (argValues.back()->getMemType() == MemorySlot::Type::Variable) {
+            // unpack the variable
+            argValues.back() = ((Variable*)argValues.back().get())->getValue();
         }
         if (argValues.back()->getTypeName() != argTypes[argValues.size() - 1]) {
             throwError("Incorrect type for argument " +
                            std::to_string(argValues.size()) +
-                           " for builtin function " + name.getReference() +
-                           "\n  note: expected " +
+                           " for builtin function '" + name.getReference() +
+                           "'\n  note: expected " +
                            argTypes[argValues.size() - 1].getReference() +
                            " but got " +
                            argValues.back()->getTypeName().getReference(),
@@ -71,13 +76,13 @@ std::shared_ptr<MemorySlot> BuiltinFunction::call(
     std::shared_ptr<MemorySlot> ret = function(argValues);
     // Assert the return type is correct
     if (ret->getTypeName() != returnType) {
-        throwError("Incorrect return type for builtin function " +
-                       name.getReference() + "\n  note: expected " +
+        throwError("Incorrect return type for builtin function '" +
+                       name.getReference() + "'\n  note: expected " +
                        returnType.getReference() + " but got " +
                        ret->getTypeName().getReference() +
                        "\n  note: this is an internal library error, please "
                        "report it to the developer of the library",
             line);
     }
-    return nullptr;
+    return ret;
 }

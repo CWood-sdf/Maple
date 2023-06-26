@@ -63,6 +63,7 @@ namespace AST {
         bool value;
         BoolAST(bool value, std::size_t line = getLine());
         BoolAST(String value, std::size_t line = getLine());
+        virtual ~BoolAST() = default;
         std::shared_ptr<MemorySlot> getValue() override;
     };
     class StringAST : public ASTNode {
@@ -97,6 +98,7 @@ namespace AST {
         String op;
         UnaryOperatorAST(std::shared_ptr<ASTNode> value, String op,
             std::size_t line = getLine());
+        virtual ~UnaryOperatorAST() = default;
         std::shared_ptr<MemorySlot> getValue() override;
     };
     class VariableAST : public ASTNode {
@@ -143,6 +145,7 @@ namespace AST {
         FunctionCallAST(String name,
             std::vector<std::shared_ptr<ASTNode>> arguments,
             std::size_t line = getLine());
+        virtual ~FunctionCallAST() = default;
         std::shared_ptr<MemorySlot> getValue() override;
     };
     class ExitAST : public ASTNode {
@@ -151,6 +154,7 @@ namespace AST {
         std::shared_ptr<ASTNode> value;
         ExitAST(ExitType t, std::shared_ptr<ASTNode> value,
             std::size_t line = getLine());
+        virtual ~ExitAST() = default;
         std::shared_ptr<MemorySlot> getValue() override;
     };
     class MemSlotAST : public ASTNode {
@@ -158,6 +162,7 @@ namespace AST {
         std::shared_ptr<MemorySlot> value;
         MemSlotAST(
             std::shared_ptr<MemorySlot> value, std::size_t line = getLine());
+        virtual ~MemSlotAST() = default;
         std::shared_ptr<MemorySlot> getValue() override;
     };
     class IfAST : public ASTNode {
@@ -170,6 +175,7 @@ namespace AST {
         IfAST(std::shared_ptr<ASTNode> condition,
             std::vector<std::shared_ptr<ASTNode>> statements, bool isAlone,
             std::size_t line = getLine());
+        virtual ~IfAST() = default;
         std::shared_ptr<MemorySlot> getValue() override;
         void addElseIf(std::shared_ptr<IfAST> elseIf);
         void addElse(std::vector<std::shared_ptr<ASTNode>> elseStatements);
@@ -182,6 +188,7 @@ namespace AST {
         WhileAST(std::shared_ptr<ASTNode> condition,
             std::vector<std::shared_ptr<ASTNode>> statements,
             std::size_t line = getLine());
+        virtual ~WhileAST() = default;
         std::shared_ptr<MemorySlot> getValue() override;
     };
 

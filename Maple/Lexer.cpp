@@ -1,5 +1,6 @@
 #include "Lexer.h"
 #include <queue>
+using namespace AST;
 std::queue<AST::Token> fakeTokens;
 uint32_t i = 0;
 uint32_t indentationLevel = 0;
@@ -52,6 +53,59 @@ void AST::addFakeToken(Type t, String s) {
     fakeTokens.push(Token(t, s));
     fakeTokens.push(currentToken);
 }
+AST::Token readIdent() {
+
+    std::string identifier = "";
+    do {
+        identifier += file[i];
+        if (!incI()) {
+            break;
+        }
+    } while ((file[i] >= 'a' && file[i] <= 'z') ||
+             (file[i] >= 'A' && file[i] <= 'Z') ||
+             (file[i] >= '0' && file[i] <= '9') || file[i] == '_');
+    if (identifier == "fn") {
+        currentToken = Token(Type::FunctionDefinition, identifier);
+    } else if (isExitStatement(identifier)) {
+        currentToken = Token(Type::Exit, identifier);
+    } else if (identifier == "void") {
+        currentToken = Token(Type::Void, identifier);
+    } else if (isIdentifier(identifier)) {
+        currentToken = Token(Type::Identifier, identifier);
+    } else if (isIdentifierModifier(identifier)) [[unlikely]] {
+        currentToken = Token(Type::IdentifierModifier, identifier);
+    } else if (isOperator(identifier)) [[unlikely]] {
+        currentToken = Token(Type::Operator, identifier);
+    } else if (isControlFlow(identifier)) {
+        currentToken = Token(Type::ControlFlow, identifier);
+    } else if (isBooleanLiteral(identifier)) {
+        currentToken = Token(Type::BooleanLiteral, identifier);
+    } else [[likely]] {
+        currentToken = Token(Type::Name, identifier);
+    }
+    return currentToken;
+}
+AST::Token readNumber() {
+    std::string number = "";
+    unsigned int decimalCount = 0;
+    do {
+        number += file[i];
+        if (file[i] == '.') {
+            decimalCount++;
+        }
+        if (!incI()) {
+            break;
+        }
+    } while ((file[i] >= '0' && file[i] <= '9') || file[i] == '.');
+    if (decimalCount > 1) [[unlikely]] {
+        throwError("Invalid number: " + number, getLine());
+    } else if (decimalCount == 1) {
+        currentToken = Token(Type::FloatLiteral, String(number));
+    } else [[likely]] {
+        currentToken = Token(Type::IntLiteral, String(number));
+    }
+    return currentToken;
+}
 AST::Type AST::getNextToken() {
     if (!fakeTokens.empty()) {
         currentToken = fakeTokens.front();
@@ -86,73 +140,18 @@ AST::Type AST::getNextToken() {
     }
 
     // If it's a number, return number
-    if (file[i] >= '0' && file[i] <= '9') {
-        std::string number = "";
-        unsigned int decimalCount = 0;
-        do {
-            number += file[i];
-            if (file[i] == '.') {
-                decimalCount++;
-            }
-            if (!incI()) {
-                break;
-            }
-        } while ((file[i] >= '0' && file[i] <= '9') || file[i] == '.');
-        if (decimalCount > 1) {
-            throwError("Invalid number: " + number, getLine());
-        }
-        if (decimalCount == 1) {
-            currentToken = Token(Type::FloatLiteral, String(number));
-            return Type::FloatLiteral;
-        }
-        currentToken = Token(Type::IntLiteral, String(number));
-        return Type::IntLiteral;
+    else if (file[i] >= '0' && file[i] <= '9') {
+        return readNumber().type;
     }
 
     // If it's a letter, return identifier
-    if ((file[i] >= 'a' && file[i] <= 'z') ||
-        (file[i] >= 'A' && file[i] <= 'Z') || file[i] == '_') {
-        std::string identifier = "";
-        do {
-            identifier += file[i];
-            if (!incI()) {
-                break;
-            }
-        } while ((file[i] >= 'a' && file[i] <= 'z') ||
-                 (file[i] >= 'A' && file[i] <= 'Z') ||
-                 (file[i] >= '0' && file[i] <= '9') || file[i] == '_');
-        if (identifier == "fn") {
-            currentToken = Token(Type::FunctionDefinition, identifier);
-            return Type::FunctionDefinition;
-        } else if (isExitStatement(identifier)) {
-            currentToken = Token(Type::Exit, identifier);
-            return Type::Exit;
-        } else if (identifier == "void") {
-            currentToken = Token(Type::Void, identifier);
-            return Type::Void;
-        } else if (isIdentifier(identifier)) {
-            currentToken = Token(Type::Identifier, identifier);
-            return Type::Identifier;
-        } else if (isIdentifierModifier(identifier)) {
-            currentToken = Token(Type::IdentifierModifier, identifier);
-            return Type::IdentifierModifier;
-        } else if (isOperator(identifier)) {
-            currentToken = Token(Type::Operator, identifier);
-            return Type::Operator;
-        } else if (isControlFlow(identifier)) {
-            currentToken = Token(Type::ControlFlow, identifier);
-            return Type::ControlFlow;
-        } else if (isBooleanLiteral(identifier)) {
-            currentToken = Token(Type::BooleanLiteral, identifier);
-            return Type::BooleanLiteral;
-        }
-
-        currentToken = Token(Type::Name, identifier);
-        return Type::Name;
+    else if ((file[i] >= 'a' && file[i] <= 'z') ||
+             (file[i] >= 'A' && file[i] <= 'Z') || file[i] == '_') {
+        return readIdent().type;
     }
     // Comments must be handled before operators, because they can start with
     // the same character Skip comments
-    if (file[i] == '/' && file[i + 1] == '/') {
+    else if (file[i] == '/' && file[i + 1] == '/') {
         while (file[i] != '\n') {
             if (!incI()) {
                 break;
@@ -165,7 +164,7 @@ AST::Type AST::getNextToken() {
         return getNextToken();
     }
     // Skip multiline comments
-    if (file[i] == '/' && i < file.size() - 1 && file[i + 1] == '*') {
+    else if (file[i] == '/' && i < file.size() - 1 && file[i + 1] == '*') {
         i += 2;
         while (file[i] != '*' && file[i + 1] != '/') {
             if (file[i] == '\n') {
@@ -179,14 +178,14 @@ AST::Type AST::getNextToken() {
         return getNextToken();
     }
     // If it's a potential operator
-    if (operatorFirstCharacters.find(file[i]) !=
-        operatorFirstCharacters.end()) {
+    else if (operatorFirstCharacters.find(file[i]) !=
+             operatorFirstCharacters.end()) [[likely]] {
         std::string op = "";
         int count = 0;
         do {
             op += file[i];
-            // Have to increment i before checking count, otherwise we could get
-            // count forcing a break 	before i is incremented
+            // Have to increment i before checking count, otherwise we could
+            // get count forcing a break 	before i is incremented
             bool inc = incI();
             count++;
             if (count > 3) {
@@ -198,8 +197,8 @@ AST::Type AST::getNextToken() {
         } while (!isOperator(op) && !isUnaryOperator(op));
         do {
             op += file[i];
-            // Have to increment i before checking count, otherwise we could get
-            // count forcing a break 	before i is incremented
+            // Have to increment i before checking count, otherwise we could
+            // get count forcing a break 	before i is incremented
             bool inc = incI();
             count++;
             if (count > 3) {
@@ -228,7 +227,7 @@ AST::Type AST::getNextToken() {
     }
 
     // Handle string literals
-    if (file[i] == '"') {
+    else if (file[i] == '"') [[unlikely]] {
         if (!incI()) {
             throwError("Unclosed string literal at end of file: \"", getLine());
         }
@@ -247,8 +246,8 @@ AST::Type AST::getNextToken() {
                 str += escapeCharacters[file[i]];
             }
             if (file[i] == '\n') {
-                throwError(
-                    "Unclosed string literal (newlines can't be in strings)",
+                throwError("Unclosed string literal (newlines can't be in "
+                           "strings)",
                     getLine());
                 currentLine++;
             }
@@ -265,7 +264,7 @@ AST::Type AST::getNextToken() {
     }
 
     // Handle character literals
-    if (file[i] == '\'') {
+    else if (file[i] == '\'') [[unlikely]] {
         if (!incI()) {
             throwError("Unclosed character literal", getLine());
         }
@@ -299,12 +298,13 @@ AST::Type AST::getNextToken() {
         }
         if (lastChar == '\\') {
             if (i >= file.size() - 1) {
-                // Since we're here, we can't check if there is another ', thus
-                // there isnt one
+                // Since we're here, we can't check if there is another ',
+                // thus there isnt one
                 throwError(
                     "Unclosed character literal: '" + str + "'", getLine());
             } else if (file[i + 1] == '\'') {
-                // Eat the first of the two ', the second one will be done later
+                // Eat the first of the two ', the second one will be done
+                // later
                 str += file[i];
                 i++;
             } else {
@@ -319,9 +319,13 @@ AST::Type AST::getNextToken() {
         i++;
         currentToken = Token(Type::CharacterLiteral, str);
         return Type::CharacterLiteral;
+    } else [[likely]] {
+        char c = file[i];
+        i++;
+        currentToken = Token((Type)c, String(c));
+        return (Type)c;
     }
-    char c = file[i];
-    i++;
-    currentToken = Token((Type)c, String(c));
-    return (Type)c;
+    // idk what to put here bc its impossible to be here but clangd is angry
+    // otherwise
+    return Type::EndOfFile;
 }

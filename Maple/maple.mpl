@@ -11,6 +11,10 @@ fn returnIntArg(int x) int {
 	return x
 }
 
+fn Cos(float a) float {
+    return cos(a)
+}
+
 // yuhh
 x = yeetFn(x, c)
 int one = 1
@@ -30,4 +34,7 @@ while yeet > 0 {
 	yeet = yeet - 1
 	stupid = stupid + 1
 }
+float PI = 3.141592653589793238462643383279502884197169399375105820974944592307816406286
 stupid = 0 - 5 + 2
+q = cos(PI / 2)
+stupid = returnIntArg('\n')

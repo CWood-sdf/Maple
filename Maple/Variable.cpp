@@ -1,12 +1,8 @@
 #include "Variable.h"
 using std::operator"" s;
-MemorySlot::Type Undefined::getMemType() {
-    return Type::Undefined;
-}
+MemorySlot::Type Undefined::getMemType() { return Type::Undefined; }
 
-String Undefined::getTypeName() {
-    return "undefined";
-}
+String Undefined::getTypeName() { return "undefined"; }
 
 Value::Val::Val(double f) : floatVal(f) {}
 
@@ -40,70 +36,30 @@ Value::Value(bool b) {
     typeName = "bool";
 }
 
-Value::Types Value::getType() {
-    return type;
-}
+Value::Types Value::getType() { return type; }
 
-MemorySlot::Type Value::getMemType() {
-    return Type::Value;
-}
+MemorySlot::Type Value::getMemType() { return Type::Value; }
 
-Value::Val& Value::getValue() {
-    return value;
-}
+Value::Val& Value::getValue() { return value; }
 
-template <class T>
-T Value::getAs() {
-    switch (type) {
-    case Value::Types::Double:
-        return (T)value.floatVal;
-        break;
-    case Value::Types::Int:
-        return (T)value.intVal;
-        break;
-    case Value::Types::Char:
-        return (T)value.charVal;
-        break;
-    case Value::Types::Bool:
-        return (T)value.boolVal;
-        break;
-    default:
-        break;
-    }
-}
+double Value::getAsFloat() { return getAs<double>(); }
 
-double Value::getAsFloat() {
-    return getAs<double>();
-}
+int Value::getAsInt() { return getAs<int>(); }
 
-int Value::getAsInt() {
-    return getAs<int>();
-}
+char Value::getAsChar() { return getAs<char>(); }
 
-char Value::getAsChar() {
-    return getAs<char>();
-}
+bool Value::getAsBool() { return getAs<bool>(); }
 
-bool Value::getAsBool() {
-    return getAs<bool>();
-}
-
-String Value::getTypeName() {
-    return typeName;
-}
+String Value::getTypeName() { return typeName; }
 
 Variable::Variable(String name, String type) {
     this->name = name;
     this->type = type;
 }
 
-void Variable::setValue(std::shared_ptr<MemorySlot> v) {
-    value = v;
-}
+void Variable::setValue(std::shared_ptr<MemorySlot> v) { value = v; }
 
-String Variable::getName() {
-    return name;
-}
+String Variable::getName() { return name; }
 
 String Variable::getTypeName() {
     if (this->type == "var"s) {
@@ -113,11 +69,7 @@ String Variable::getTypeName() {
     }
 }
 
-MemorySlot::Type Variable::getMemType() {
-    return Type::Variable;
-}
+MemorySlot::Type Variable::getMemType() { return Type::Variable; }
 
 // getValue
-std::shared_ptr<MemorySlot> Variable::getValue() {
-    return value;
-}
+std::shared_ptr<MemorySlot> Variable::getValue() { return value; }

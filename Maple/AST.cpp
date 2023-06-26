@@ -13,7 +13,7 @@ std::set<String> controlFlow = {
     "default",*/
 };
 std::set<String> exitStatements = {"break", "continue", "return"};
-std::set<String> operators = {"=", "+", "-", "*", "==", ">", "||", "&&"};
+std::set<String> operators = {"=", "+", "-", "*", "==", ">", "||", "&&", "/"};
 std::set<char> operatorFirstCharacters = {};
 std::map<String, int> unaryPrecedence = {
     {"!", 3},
@@ -211,6 +211,19 @@ std::shared_ptr<MemorySlot> evalOperatorMult(
     return doOperator(leftValue, rightValue, lambdaFloat, lambdaInt, lambdaChar,
         lambdaBool, line);
 }
+std::shared_ptr<MemorySlot> evalOperatorDiv(
+    std::shared_ptr<MemorySlot> leftValue,
+    std::shared_ptr<MemorySlot> rightValue, std::size_t line) { /*{{{*/
+    double (*lambdaFloat)(
+        double, double) = [](double a, double b) { return a / b; };
+    double (*lambdaInt)(int, int) = [](int a, int b) { return (double)a / b; };
+    double (*lambdaChar)(
+        char, char) = [](char a, char b) { return (double)a / b; };
+    double (*lambdaBool)(
+        bool, bool) = [](bool a, bool b) { return (double)a / b; };
+    return doOperator(leftValue, rightValue, lambdaFloat, lambdaInt, lambdaChar,
+        lambdaBool, line);
+}
 std::shared_ptr<MemorySlot> evalOperatorGtr(
     std::shared_ptr<MemorySlot> leftValue,
     std::shared_ptr<MemorySlot> rightValue, std::size_t line) { /*{{{*/
@@ -389,6 +402,8 @@ std::shared_ptr<MemorySlot> AST::BinaryOperatorAST::getValue() {
         return evalOperatorMns(leftValue, rightValue, line);
     } else if (op == "*"s) {
         return evalOperatorMult(leftValue, rightValue, line);
+    } else if (op == "/"s) {
+        return evalOperatorDiv(leftValue, rightValue, line);
     } else if (op == ">"s) {
         return evalOperatorGtr(leftValue, rightValue, line);
     } else if (op == "=="s) {
@@ -470,8 +485,8 @@ std::shared_ptr<MemorySlot> AST::FunctionAST::call(
     }
     // Preprocess the arguments before new scope is added
     std::vector<std::shared_ptr<MemSlotAST>> argASTs = {};
-    for (auto arg : args) {
-        argASTs.push_back(std::make_shared<MemSlotAST>(arg->getValue()));
+    for (size_t i = 0; i < args.size(); i++) {
+        argASTs.push_back(std::make_shared<MemSlotAST>(args[i]->getValue()));
     }
     addScope(name);
     for (size_t i = 0; i < argASTs.size(); i++) {
@@ -526,12 +541,13 @@ AST::FunctionCallAST::FunctionCallAST(String name,
 std::shared_ptr<MemorySlot> AST::FunctionCallAST::getValue() {
     // Get function
     auto func = getFunctionVariable(name, this->line);
+    auto f = func->getValue();
     // Get function AST
-    if (func->getMemType() == MemorySlot::Type::BuiltinFunction) {
+    if (f->getMemType() == MemorySlot::Type::BuiltinFunction) {
         auto builtin = dynamic_cast<BuiltinFunction*>(func->getValue().get());
         return builtin->call(arguments, this->line);
     }
-    auto fn = dynamic_cast<Function*>(func->getValue().get());
+    auto fn = dynamic_cast<Function*>(f.get());
     if (fn == nullptr) {
         throwError("Function "s + name.getReference() + " is not defined"s,
             this->line);

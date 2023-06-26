@@ -18,7 +18,8 @@ void throwError(std::string message, std::size_t line) {
     std::cin.get();
     exit(1);
 }
-void writeOutput(std::string message, std::size_t line) {
+void writeOutput(
+    std::string message [[maybe_unused]], std::size_t line [[maybe_unused]]) {
 #if STD_OUT == 1
     std::cout << message << std::endl;
     std::cout << "At line: " << line << std::endl;
@@ -33,7 +34,7 @@ void writeOutput(std::string message, std::size_t line) {
     }
 #endif
 }
-void writeOutputNoLine(std::string message) {
+void writeOutputNoLine(std::string message [[maybe_unused]]) {
 #if STD_OUT == 1
     std::cout << message << std::endl;
 #endif

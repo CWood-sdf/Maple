@@ -1,6 +1,6 @@
 
 CXX = clang
-CXXFLAGS = -Wall -Wextra -Wpedantic -std=c++20 -ffunction-sections -fdata-sections -frtti
+CXXFLAGS = -Wall -Wextra -Wpedantic -std=c++2b -ffunction-sections -fdata-sections -frtti
 LD_FLAGS = 
 HEADERS = $(wildcard Maple/*.h)
 ifeq ($(RELEASE), 1)
@@ -15,7 +15,7 @@ ifeq ($(OS), Windows_NT)
 	EXEC = $(BUILD_DIR)/main.exe
 else
 	CXXFLAGS += -DUNIX -gdwarf-4
-	LD_FLAGS += -lstdc++
+	LD_FLAGS += -lstdc++ -lm
 	OBJ_EXT = o
 	BUILD_DIR = Maple/out-linux
 	EXEC = $(BUILD_DIR)/main

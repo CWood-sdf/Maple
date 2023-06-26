@@ -2,21 +2,24 @@
 // and ends there.
 //
 
+#include "Builtins.h"
 #include "Error.h"
 #include "FileLoad.h"
 #include "Interpret.h"
 #include "Parser.h"
 #include "Scope.h"
 #include <chrono>
+#include <cmath>
 #include <iostream>
 #include <string>
-
 int main() {
     // start timer
     std::string file = loadFile("./Maple/maple.mpl");
     AST::prepareInterpreter(file);
     auto start = std::chrono::high_resolution_clock::now();
     initScope();
+    addBuiltins();
+    // make a variable for cos function
     writeOutput(file);
     /*while (AST::getNextToken() != AST::Type::EndOfFile) {
             std::cout << "Token: " <<

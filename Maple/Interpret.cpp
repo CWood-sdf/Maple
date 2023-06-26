@@ -1,6 +1,7 @@
 #include "Interpret.h"
 #include <memory>
-std::shared_ptr<MemorySlot> interpret(std::vector<std::shared_ptr<AST::ASTNode>> ast) {
+std::shared_ptr<MemorySlot> interpret(
+    std::vector<std::shared_ptr<AST::ASTNode>> ast) {
     for (auto i : ast) {
         i->getValue();
         if (isExit()) {
@@ -10,5 +11,7 @@ std::shared_ptr<MemorySlot> interpret(std::vector<std::shared_ptr<AST::ASTNode>>
     return nullptr;
 }
 
-void interpret(std::string file) {
+void interpret(std::string file [[maybe_unused]]) {
+    throwError(
+        "Not implemented yet (interpret(std::string file))", AST::getLine());
 }

@@ -24,6 +24,7 @@ public:
 class VoidSpot : public MemorySlot {
 public:
     VoidSpot() {}
+    virtual ~VoidSpot() = default;
     Type getMemType() { return Type::Void; }
     String getTypeName() { return "void"; }
 };
@@ -67,7 +68,24 @@ public:
     Types getType();
     virtual Type getMemType();
     Val& getValue();
-    template <class T> T getAs();
+    template <class T> T getAs() {
+        switch (type) {
+        case Value::Types::Double:
+            return (T)value.floatVal;
+            break;
+        case Value::Types::Int:
+            return (T)value.intVal;
+            break;
+        case Value::Types::Char:
+            return (T)value.charVal;
+            break;
+        case Value::Types::Bool:
+            return (T)value.boolVal;
+            break;
+        default:
+            break;
+        }
+    }
     double getAsFloat();
     int getAsInt();
     char getAsChar();
@@ -95,6 +113,7 @@ class Function : public MemorySlot {
 
 public:
     Function(String name, std::shared_ptr<AST::FunctionAST> function);
+    virtual ~Function() = default;
     std::shared_ptr<AST::FunctionAST> getFunction();
     virtual String getTypeName();
     virtual Type getMemType();
@@ -113,6 +132,8 @@ class BuiltinFunction : public MemorySlot {
 public:
     BuiltinFunction(String name, FunctionType function, size_t argCount,
         String returnType, std::vector<String> argTypes);
+
+    virtual ~BuiltinFunction() = default;
     virtual String getTypeName();
     virtual Type getMemType();
     std::shared_ptr<MemorySlot> call(
