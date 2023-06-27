@@ -101,8 +101,9 @@ Scope::Scope(String scopeName) {
 }
 
 std::shared_ptr<Variable> Scope::getVariable(String name) {
-	if (variables.find(name) != variables.end()) {
-		auto var = variables[name];
+	auto v = variables.find(name);
+	if (v != variables.end()) {
+		auto var = v->second;
 		if (var.second == VariableType::Variable) {
 			return var.first;
 		} else {
@@ -112,8 +113,9 @@ std::shared_ptr<Variable> Scope::getVariable(String name) {
 	return nullptr;
 }
 std::shared_ptr<Variable> Scope::getFunctionVariable(String name) {
-	if (variables.find(name) != variables.end()) {
-		auto var = variables[name];
+	auto v = variables.find(name);
+	if (v != variables.end()) {
+		auto var = v->second;
 		if (var.second == VariableType::Function) {
 			return var.first;
 		} else {
@@ -123,8 +125,9 @@ std::shared_ptr<Variable> Scope::getFunctionVariable(String name) {
 	return nullptr;
 }
 std::shared_ptr<Variable> Scope::getGeneralVariable(String name) {
-	if (variables.find(name) != variables.end()) {
-		return variables[name].first;
+	auto v = variables.find(name);
+	if (v != variables.end()) {
+		return v->second.first;
 	}
 	return nullptr;
 }
