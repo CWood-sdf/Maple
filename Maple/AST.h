@@ -58,6 +58,14 @@ namespace AST {
         virtual ~IntAST() = default;
         std::shared_ptr<MemorySlot> getValue() override;
     };
+    class Int64AST : public ASTNode {
+    public:
+        int64_t value;
+        Int64AST(int64_t value, std::size_t line = getLine());
+        Int64AST(String value, std::size_t line = getLine());
+        virtual ~Int64AST() = default;
+        std::shared_ptr<MemorySlot> getValue() override;
+    };
     class BoolAST : public ASTNode {
     public:
         bool value;

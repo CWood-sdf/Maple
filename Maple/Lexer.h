@@ -25,6 +25,7 @@ namespace AST {
         FunctionDefinition = -14,
         Void = -15,
         Exit = -16,
+        Int64Literal = -17
     };
     bool operator==(const Type& value, char c);
     class Token {

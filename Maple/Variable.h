@@ -2,6 +2,7 @@
 #define VARIABLE_H
 
 #include "String.h"
+#include <cstdint>
 #include <memory>
 namespace AST {
     class ASTNode;
@@ -42,6 +43,7 @@ class Value : public MemorySlot {
         int intVal;
         char charVal;
         bool boolVal;
+        int64_t int64Val;
         Val() {}
 
     public:
@@ -49,10 +51,11 @@ class Value : public MemorySlot {
         Val(int i);
         Val(char c);
         Val(bool b);
+        Val(int64_t i);
     };
 
 public:
-    enum class Types { Double, Int, Char, Bool };
+    enum class Types { Double, Int, Char, Bool, Int64 };
 
 private:
     Val value;
@@ -64,6 +67,7 @@ public:
     Value(int f);
     Value(char c);
     Value(bool b);
+    Value(int64_t i);
     virtual ~Value() = default;
     Types getType();
     virtual Type getMemType();
@@ -82,6 +86,9 @@ public:
         case Value::Types::Bool:
             return (T)value.boolVal;
             break;
+        case Value::Types::Int64:
+            return (T)value.int64Val;
+            break;
         default:
             break;
         }
@@ -90,6 +97,7 @@ public:
     int getAsInt();
     char getAsChar();
     bool getAsBool();
+    int64_t getAsInt64();
     virtual String getTypeName();
 };
 class Variable : public MemorySlot {

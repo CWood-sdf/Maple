@@ -88,7 +88,13 @@ AST::Token readIdent() {
 AST::Token readNumber() {
     std::string number = "";
     unsigned int decimalCount = 0;
+    bool isI64 = false;
     do {
+        if (isI64) {
+            throwError(
+                "Unexpected continuation of number after ending character 'l'",
+                getLine());
+        }
         number += file[i];
         if (file[i] == '.') {
             decimalCount++;
@@ -96,11 +102,36 @@ AST::Token readNumber() {
         if (!incI()) {
             break;
         }
+        if (file[i] == 'l') {
+            isI64 = true;
+            if (decimalCount > 0) [[unlikely]] {
+                throwError("Invalid number: " + number +
+                               "\n  note: number ends with an 'l' to signify "
+                               "that it is int64, but it has a decimal point"
+                               ", which signifies that it's a float",
+                    getLine());
+            }
+            if (!incI()) {
+                break;
+            }
+        }
     } while ((file[i] >= '0' && file[i] <= '9') || file[i] == '.');
+    if (decimalCount == 0 && !isI64) {
+        try {
+            std::stoi(number);
+        } catch (std::out_of_range& e) {
+            throwError("Given numeric literal \"" + number +
+                           "\" does not fit in 32 bit integer, try adding an "
+                           "'l' to the end to make it an int64",
+                getLine());
+        }
+    }
     if (decimalCount > 1) [[unlikely]] {
         throwError("Invalid number: " + number, getLine());
     } else if (decimalCount == 1) {
         currentToken = Token(Type::FloatLiteral, String(number));
+    } else if (isI64) {
+        currentToken = Token(Type::Int64Literal, String(number));
     } else [[likely]] {
         currentToken = Token(Type::IntLiteral, String(number));
     }

@@ -12,6 +12,8 @@ Value::Val::Val(char c) : charVal(c) {}
 
 Value::Val::Val(bool b) : boolVal(b) {}
 
+Value::Val::Val(int64_t i) : int64Val(i) {}
+
 Value::Value(double d) {
     value = Val(d);
     type = Types::Double;
@@ -36,6 +38,12 @@ Value::Value(bool b) {
     typeName = "bool";
 }
 
+Value::Value(int64_t i) {
+    value = Val(i);
+    type = Types::Int64;
+    typeName = "int64";
+}
+
 Value::Types Value::getType() { return type; }
 
 MemorySlot::Type Value::getMemType() { return Type::Value; }
@@ -49,6 +57,8 @@ int Value::getAsInt() { return getAs<int>(); }
 char Value::getAsChar() { return getAs<char>(); }
 
 bool Value::getAsBool() { return getAs<bool>(); }
+
+int64_t Value::getAsInt64() { return getAs<int64_t>(); }
 
 String Value::getTypeName() { return typeName; }
 

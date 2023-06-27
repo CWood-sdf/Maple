@@ -46,6 +46,14 @@ int main() {
     std::cout << "stupid: "
               << *(int*)(&((Value*)stupid->getValue().get())->getValue())
               << std::endl;
+    auto o = getVariable("o", 0);
+    std::cout << "o: "
+              << *(int64_t*)(&((Value*)o->getValue().get())->getValue())
+              << std::endl;
+    auto o2 = getVariable("o2", 0);
+    std::cout << "o2: "
+              << *(int64_t*)(&((Value*)o2->getValue().get())->getValue())
+              << std::endl;
     writeOutputNoLine(
         "Done in " + std::to_string(duration.count() / 1000.0) + " ms\n");
     std::cout << "Done in " << duration.count() / 1000.0 << " ms" << std::endl;

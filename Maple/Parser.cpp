@@ -51,6 +51,9 @@ std::shared_ptr<AST::ASTNode> parsePartialExpression(int maxPrecedence) {
     case Type::IntLiteral:
         ret = std::make_shared<IntAST>(getCurrentToken().str);
         break;
+    case Type::Int64Literal:
+        ret = std::make_shared<Int64AST>(getCurrentToken().str);
+        break;
     case Type::FloatLiteral:
         ret = std::make_shared<FloatAST>(getCurrentToken().str);
         break;
@@ -84,17 +87,19 @@ std::shared_ptr<AST::ASTNode> parsePartialExpression(int maxPrecedence) {
         // eat the '('
         getNextToken();
         std::vector<std::shared_ptr<ASTNode>> args;
-        while (1) {
-            args.push_back(parsePartialExpression());
-            if (getCurrentToken().type == (Type)',') {
-                getNextToken();
-            } else if (getCurrentToken().type == (Type)')') {
-                break;
-            } else {
-                throwError(
-                    "Expected ',' or ')' in function argument list, got "s +
-                        getCurrentToken().str.getReference(),
-                    getCurrentToken().originLine);
+        if (getCurrentToken().type != (Type)')') {
+            while (1) {
+                args.push_back(parsePartialExpression());
+                if (getCurrentToken().type == (Type)',') {
+                    getNextToken();
+                } else if (getCurrentToken().type == (Type)')') {
+                    break;
+                } else {
+                    throwError(
+                        "Expected ',' or ')' in function argument list, got "s +
+                            getCurrentToken().str.getReference(),
+                        getCurrentToken().originLine);
+                }
             }
         }
         // eat the ')'
@@ -257,17 +262,20 @@ std::shared_ptr<ASTNode> parseFunctionDefinition() {
     getNextToken();
     // Get the parameters
     std::vector<std::shared_ptr<ASTNode>> parameters;
-    while (1) {
-        parameters.push_back(parsePartialDefinition());
-        if (getCurrentToken().type == (Type)',') {
-            getNextToken();
-        } else if (getCurrentToken().type == (Type)')') {
-            break;
-        } else {
-            throwError("Expected ',' or ')' after function parameter",
-                getCurrentToken().originLine);
+    if (getCurrentToken().type != (Type)')') {
+        while (1) {
+            parameters.push_back(parsePartialDefinition());
+            if (getCurrentToken().type == (Type)',') {
+                getNextToken();
+            } else if (getCurrentToken().type == (Type)')') {
+                break;
+            } else {
+                throwError("Expected ',' or ')' after function parameter",
+                    getCurrentToken().originLine);
+            }
         }
     }
+
     // eat ')'
     getNextToken();
     // Get the return type
@@ -282,12 +290,12 @@ std::shared_ptr<ASTNode> parseFunctionDefinition() {
 
     //  Get the statements
     std::vector<std::shared_ptr<ASTNode>> statements = Parse::parse(false);
-    if (getCurrentToken().type != Type::EndOfStatement) {
-        throwError("Expected newline after function block",
-            getCurrentToken().originLine);
-    }
-    // eat newline
-    getNextToken();
+    // if (getCurrentToken().type != Type::EndOfStatement) {
+    //     throwError("Expected newline after function block",
+    //         getCurrentToken().originLine);
+    // }
+    // // eat newline
+    // getNextToken();
 
     // Make the AST node
     std::shared_ptr<FunctionAST> node =
@@ -425,7 +433,8 @@ std::vector<std::shared_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
     } else {
         // eat '{'
         if (getCurrentToken().type != (Type)'{') {
-            throwError("Expected '{' to start code block",
+            throwError("Expected '{' to start code block\n  note: got '" +
+                           getCurrentToken().str.getReference() + "'",
                 getCurrentToken().originLine);
         }
         if (getNextToken() != Type::EndOfStatement) {
