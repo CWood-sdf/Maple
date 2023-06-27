@@ -30,6 +30,12 @@ public:
     const char& operator[](int i) const;
     bool operator==(std::string str) const;
     bool operator==(String str) const;
+	bool operator!=(std::string str) const {
+		return !this->operator==(str);
+	}
+	bool operator!=(String str) const {
+		return !this->operator==(str);
+	}
     bool operator<(const String& str) const;
 };
 struct StringHash {

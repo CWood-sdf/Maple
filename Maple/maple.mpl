@@ -65,9 +65,9 @@ while yeet > 0 {
 float PI = 3.141592653589793238462643383279502884197169399375105820974944592307816406286
 stupid = 0 - 5 + 2
 o = micro()
-q = cos(PI / 2)
+q = cos(0.0)
 o = micro() - o
 int64 o2 = micro()
-q = cos2(PI / 2)
+q = cos2(0)
 o2 = micro() - o2
 stupid = returnIntArg('\n')

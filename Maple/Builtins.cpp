@@ -27,7 +27,8 @@ std::shared_ptr<MemorySlot> builtinMicro(
             .count();
     return std::make_shared<Value>(microSeconds);
 }
-void makeBuiltin(auto fn, String ret, String name, std::vector<String> args) {
+void makeBuiltin(std::shared_ptr<MemorySlot> (*fn)(std::vector<std::shared_ptr<MemorySlot>>), String ret, String name,
+	std::vector<String> args) {
     auto builtinFn =
         std::make_shared<BuiltinFunction>(name, fn, args.size(), ret, args);
     auto builtinVar =
