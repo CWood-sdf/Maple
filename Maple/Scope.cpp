@@ -103,7 +103,7 @@ Scope::Scope(String scopeName) {
 std::shared_ptr<Variable> Scope::getVariable(String name) {
 	auto v = variables.find(name);
 	if (v != variables.end()) {
-		//auto var = variables[name];
+		// auto var = variables[name];
 		if (v->second.second == VariableType::Variable) {
 			return v->second.first;
 		} else {
@@ -157,7 +157,8 @@ void Scope::addVariable(
 					   " already exists in the current scope",
 			line);
 	}
-	variables[name] = std::pair<std::shared_ptr<Variable>, VariableType>(variable, VariableType::Variable);
+	variables[name] = std::pair<std::shared_ptr<Variable>, VariableType>(
+		variable, VariableType::Variable);
 }
 void Scope::addFunctionVariable(
 	String name, std::shared_ptr<Variable> variable, std::size_t line) {
