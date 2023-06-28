@@ -18,8 +18,7 @@ struct ReturnRegister {
 	  : second(second), first(first), line(line) {}
 };
 class Scope {
-	std::unordered_map<String,
-		std::pair<std::shared_ptr<Variable>, VariableType>, StringHash>
+	std::map<String, std::pair<std::shared_ptr<Variable>, VariableType>>
 		variables;
 	String name;
 	std::shared_ptr<MemorySlot> returnRegister = nullptr;

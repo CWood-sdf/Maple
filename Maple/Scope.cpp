@@ -96,8 +96,8 @@ size_t getExitCallLine() {
 }
 Scope::Scope(String scopeName) {
 	name = scopeName;
-	variables = std::unordered_map<String,
-		std::pair<std::shared_ptr<Variable>, VariableType>, StringHash>();
+	variables =
+		std::map<String, std::pair<std::shared_ptr<Variable>, VariableType>>();
 }
 
 std::shared_ptr<Variable> Scope::getVariable(String name) {
