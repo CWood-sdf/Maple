@@ -42,7 +42,7 @@ public:
 	void addFunctionVariable(
 		String name, std::shared_ptr<Variable> variable, std::size_t line);
 };
-extern std::LinkedList<Scope> globalScope;
+extern std::deque<Scope> globalScope;
 void addVariable(std::shared_ptr<Variable> v, std::size_t line);
 void addFunction(std::shared_ptr<Variable> v, std::size_t line);
 void initScope();

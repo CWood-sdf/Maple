@@ -1,17 +1,17 @@
 #include "Scope.h"
 #include <memory>
 
-std::LinkedList<Scope> globalScope = {};
+std::deque<Scope> globalScope = {};
 void addVariable(std::shared_ptr<Variable> v, std::size_t line) {
 	String name = v->getName();
-	globalScope.getBase()->addVariable(name, v, line);
+	globalScope.front().addVariable(name, v, line);
 }
 void addFunction(std::shared_ptr<Variable> v, std::size_t line) {
 	String name = v->getName();
-	globalScope.getBase()->addFunctionVariable(name, v, line);
+	globalScope.front().addFunctionVariable(name, v, line);
 }
 void initScope() {
-	globalScope.pushBase(Scope("$_globalScope"));
+	globalScope.push_front(Scope("$_globalScope"));
 }
 
 ReturnRegister handleReturnRegister() {
@@ -26,12 +26,12 @@ ReturnRegister handleReturnRegister() {
 }
 
 void addScope(String name) {
-	globalScope.pushBase(Scope(name));
+	globalScope.push_front(Scope(name));
 }
 
 void removeScope() {
 	auto ret = handleReturnRegister();
-	globalScope.popBase();
+	globalScope.pop_front();
 	if (ret.first != ExitType::None) {
 		if (globalScope.empty()) {
 			throwError("Cannot return from global scope", 0);
@@ -77,22 +77,22 @@ std::shared_ptr<Variable> getVariable(String name, std::size_t line) {
 	return nullptr;
 }
 void setReturnRegister(std::shared_ptr<MemorySlot> reg, std::size_t line) {
-	globalScope.getBase()->setReturnRegister(reg, line);
+	globalScope.front().setReturnRegister(reg, line);
 }
 std::shared_ptr<MemorySlot> getReturnRegister() {
-	return globalScope.getBase()->getReturnRegister();
+	return globalScope.front().getReturnRegister();
 }
 void setExit(ExitType type) {
-	globalScope.getBase()->setExit(type);
+	globalScope.front().setExit(type);
 }
 bool isExit() {
-	return globalScope.getBase()->isExit();
+	return globalScope.front().isExit();
 }
 ExitType getExitType() {
-	return globalScope.getBase()->getExitType();
+	return globalScope.front().getExitType();
 }
 size_t getExitCallLine() {
-	return globalScope.getBase()->getExitCallLine();
+	return globalScope.front().getExitCallLine();
 }
 Scope::Scope(String scopeName) {
 	name = scopeName;
