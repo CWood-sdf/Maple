@@ -1,2 +1,2 @@
 make $1
-./maple/out-linux/main
+./bin/linux64/main

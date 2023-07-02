@@ -11,13 +11,13 @@ endif
 ifeq ($(OS), Windows_NT)
 	CXXFLAGS += -DWIN32
 	OBJ_EXT = obj
-	BUILD_DIR = Maple/out
+	BUILD_DIR = ./bin/win64
 	EXEC = $(BUILD_DIR)/main.exe
 else
 	CXXFLAGS += -DUNIX -gdwarf-4
 	LD_FLAGS += -lstdc++ -lm
 	OBJ_EXT = o
-	BUILD_DIR = Maple/out-linux
+	BUILD_DIR = ./bin/linux64
 	EXEC = $(BUILD_DIR)/main
 endif
 
@@ -40,7 +40,7 @@ clean:
 
 compile_objects: $(OBJ)
 
-run: $(EXEC)
+run: $(EXEC) $(OBJ) $(HEADERS)
 	$(EXEC)
 
 test:

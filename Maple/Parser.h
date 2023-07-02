@@ -6,7 +6,7 @@
 #include <vector>
 
 namespace AST {
-    namespace Parse {
-        std::vector<std::shared_ptr<ASTNode>> parse(bool topLevel);
-    } // namespace Parse
+	namespace Parse {
+		std::vector<std::unique_ptr<ASTNode>> parse(bool topLevel);
+	} // namespace Parse
 } // namespace AST

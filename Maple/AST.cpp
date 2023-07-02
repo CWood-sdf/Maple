@@ -451,9 +451,9 @@ std::shared_ptr<MemorySlot> AST::CharacterAST::getValue() {
 	return std::make_shared<Value>(value);
 }
 
-AST::BinaryOperatorAST::BinaryOperatorAST(std::shared_ptr<ASTNode> left,
-	std::shared_ptr<ASTNode> right, String op, std::size_t line)
-  : ASTNode(line), left(left), right(right), op(op) {}
+AST::BinaryOperatorAST::BinaryOperatorAST(std::unique_ptr<ASTNode> left,
+	std::unique_ptr<ASTNode> right, String op, std::size_t line)
+  : ASTNode(line), left(std::move(left)), right(std::move(right)), op(op) {}
 std::shared_ptr<MemorySlot> AST::BinaryOperatorAST::getValue() {
 	auto leftValue = left->getValue();
 	auto rightValue = right->getValue();
@@ -503,8 +503,8 @@ std::shared_ptr<MemorySlot> AST::BinaryOperatorAST::getValue() {
 	return std::make_shared<Undefined>();
 }
 AST::UnaryOperatorAST::UnaryOperatorAST(
-	std::shared_ptr<ASTNode> value, String op, std::size_t line)
-  : ASTNode(line), value(value), op(op) {}
+	std::unique_ptr<ASTNode> value, String op, std::size_t line)
+  : ASTNode(line), value(std::move(value)), op(op) {}
 std::shared_ptr<MemorySlot> AST::UnaryOperatorAST::getValue() {
 	auto opValue = value->getValue();
 	if (!opValue) {
@@ -539,69 +539,67 @@ std::shared_ptr<MemorySlot> AST::VariableDeclarationAST::getValue() {
 	return var;
 }
 AST::FunctionAST::FunctionAST(String returnType,
-	std::vector<std::shared_ptr<ASTNode>> arguments,
-	std::vector<std::shared_ptr<ASTNode>> statements, String name,
+	std::vector<std::unique_ptr<ASTNode>> arguments,
+	std::vector<std::unique_ptr<ASTNode>> statements, String name,
 	std::size_t line)
-  : ASTNode(line), returnType(returnType), arguments(arguments),
-	statements(statements), name(name) {}
+  : ASTNode(line), returnType(returnType), arguments(std::move(arguments)),
+	statements(std::move(statements)), name(name) {}
 std::shared_ptr<MemorySlot> AST::FunctionAST::getValue() {
 	auto var = std::make_shared<Variable>(name, getType());
 	addFunction(var, this->line);
-	var->setValue(std::make_shared<Function>(name, this->selfReference));
+	// var->setValue(std::make_shared<Function>(name, this->selfReference));
 	return var;
 }
 std::shared_ptr<MemorySlot> AST::FunctionAST::call(
-	std::vector<std::shared_ptr<ASTNode>> args, std::size_t callLine) {
-	if (args.size() != arguments.size()) {
-		throwError("Invalid number of arguments in call to function "s +
-					   name.getReference() + "\n  note: expected "s +
-					   std::to_string(arguments.size()) + " arguments, got "s +
-					   std::to_string(args.size()) +
-					   "\n  note: function declared at line "s +
-					   std::to_string(this->line),
-			callLine);
-	}
-	// Preprocess the arguments before new scope is added
-	std::vector<std::shared_ptr<MemSlotAST>> argASTs = {};
-	for (size_t i = 0; i < args.size(); i++) {
-		argASTs.push_back(std::make_shared<MemSlotAST>(args[i]->getValue()));
-	}
-	addScope(name);
-	for (size_t i = 0; i < argASTs.size(); i++) {
-		auto declAST = arguments[i];
-		auto equals = std::make_shared<BinaryOperatorAST>(
-			declAST, argASTs[i], "="s, callLine);
-		equals->getValue();
-	}
-	interpret(statements);
-	std::shared_ptr<MemorySlot> ret = nullptr;
-	if (getExitType() == ExitType::Return) {
-		auto reg = handleReturnRegister();
-		ret = reg.second;
-		auto line = reg.line;
-		if (ret->getTypeName() != returnType) {
-			throwError(
-				"Invalid return type in function "s + name.getReference() +
-					"\n  note: expected "s + returnType.getReference() +
-					", got "s + ret->getTypeName().getReference() +
-					"\n  note: return called at line "s + std::to_string(line),
-				callLine);
-		}
-	} else if (getExitType() != ExitType::None) {
-		throwError("Invalid exit type in function "s + name.getReference() +
-					   "  note: only valid type is 'return'",
-			callLine);
-	}
-	removeScope();
-	if (ret == nullptr && returnType != "void"s) {
-		throwError(
-			"Missing return statement in function "s + name.getReference(),
-			callLine);
-	}
-	return ret;
-}
-void AST::FunctionAST::setSelfReference(std::shared_ptr<FunctionAST> self) {
-	this->selfReference = self;
+	std::vector<std::unique_ptr<ASTNode>> args, std::size_t callLine) {
+	// if (args.size() != arguments.size()) {
+	// 	throwError("Invalid number of arguments in call to function "s +
+	// 				   name.getReference() + "\n  note: expected "s +
+	// 				   std::to_string(arguments.size()) + " arguments, got "s +
+	// 				   std::to_string(args.size()) +
+	// 				   "\n  note: function declared at line "s +
+	// 				   std::to_string(this->line),
+	// 		callLine);
+	// }
+	// // Preprocess the arguments before new scope is added
+	// std::vector<std::unique_ptr<MemSlotAST>> argASTs = {};
+	// for (size_t i = 0; i < args.size(); i++) {
+	// 	argASTs.push_back(std::make_unique<MemSlotAST>(args[i]->getValue()));
+	// }
+	// addScope(name);
+	// for (size_t i = 0; i < argASTs.size(); i++) {
+	// 	auto declAST = arguments[i];
+	// 	auto equals = std::make_shared<BinaryOperatorAST>(
+	// 		declAST, argASTs[i], "="s, callLine);
+	// 	equals->getValue();
+	// }
+	// interpret(statements);
+	// std::shared_ptr<MemorySlot> ret = nullptr;
+	// if (getExitType() == ExitType::Return) {
+	// 	auto reg = handleReturnRegister();
+	// 	ret = reg.second;
+	// 	auto line = reg.line;
+	// 	if (ret->getTypeName() != returnType) {
+	// 		throwError(
+	// 			"Invalid return type in function "s + name.getReference() +
+	// 				"\n  note: expected "s + returnType.getReference() +
+	// 				", got "s + ret->getTypeName().getReference() +
+	// 				"\n  note: return called at line "s + std::to_string(line),
+	// 			callLine);
+	// 	}
+	// } else if (getExitType() != ExitType::None) {
+	// 	throwError("Invalid exit type in function "s + name.getReference() +
+	// 				   "  note: only valid type is 'return'",
+	// 		callLine);
+	// }
+	// removeScope();
+	// if (ret == nullptr && returnType != "void"s) {
+	// 	throwError(
+	// 		"Missing return statement in function "s + name.getReference(),
+	// 		callLine);
+	// }
+	// return ret;
+	return nullptr;
 }
 String AST::FunctionAST::getType() {
 	std::string type = returnType.getReference() + "(";
@@ -617,30 +615,35 @@ String AST::FunctionAST::getType() {
 	return returnType;
 }
 AST::FunctionCallAST::FunctionCallAST(String name,
-	std::vector<std::shared_ptr<ASTNode>> arguments, std::size_t line)
-  : ASTNode(line), name(name), arguments(arguments) {}
+	std::vector<std::unique_ptr<ASTNode>> arguments, std::size_t line)
+  : ASTNode(line), name(name), arguments(std::move(arguments)) {}
 std::shared_ptr<MemorySlot> AST::FunctionCallAST::getValue() {
 	// Get function
-	auto func = getFunctionVariable(name, this->line);
-	auto f = func->getValue();
-	// Get function AST
-	if (f->getMemType() == MemorySlot::Type::BuiltinFunction) {
-		auto builtin = dynamic_cast<BuiltinFunction*>(func->getValue().get());
-		return builtin->call(arguments, this->line);
-	}
-	auto fn = dynamic_cast<Function*>(f.get());
-	if (fn == nullptr) {
-		throwError("Function "s + name.getReference() + " is not defined"s,
-			this->line);
-	}
-	// Call function
-	auto fnAST = fn->getFunction();
-	return fnAST->call(arguments, this->line);
+	// auto func = getFunctionVariable(name, this->line);
+	// auto f = func->getValue();
+	// std::vector<std::shared_ptr<MemorySlot>> argumentsEval = {};
+	// for (size_t i = 0; i < arguments.size(); i++) {
+	// 	argumentsEval.push_back(arguments[i]->getValue());
+	// }
+	// // Get function AST
+	// if (f->getMemType() == MemorySlot::Type::BuiltinFunction) {
+	// 	auto builtin = dynamic_cast<BuiltinFunction*>(func->getValue().get());
+	// 	return builtin->call(argumentsEval, this->line);
+	// }
+	// auto fn = dynamic_cast<Function*>(f.get());
+	// if (fn == nullptr) {
+	// 	throwError("Function "s + name.getReference() + " is not defined"s,
+	// 		this->line);
+	// }
+	// // Call function
+	// auto fnAST = fn->getFunction();
+	// return fnAST->call(argumentsEval, this->line);
+	return nullptr;
 }
 
 AST::ExitAST::ExitAST(
-	ExitType t, std::shared_ptr<ASTNode> value, std::size_t line)
-  : ASTNode(line), type(t), value(value) {}
+	ExitType t, std::unique_ptr<ASTNode> value, std::size_t line)
+  : ASTNode(line), type(t), value(std::move(value)) {}
 
 std::shared_ptr<MemorySlot> AST::ExitAST::getValue() {
 	std::shared_ptr<MemorySlot> ret = nullptr;
@@ -659,11 +662,11 @@ std::shared_ptr<MemorySlot> AST::MemSlotAST::getValue() {
 	return value;
 }
 
-AST::IfAST::IfAST(std::shared_ptr<ASTNode> condition,
-	std::vector<std::shared_ptr<ASTNode>> statements, bool isAlone,
+AST::IfAST::IfAST(std::unique_ptr<ASTNode> condition,
+	std::vector<std::unique_ptr<ASTNode>> statements, bool isAlone,
 	std::size_t line)
-  : ASTNode(line), condition(condition), statements(statements),
-	isAlone(isAlone) {}
+  : ASTNode(line), condition(std::move(condition)),
+	statements(std::move(statements)), isAlone(isAlone) {}
 
 std::shared_ptr<MemorySlot> AST::IfAST::getValue() {
 	auto conditionRet = condition->getValue();
@@ -688,7 +691,7 @@ std::shared_ptr<MemorySlot> AST::IfAST::getValue() {
 		removeScope();
 		return ret;
 	} else {
-		for (auto elseIf : elseIfs) {
+		for (auto& elseIf : elseIfs) {
 			auto elseIfRet = elseIf->condition->getValue();
 			if (elseIfRet->getTypeName() != "bool"s) {
 				throwError(
@@ -721,17 +724,18 @@ std::shared_ptr<MemorySlot> AST::IfAST::getValue() {
 	return nullptr;
 }
 
-void AST::IfAST::addElseIf(std::shared_ptr<IfAST> elseIf) {
-	elseIfs.push_back(elseIf);
+void AST::IfAST::addElseIf(std::unique_ptr<IfAST> elseIf) {
+	elseIfs.push_back(std::move(elseIf));
 }
 
-void AST::IfAST::addElse(std::vector<std::shared_ptr<ASTNode>> elseStatements) {
-	this->elseStatements = elseStatements;
+void AST::IfAST::addElse(std::vector<std::unique_ptr<ASTNode>> elseStatements) {
+	this->elseStatements = std::move(elseStatements);
 }
 
-AST::WhileAST::WhileAST(std::shared_ptr<ASTNode> condition,
-	std::vector<std::shared_ptr<ASTNode>> statements, std::size_t line)
-  : ASTNode(line), condition(condition), statements(statements) {}
+AST::WhileAST::WhileAST(std::unique_ptr<ASTNode> condition,
+	std::vector<std::unique_ptr<ASTNode>> statements, std::size_t line)
+  : ASTNode(line), condition(std::move(condition)),
+	statements(std::move(statements)) {}
 
 std::shared_ptr<MemorySlot> AST::WhileAST::getValue() {
 	auto conditionRet = condition->getValue();

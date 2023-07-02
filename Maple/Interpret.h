@@ -3,5 +3,6 @@
 #include <memory>
 #include <string>
 
-std::shared_ptr<MemorySlot> interpret(std::vector<std::shared_ptr<AST::ASTNode>> ast);
+std::shared_ptr<MemorySlot> interpret(
+	std::vector<std::unique_ptr<AST::ASTNode>>& ast);
 // void interpret(std::string file);

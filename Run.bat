@@ -1,3 +1,3 @@
 make
 
-maple\out\main.exe
+bin\win64\main.exe
