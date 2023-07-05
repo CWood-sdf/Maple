@@ -12,7 +12,7 @@ It has strong typing (kinda) and might have "Metaprogramming" in the future
 
 Maple has been tested not only on ubuntu wsl x64, but also on windows 11 x64. This clearly means that it will run on any other system. 
 
-It compiles on the latest version of clang (built from the source, it's like clang 15 or something) and msvc maybe it will also compile with gcc
+It compiles on the latest version of clang (built from the source, it's like clang 15 or something) and msvc; maybe it will also compile with gcc
 
 ## Syntax
 
@@ -34,7 +34,7 @@ as you can see maple also has no semicolons
 
 ### Functions
 
-Functions are very easily declared with the syntax: fn *name* ([args[, ]...]) *return type* { [code] }
+Functions are very easily declared with the syntax: fn *name* ([args[, ]...]) *return_type* { [code] }
 
 like this:
 
@@ -56,9 +56,21 @@ if x == 0 {
 
 same with while
 
+else if is done with the keyword elseif (ie no space), and else is done with else:
+
+```
+if x == 1 {
+    // do stuff
+} elseif x > 1 {
+    // do other stuff
+} else {
+    // do other other stuff
+}
+```
+
 ### Operators
 
-the currently used operators and their precedence can be found in Maple/AST.cpp
+the currently used operators and their precedence can be found in Maple/AST.cpp (aka not all operators are actually implemented yet)
 
 ## Future plans
 
@@ -79,6 +91,13 @@ else {
     }
 }
 ```
+
+### mega speed boost
+
+1. maybe have all operators have their own ast which also means more customizability but more work for me
+2. idk make things faster
+3. custom token thing
+4. mega super mega speed boost
 
 ### idk other stuff
   
