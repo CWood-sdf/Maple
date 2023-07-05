@@ -30,6 +30,8 @@ def cos2(x):
 
 
 start = time.time()
+# bc for some reason, it not actually time when I don't do this
+time.sleep(0.0000000000000001)
 c = cos2(0.5)
 t = time.time() - start
 print("cos2(0) = ", c, " time = ", t)
