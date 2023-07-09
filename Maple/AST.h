@@ -42,6 +42,9 @@ namespace AST {
 		ASTNode(std::size_t l) : line(l) {}
 		virtual ~ASTNode() = default;
 		virtual std::shared_ptr<MemorySlot> getValue() = 0;
+		virtual std::size_t getOriginLine() {
+			return line;
+		}
 	};
 	class FloatAST : public ASTNode {
 	public:

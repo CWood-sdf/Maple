@@ -123,12 +123,16 @@ class Function : public MemorySlot {
 	String type;
 	std::vector<std::unique_ptr<AST::ASTNode>> arguments;
 	std::vector<std::unique_ptr<AST::ASTNode>> statements;
+	String returnType;
+	std::size_t declLine;
 
 public:
 	Function(String name, AST::FunctionAST* ast);
 	virtual ~Function() = default;
 	virtual String getTypeName();
 	virtual Type getMemType();
+	std::shared_ptr<MemorySlot> call(
+		std::vector<std::shared_ptr<MemorySlot>> args, size_t line);
 };
 
 class BuiltinFunction : public MemorySlot {

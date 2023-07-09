@@ -14,8 +14,7 @@
 #include <string>
 int main() {
 	// start timer
-	std::string file =
-		loadFile("C:/Users/woodc/source/repos/Maple/Maple/maple.mpl");
+	std::string file = loadFile("./Maple/maple.mpl");
 	AST::prepareInterpreter(file);
 	initScope();
 	addBuiltins();

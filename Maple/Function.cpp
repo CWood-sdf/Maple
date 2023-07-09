@@ -1,4 +1,5 @@
 #include "AST.h"
+#include "Interpret.h"
 #include "Variable.h"
 #include <memory>
 #include <string>
@@ -6,7 +7,8 @@
 Function::Function(String name, AST::FunctionAST* function)
   : MemorySlot(), name(name), type(function->getType()),
 	arguments(std::move(function->arguments)),
-	statements(std::move(function->statements)) {}
+	statements(std::move(function->statements)),
+	returnType(function->returnType), declLine(function->getOriginLine()) {}
 
 String Function::getTypeName() {
 	return type;
@@ -15,7 +17,57 @@ String Function::getTypeName() {
 Function::Type Function::getMemType() {
 	return Type::Function;
 }
+std::shared_ptr<MemorySlot> Function::call(
+	std::vector<std::shared_ptr<MemorySlot>> args, std::size_t line) {
 
+	if (args.size() != arguments.size()) {
+		throwError("Invalid number of arguments in call to function "s +
+					   name.getReference() + "\n  note: expected "s +
+					   std::to_string(arguments.size()) + " arguments, got "s +
+					   std::to_string(args.size()) +
+					   "\n  note: function declared at line "s +
+					   std::to_string(this->declLine),
+			line);
+	}
+	// Preprocess the arguments before new scope is added
+	std::vector<std::unique_ptr<AST::MemSlotAST>> argASTs = {};
+	for (size_t i = 0; i < args.size(); i++) {
+		argASTs.push_back(std::make_unique<AST::MemSlotAST>(args[i]));
+	}
+	addScope(name);
+	for (size_t i = 0; i < argASTs.size(); i++) {
+		auto declAST = std::move(arguments[i]);
+		auto equals = std::make_shared<AST::BinaryOperatorAST>(
+			std::move(declAST), std::move(argASTs[i]), "="s, line);
+		equals->getValue();
+	}
+	interpret(statements);
+	std::shared_ptr<MemorySlot> ret = nullptr;
+	if (getExitType() == ExitType::Return) {
+		auto reg = handleReturnRegister();
+		ret = reg.second;
+		auto line = reg.line;
+		if (ret->getTypeName() != returnType) {
+			throwError(
+				"Invalid return type in function "s + name.getReference() +
+					"\n  note: expected "s + returnType.getReference() +
+					", got "s + ret->getTypeName().getReference() +
+					"\n  note: return called at line "s + std::to_string(line),
+				line);
+		}
+	} else if (getExitType() != ExitType::None) {
+		throwError("Invalid exit type in function "s + name.getReference() +
+					   "  note: only valid type is 'return'",
+			line);
+	}
+	removeScope();
+	if (ret == nullptr && returnType != "void"s) {
+		throwError(
+			"Missing return statement in function "s + name.getReference(),
+			line);
+	}
+	return ret;
+}
 BuiltinFunction::BuiltinFunction(String name,
 	BuiltinFunction::FunctionType func, size_t argCount, String returnType,
 	std::vector<String> argTypes)

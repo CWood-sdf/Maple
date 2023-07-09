@@ -2,6 +2,7 @@
 CXX = clang
 CXXFLAGS = -Wall -Wextra -Wpedantic -std=c++2b -ffunction-sections -fdata-sections -frtti
 LD_FLAGS = 
+TOUCH_FILE =
 HEADERS = $(wildcard Maple/*.h)
 ifeq ($(RELEASE), 1)
 	CXXFLAGS += -O3
@@ -19,6 +20,7 @@ else
 	OBJ_EXT = o
 	BUILD_DIR = ./bin/linux64
 	EXEC = $(BUILD_DIR)/main
+	CXX = clang-15
 endif
 
 
