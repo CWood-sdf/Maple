@@ -12,7 +12,6 @@
 #define MAKE_STRING(str) Strings::str##_str = String(str)
 #define MAKE_SPECIAL(str, val) Strings::str##_str = String(val)
 class String {
-	// std::string str;
 	static inline std::unordered_map<std::string, int> refMap = {};
 	static inline std::vector<std::string> refVec = {};
 	int ref = -1;
