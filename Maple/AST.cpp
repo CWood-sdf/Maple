@@ -1,47 +1,61 @@
 #include "AST.h"
 #include "Interpret.h"
 #include "Scope.h"
+#include "String.h"
 #include "Variable.h"
 #include <cstdint>
 #include <memory>
 // #include <vcruntime.h>
-std::set<String> identifiers = {"char", "int", "float", "bool", "var", "int64"};
-std::set<String> identifierModifiers = {"const", "static", "global"};
-std::set<String> controlFlow = {
-	"if", "while", "for",
-	/*"switch",
-    "case",
-    "default",*/
-};
-std::set<String> exitStatements = {"break", "continue", "return"};
-std::set<String> operators = {
-	"=", "+", "-", "*", "==", ">", "||", "&&", "/", "<", ">=", "!="};
-std::set<char> operatorFirstCharacters = {};
-std::map<String, int> unaryPrecedence = {
-	{"!", 3},
-	{"-", 3},
-};
+std::set<String> identifiers;
+std::set<String> identifierModifiers;
+std::set<String> controlFlow;
+std::set<String> exitStatements;
+std::set<String> operators;
+std::set<char> operatorFirstCharacters;
+std::map<String, int> unaryPrecedence;
 
-std::map<String, int> operatorPrecedence = {
-	{"*", 5},
-	{"+", 6},
-	{"-", 6},
-	{">", 9},
-	{"<", 9},
-	{"/", 5},
-	{"==", 10},
-	{"=", 16},
-	{"||", 15},
-	{"&&", 14},
-	{"!=", 10},
-	{">=", 9},
-};
-std::map<char, char> escapeCharacters = {{'n', '\n'}, {'t', '\t'}, {'r', '\r'},
-	{'b', '\b'}, {'f', '\f'}, {'v', '\v'}, {'a', '\a'}, {'\\', '\\'},
-	{'\'', '\''}, {'\"', '\"'}, {'?', '\?'}, {'0', '\0'}};
+std::map<String, int> operatorPrecedence;
+std::map<char, char> escapeCharacters;
 
-std::set<String> unaryOperators = {"!", "-"};
+std::set<String> unaryOperators;
+void initASTGlobals() {
+	identifiers = {"char", "int", "float", "bool", "var", "int64"};
+	identifierModifiers = {"const", "static", "global"};
+	controlFlow = {
+		"if", "while", "for",
+		/*"switch",
+	    "case",
+	    "default",*/
+	};
+	exitStatements = {"break", "continue", "return"};
+	operators = {
+		"=", "+", "-", "*", "==", ">", "||", "&&", "/", "<", ">=", "!="};
+	operatorFirstCharacters = {};
+	unaryPrecedence = {
+		{"!", 3},
+		{"-", 3},
+	};
 
+	operatorPrecedence = {
+		{"*", 5},
+		{"+", 6},
+		{"-", 6},
+		{">", 9},
+		{"<", 9},
+		{"/", 5},
+		{"==", 10},
+		{"=", 16},
+		{"||", 15},
+		{"&&", 14},
+		{"!=", 10},
+		{">=", 9},
+	};
+	escapeCharacters = {{'n', '\n'}, {'t', '\t'}, {'r', '\r'}, {'b', '\b'},
+		{'f', '\f'}, {'v', '\v'}, {'a', '\a'}, {'\\', '\\'}, {'\'', '\''},
+		{'\"', '\"'}, {'?', '\?'}, {'0', '\0'}};
+
+	unaryOperators = {"!", "-"};
+}
 std::shared_ptr<MemorySlot> evalOperatorEql(
 	std::shared_ptr<MemorySlot> leftValue,
 	std::shared_ptr<MemorySlot> rightValue, std::size_t line) {
@@ -399,7 +413,7 @@ bool AST::isOperator(String str) {
 	return operators.find(str) != operators.end();
 }
 bool AST::isBooleanLiteral(String str) {
-	return str.getReference() == "true" || str.getReference() == "false";
+	return str == Strings::true_str || str == Strings::false_str;
 }
 bool AST::isExitStatement(String str) {
 	return exitStatements.find(str) != exitStatements.end();
@@ -432,7 +446,7 @@ std::shared_ptr<MemorySlot> AST::IntAST::getValue() {
 AST::BoolAST::BoolAST(bool value, std::size_t line)
   : ASTNode(line), value(value) {}
 AST::BoolAST::BoolAST(String value, std::size_t line)
-  : ASTNode(line), value(value.getReference() == "true") {}
+  : ASTNode(line), value(value == Strings::true_str) {}
 std::shared_ptr<MemorySlot> AST::BoolAST::getValue() {
 	return std::make_shared<Value>(value);
 }

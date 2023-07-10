@@ -1,4 +1,5 @@
 #include "Parser.h"
+#include "String.h"
 #include <memory>
 #include <ranges>
 #pragma clang diagnostic push
@@ -208,7 +209,7 @@ std::unique_ptr<AST::ASTNode> parseDefinition() {
 	auto nextToken = getCurrentToken().type;
 	// If it's an assignment, then we need to parse the expression
 	if (nextToken == Type::Operator) {
-		if (getCurrentToken().str.getReference() == "=") {
+		if (getCurrentToken().str == Strings::eq_str) {
 			return parseBinaryOperator(std::move(node));
 		} else {
 			throwError("Invalid operator after variable declaration: " +
@@ -445,7 +446,7 @@ std::vector<std::unique_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
 	while (true) {
 		// Get the next Token
 		Type type = getCurrentToken().type;
-		writeOutput(getCurrentToken().str.getReference());
+		// writeOutput(getCurrentToken().str.getReference());
 		if (type == Type::EndOfFile) {
 			if (!topLevel) {
 				throwError(

@@ -21,6 +21,7 @@ extern std::set<char> operatorFirstCharacters;
 extern std::map<String, int> operatorPrecedence;
 extern std::set<String> unaryOperators;
 extern std::map<char, char> escapeCharacters;
+void initASTGlobals();
 // extern std::unor
 // extern u i;
 namespace AST {
