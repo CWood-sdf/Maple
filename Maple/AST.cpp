@@ -547,59 +547,8 @@ AST::FunctionAST::FunctionAST(String returnType,
 std::shared_ptr<MemorySlot> AST::FunctionAST::getValue() {
 	auto var = std::make_shared<Variable>(name, getType());
 	addFunction(var, this->line);
-	// var->setValue(std::make_shared<Function>(name, this->selfReference));
+	var->setValue(std::make_shared<Function>(name, this));
 	return var;
-}
-std::shared_ptr<MemorySlot> AST::FunctionAST::call(
-	std::vector<std::unique_ptr<ASTNode>> args, std::size_t callLine) {
-	// if (args.size() != arguments.size()) {
-	// 	throwError("Invalid number of arguments in call to function "s +
-	// 				   name.getReference() + "\n  note: expected "s +
-	// 				   std::to_string(arguments.size()) + " arguments, got "s +
-	// 				   std::to_string(args.size()) +
-	// 				   "\n  note: function declared at line "s +
-	// 				   std::to_string(this->line),
-	// 		callLine);
-	// }
-	// // Preprocess the arguments before new scope is added
-	// std::vector<std::unique_ptr<MemSlotAST>> argASTs = {};
-	// for (size_t i = 0; i < args.size(); i++) {
-	// 	argASTs.push_back(std::make_unique<MemSlotAST>(args[i]->getValue()));
-	// }
-	// addScope(name);
-	// for (size_t i = 0; i < argASTs.size(); i++) {
-	// 	auto declAST = arguments[i];
-	// 	auto equals = std::make_shared<BinaryOperatorAST>(
-	// 		declAST, argASTs[i], "="s, callLine);
-	// 	equals->getValue();
-	// }
-	// interpret(statements);
-	// std::shared_ptr<MemorySlot> ret = nullptr;
-	// if (getExitType() == ExitType::Return) {
-	// 	auto reg = handleReturnRegister();
-	// 	ret = reg.second;
-	// 	auto line = reg.line;
-	// 	if (ret->getTypeName() != returnType) {
-	// 		throwError(
-	// 			"Invalid return type in function "s + name.getReference() +
-	// 				"\n  note: expected "s + returnType.getReference() +
-	// 				", got "s + ret->getTypeName().getReference() +
-	// 				"\n  note: return called at line "s + std::to_string(line),
-	// 			callLine);
-	// 	}
-	// } else if (getExitType() != ExitType::None) {
-	// 	throwError("Invalid exit type in function "s + name.getReference() +
-	// 				   "  note: only valid type is 'return'",
-	// 		callLine);
-	// }
-	// removeScope();
-	// if (ret == nullptr && returnType != "void"s) {
-	// 	throwError(
-	// 		"Missing return statement in function "s + name.getReference(),
-	// 		callLine);
-	// }
-	// return ret;
-	return nullptr;
 }
 String AST::FunctionAST::getType() {
 	std::string type = returnType.getReference() + "(";
@@ -619,25 +568,20 @@ AST::FunctionCallAST::FunctionCallAST(String name,
   : ASTNode(line), name(name), arguments(std::move(arguments)) {}
 std::shared_ptr<MemorySlot> AST::FunctionCallAST::getValue() {
 	// Get function
-	// auto func = getFunctionVariable(name, this->line);
-	// auto f = func->getValue();
-	// std::vector<std::shared_ptr<MemorySlot>> argumentsEval = {};
-	// for (size_t i = 0; i < arguments.size(); i++) {
-	// 	argumentsEval.push_back(arguments[i]->getValue());
-	// }
-	// // Get function AST
-	// if (f->getMemType() == MemorySlot::Type::BuiltinFunction) {
-	// 	auto builtin = dynamic_cast<BuiltinFunction*>(func->getValue().get());
-	// 	return builtin->call(argumentsEval, this->line);
-	// }
-	// auto fn = dynamic_cast<Function*>(f.get());
-	// if (fn == nullptr) {
-	// 	throwError("Function "s + name.getReference() + " is not defined"s,
-	// 		this->line);
-	// }
-	// // Call function
-	// auto fnAST = fn->getFunction();
-	// return fnAST->call(argumentsEval, this->line);
+	auto func = getFunctionVariable(name, this->line);
+	auto f = func->getValue();
+	std::vector<std::shared_ptr<MemorySlot>> argumentsEval = {};
+	for (size_t i = 0; i < arguments.size(); i++) {
+		argumentsEval.push_back(arguments[i]->getValue());
+	}
+	// Get function AST
+	if (f->getMemType() == MemorySlot::Type::BuiltinFunction) {
+		auto builtin = dynamic_cast<BuiltinFunction*>(func->getValue().get());
+		return builtin->call(argumentsEval, this->line);
+	} else if (f->getMemType() == MemorySlot::Type::Function) {
+		auto fn = dynamic_cast<Function*>(func->getValue().get());
+		return fn->call(argumentsEval, this->line);
+	}
 	return nullptr;
 }
 

@@ -9,6 +9,7 @@
 #include <set>
 #include <string>
 #include <unordered_set>
+// double stdDev(std::vector<double> stuff){
 
 using std::operator"" s;
 extern std::set<String> identifiers;

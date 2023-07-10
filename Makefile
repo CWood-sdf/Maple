@@ -4,6 +4,7 @@ CXXFLAGS = -Wall -Wextra -Wpedantic -std=c++2b -ffunction-sections -fdata-sectio
 LD_FLAGS = 
 TOUCH_FILE =
 HEADERS = $(wildcard Maple/*.h)
+CLEAN = 
 ifeq ($(RELEASE), 1)
 	CXXFLAGS += -O3
 else 
@@ -14,6 +15,7 @@ ifeq ($(OS), Windows_NT)
 	OBJ_EXT = obj
 	BUILD_DIR = ./bin/win64
 	EXEC = $(BUILD_DIR)/main.exe
+	CLEAN = powershell "Get-ChildItem -Path $(BUILD_DIR) -Include *.obj, *.exe -Recurse -Force | Remove-Item -Force "
 else
 	CXXFLAGS += -DUNIX -gdwarf-4
 	LD_FLAGS += -lstdc++ -lm
@@ -21,6 +23,7 @@ else
 	BUILD_DIR = ./bin/linux64
 	EXEC = $(BUILD_DIR)/main
 	CXX = clang-15
+	CLEAN = rm -rf $(BUILD_DIR)/*.o $(BUILD_DIR)/*.exe $(BUILD_DIR)/*.out 
 endif
 
 
@@ -38,7 +41,7 @@ $(BUILD_DIR)/%.$(OBJ_EXT): Maple/%.cpp $(HEADERS)
 	@$(CXX) $(CXXFLAGS) -c $< -o $@
 
 clean:
-	rm -rf $(OBJ) $(EXEC)
+	$(CLEAN)
 
 compile_objects: $(OBJ)
 

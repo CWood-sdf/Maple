@@ -8,7 +8,7 @@
             "name": "(gdb) Launch",
             "type": "cppvsdbg",
             "request": "launch",
-            "program": "${workspaceFolder}/Maple/out/main.exe",
+            "program": "${workspaceFolder}/bin/win64/main.exe",
             "args": [],
             "stopAtEntry": false,
             "cwd": "${workspaceFolder}",

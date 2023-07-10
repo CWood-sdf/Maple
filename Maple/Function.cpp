@@ -36,9 +36,11 @@ std::shared_ptr<MemorySlot> Function::call(
 	}
 	addScope(name);
 	for (size_t i = 0; i < argASTs.size(); i++) {
-		auto declAST = std::move(arguments[i]);
+		auto decl = arguments[i]->getValue();
+
 		auto equals = std::make_shared<AST::BinaryOperatorAST>(
-			std::move(declAST), std::move(argASTs[i]), "="s, line);
+			std::make_unique<AST::MemSlotAST>(decl), std::move(argASTs[i]),
+			"="s, line);
 		equals->getValue();
 	}
 	interpret(statements);
