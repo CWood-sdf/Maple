@@ -1,6 +1,6 @@
 
 CXX = clang
-CXXFLAGS = -Wall -Wextra -Wpedantic -std=c++2b -ffunction-sections -fdata-sections -frtti 
+CXXFLAGS = -Wall -Wextra -Wpedantic  -std=c++2b -ffunction-sections -fdata-sections -frtti 
 LD_FLAGS = 
 TOUCH_FILE =
 HEADERS = $(wildcard Maple/*.h)
@@ -8,7 +8,7 @@ CLEAN =
 ifeq ($(RELEASE), 1)
 	CXXFLAGS += -O3
 else 
-	CXXFLAGS += -g
+	CXXFLAGS += -glldb
 endif
 ifeq ($(OS), Windows_NT)
 	CXXFLAGS += -DWIN32
