@@ -213,7 +213,9 @@ std::unique_ptr<AST::ASTNode> parseDefinition() {
 			return parseBinaryOperator(std::move(node));
 		} else {
 			throwError("Invalid operator after variable declaration: " +
-						   getCurrentToken().str.getReference(),
+						   getCurrentToken().str.getReference() +
+						   "\n  note: expected '" +
+						   Strings::eq_str.getReference() + "'",
 				getCurrentToken().originLine);
 		}
 	} else if (nextToken == Type::EndOfStatement) {
@@ -221,7 +223,7 @@ std::unique_ptr<AST::ASTNode> parseDefinition() {
 	} else {
 		throwError("Invalid token after variable declaration: " +
 					   getCurrentToken().str.getReference() +
-					   "\n  note: maybe you forgot a newline",
+					   "\n  note: expected newline",
 			getCurrentToken().originLine);
 	}
 	return node;

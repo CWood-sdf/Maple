@@ -14,6 +14,7 @@
 #include <string>
 int main() {
 	String::init();
+	Strings::init();
 	initASTGlobals();
 	// start timer
 	std::string file = loadFile("./Maple/maple.mpl");
