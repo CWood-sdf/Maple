@@ -1,4 +1,4 @@
 CompileFlags:
   Add:
-    [-std=c++20, -IMaple, -Wall, -Wextra, -pedantic]
+    [-std=c++2b, -IMaple, -Wall, -Wextra, -pedantic]
     
