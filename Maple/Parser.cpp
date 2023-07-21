@@ -308,11 +308,11 @@ std::unique_ptr<ASTNode> parseFunctionDefinition() {
 // parseExitStatement
 /// <summary>
 /// Parses an exit statement
-///		::= return expression
-///     ::= break expression
-///     ::= return
-///     ::= break
-///     ::= continue
+///		::= 'return' expression
+///     ::= 'break' expression
+///     ::= 'return'
+///     ::= 'break'
+///     ::= 'continue'
 /// </summary>
 std::unique_ptr<ASTNode> parseExitStatement() {
 	auto name = getCurrentToken().str;
@@ -340,8 +340,9 @@ std::unique_ptr<ASTNode> parseExitStatement() {
 // parseIfStatement
 /// <summary>
 /// Parses an if statement
-///		::= if expression '{' statements '}' else '{' statements '}'
 ///		::= if expression '{' statements '}'
+///		    [elseif expression '{' statements '}']*
+///		    [else '{' statements '}']
 /// </summary>
 std::unique_ptr<ASTNode> parseIfStatement(bool isAlone) {
 	// Get the expression
@@ -497,8 +498,11 @@ std::vector<std::unique_ptr<AST::ASTNode>> AST::Parse::parse(bool topLevel) {
 						   getCurrentToken().str.getReference() + "'",
 				getLine());
 		}
-		if (currentNode) {
+		if (topLevel && currentNode) {
+			currentNode->getValue();
+		} else if (currentNode) {
 			code.push_back(std::move(currentNode));
+			currentNode = nullptr;
 		}
 		if (getCurrentToken().type != Type::EndOfStatement &&
 			getCurrentToken().type != Type::EndOfFile) {

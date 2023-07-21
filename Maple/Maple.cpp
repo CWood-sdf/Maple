@@ -28,11 +28,8 @@ int main() {
 	AST::getCurrentToken().second.getReference()
 	<< ", " << (int)AST::getCurrentToken().first << std::endl;
 	}*/
-	auto block = AST::Parse::parse(true);
 	auto start = std::chrono::high_resolution_clock::now();
-	for (auto& b : block) {
-		b->getValue();
-	}
+	auto block = AST::Parse::parse(true);
 
 	// end timer
 	auto end = std::chrono::high_resolution_clock::now();

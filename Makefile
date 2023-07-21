@@ -7,7 +7,6 @@ LD_FLAGS =
 TOUCH_FILE =
 HEADERS = $(wildcard Maple/*.h Maple/*/*.h)
 CLEAN = 
-MKDIR = 
 ifeq ($(RELEASE), 1)
 	CXXFLAGS += -O3  -ffunction-sections -fdata-sections -frtti 
 else 
