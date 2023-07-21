@@ -162,7 +162,6 @@ bool String::operator<(const String& str) const {
 }
 
 namespace Strings {
-
 	MAKE_STRING_DECL_CPP(false);
 	MAKE_STRING_DECL_CPP(true);
 	MAKE_SPECIAL_DECL_CPP(eq, "=");

@@ -11,6 +11,7 @@
 #define MAKE_SPECIAL_DECL_CPP(str, val) String str##_str
 #define MAKE_STRING(str) Strings::str##_str = String(str)
 #define MAKE_SPECIAL(str, val) Strings::str##_str = String(val)
+// A class to hold tokens, in memory stores them as an int
 class String {
 	static inline std::unordered_map<std::string, int> refMap = {};
 	static inline std::vector<std::string> refVec = {};
