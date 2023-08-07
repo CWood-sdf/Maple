@@ -118,6 +118,34 @@ public:
 	virtual Type getMemType();
 	std::shared_ptr<MemorySlot> getValue();
 };
+class Object : public MemorySlot {
+	String type;
+	std::vector<std::pair<String, std::shared_ptr<MemorySlot>>> members;
+
+public:
+	Object(String name, String type);
+	virtual ~Object() = default;
+	void addMember(String name, std::shared_ptr<MemorySlot> value);
+	virtual String getTypeName();
+	virtual Type getMemType();
+	std::shared_ptr<MemorySlot> getMember(String name);
+};
+class MplClass : public MemorySlot {
+	String name;
+	std::vector<std::pair<String, std::shared_ptr<MemorySlot>>> members;
+	std::vector<std::pair<String, std::shared_ptr<MemorySlot>>> methods;
+
+public:
+	MplClass(String name);
+	virtual ~MplClass() = default;
+	void addMember(String name, std::shared_ptr<MemorySlot> value);
+	void addMethod(String name, std::shared_ptr<MemorySlot> value);
+	virtual String getTypeName();
+	virtual Type getMemType();
+	std::shared_ptr<MemorySlot> getMember(String name);
+	std::shared_ptr<MemorySlot> getMethod(String name);
+	std::shared_ptr<MemorySlot> getNew();
+};
 class Function : public MemorySlot {
 	String name;
 	String type;
@@ -155,4 +183,5 @@ public:
 	std::shared_ptr<MemorySlot> call(
 		std::vector<std::shared_ptr<MemorySlot>> args, size_t line);
 };
+
 #endif // VARIABLE_H
