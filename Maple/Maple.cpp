@@ -21,13 +21,7 @@ int main() {
 	AST::prepareInterpreter(file);
 	initScope();
 	addBuiltins();
-	// make a variable for cos function
 	writeOutput(file);
-	/*while (AST::getNextToken() != AST::Type::EndOfFile) {
-	        std::cout << "Token: " <<
-	AST::getCurrentToken().second.getReference()
-	<< ", " << (int)AST::getCurrentToken().first << std::endl;
-	}*/
 	auto start = std::chrono::high_resolution_clock::now();
 	auto block = AST::Parse::parse(true);
 

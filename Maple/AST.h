@@ -107,16 +107,16 @@ namespace AST {
 		std::shared_ptr<MemorySlot> getValue() override;
 	};
 	// A binop ast for '='
-	class SetOpAST : public ASTNode {
-	public:
-		std::unique_ptr<ASTNode> left;
-		std::unique_ptr<ASTNode> right;
-
-		SetOpAST(std::unique_ptr<ASTNode> left, std::unique_ptr<ASTNode> right,
-			std::size_t line = getLine());
-		virtual ~SetOpAST() = default;
-		std::shared_ptr<MemorySlot> getValue() override;
-	};
+	// class SetOpAST : public ASTNode {
+	// public:
+	// 	std::unique_ptr<ASTNode> left;
+	// 	std::unique_ptr<ASTNode> right;
+	//
+	// 	SetOpAST(std::unique_ptr<ASTNode> left, std::unique_ptr<ASTNode> right,
+	// 		std::size_t line = getLine());
+	// 	virtual ~SetOpAST() = default;
+	// 	std::shared_ptr<MemorySlot> getValue() override;
+	// };
 	class UnaryOperatorAST : public ASTNode {
 	public:
 		std::unique_ptr<ASTNode> value;

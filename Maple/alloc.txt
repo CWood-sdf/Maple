@@ -1,0 +1,61 @@
+
+template <typename T> class TestAllocator {
+	static inline size_t sizeAllocated = 0;
+	static inline T heap[100] = {};
+	static inline bool closedPosition[100] = {};
+
+public:
+	static void initHeap() {
+		sizeAllocated = 0;
+		for (int i = 0; i < 100; i++) {
+			heap[i] = 0;
+			closedPosition[i] = false;
+		}
+	}
+	typedef T value_type;
+	TestAllocator() = default;
+	template <typename U> TestAllocator(const TestAllocator<U>&) {}
+	TestAllocator(TestAllocator&&) noexcept {}
+	T* allocate(std::size_t n) {
+		// find first position that is not taken in heap
+
+		for (int i = 0; i < 100; i++) {
+			if (!closedPosition[i]) {
+				sizeAllocated += sizeof(T);
+				closedPosition[i] = true;
+				return (T*)heap + i;
+			}
+		}
+		std::cout << "Out of memory!" << std::endl;
+		return nullptr;
+	}
+	void deallocate(T* p, std::size_t n) {
+		// find position in heap
+		int pos = (int)(p - heap);
+		if (pos < 0 || pos >= 100) {
+			std::cout << "Invalid deallocation!" << std::endl;
+			return;
+		}
+		if (!closedPosition[pos]) {
+			std::cout << "Invalid deallocation!" << std::endl;
+			return;
+		}
+		closedPosition[pos] = false;
+		sizeAllocated -= sizeof(T);
+	}
+	static size_t getSizeAllocated() {
+		return sizeAllocated;
+	}
+	void operator()(T* p) {
+		deallocate(p, 1);
+	}
+};
+void allocTest() {
+	std::vector<std::shared_ptr<int>> ints;
+	for (int i = 0; i < 100; i++) {
+		ints.push_back(std::shared_ptr<int>(
+			TestAllocator<int>().allocate(1), TestAllocator<int>()));
+	}
+	std::cout << "Allocated " << TestAllocator<int>::getSizeAllocated()
+			  << " bytes" << std::endl;
+}
