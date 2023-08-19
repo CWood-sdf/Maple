@@ -49,7 +49,7 @@ std::shared_ptr<MemorySlot> Function::call(
 		auto reg = handleReturnRegister();
 		ret = reg.second;
 		auto line = reg.line;
-		if (ret->getTypeName() != returnType) {
+		if (ret->getTypeName() != returnType && returnType != "var"s) {
 			throwError(
 				"Invalid return type in function "s + name.getReference() +
 					"\n  note: expected "s + returnType.getReference() +
@@ -122,7 +122,7 @@ std::shared_ptr<MemorySlot> BuiltinFunction::call(
 			// unpack the variable
 			arg = ((Variable*)arg.get())->getValue();
 		}
-		if (arg->getTypeName() != argTypes[i]) {
+		if (arg->getTypeName() != argTypes[i] && argTypes[i] != "var"s) {
 			throwError("Incorrect type for argument " + std::to_string(i + 1) +
 						   " for builtin function '" + name.getReference() +
 						   "'\n  note: expected " + argTypes[i].getReference() +
@@ -133,6 +133,9 @@ std::shared_ptr<MemorySlot> BuiltinFunction::call(
 	}
 	// Call the function
 	std::shared_ptr<MemorySlot> ret = function(args);
+	if (returnType == "void"s && !ret) {
+		return nullptr;
+	}
 	// Assert the return type is correct
 	if (ret->getTypeName() != returnType) {
 		throwError("Incorrect return type for builtin function '" +
