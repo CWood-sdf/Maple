@@ -32,7 +32,7 @@ impl GetFromIndex<char> for String {
 }
 #[derive(Debug, PartialEq)]
 pub enum Token {
-    Number(i64),
+    Number(f64),
     Char(char),
     String(String),
     Ident(String),
@@ -49,6 +49,12 @@ pub enum Token {
     OpEq,
     OpEqEq,
     EOF,
+    LeftBrace,
+    RightBrace,
+    LeftParen,
+    RightParen,
+    LeftSquare,
+    RightSquare,
 }
 #[derive(Debug)]
 pub struct Lexer {
@@ -70,13 +76,13 @@ impl Lexer {
         let start_index = self.i;
         while self.i < self.input.len() {
             match self.input.at(self.i, self.line)? {
-                '0'..='9' => {
+                '0'..='9' | '.' => {
                     self.i += 1;
                 }
                 _ => break,
             }
         }
-        number = match self.input[start_index..self.i].parse::<i64>() {
+        number = match self.input[start_index..self.i].parse::<f64>() {
             Ok(n) => n,
             Err(_) => {
                 return Err(LexerError::new(
@@ -87,8 +93,38 @@ impl Lexer {
         };
         Ok(Token::Number(number))
     }
+    fn get_special_char(c: char) -> Result<char, LexerError> {
+        match c {
+            'n' => Ok('\n'),
+            't' => Ok('\t'),
+            'r' => Ok('\r'),
+            '0' => Ok('\0'),
+            '\\' => Ok('\\'),
+            _ => Err(LexerError::new(
+                0,
+                "Invalid special character: ".to_string() + &c.to_string(),
+            )),
+        }
+    }
     fn get_char(&mut self) -> Result<Token, LexerError> {
-        Ok(Token::Char('a'))
+        self.i += 1;
+
+        let c = match self.input.at(self.i, self.line)? {
+            '\\' => {
+                self.i += 1;
+                Self::get_special_char(self.input.at(self.i, self.line)?)?
+            }
+            c => c,
+        };
+
+        if self.input.at(self.i + 1, self.line)? != '\'' {
+            return Err(LexerError::new(
+                self.line,
+                "Unterminated or overlong character literal: ".to_string() + &c.to_string(),
+            ));
+        }
+        self.i += 2;
+        Ok(Token::Char(c))
     }
     fn get_string(&mut self) -> Result<Token, LexerError> {
         Ok(Token::String("".to_string()))
@@ -136,27 +172,116 @@ impl Lexer {
                 '"' => self.get_string(),
                 '\n' => {
                     self.line += 1;
+                    self.i += 1;
                     Ok(Token::EndOfStatement)
                 }
                 ' ' | '\t' => {
                     self.i += 1;
                     self.get_next_token()
                 }
-                '=' => match self.peek_next_char() {
-                    '=' => {
-                        self.i += 2;
-                        Ok(Token::OpEqEq)
-                    }
-                    _ => {
-                        self.i += 1;
-                        Ok(Token::OpEq)
-                    }
-                },
+                '=' if self.peek_next_char() == '=' => {
+                    self.i += 2;
+                    Ok(Token::OpEqEq)
+                }
+                '=' => {
+                    self.i += 1;
+                    Ok(Token::OpEq)
+                }
+                '{' => {
+                    self.i += 1;
+                    Ok(Token::LeftBrace)
+                }
+                '}' => {
+                    self.i += 1;
+                    Ok(Token::RightBrace)
+                }
+                '(' => {
+                    self.i += 1;
+                    Ok(Token::LeftParen)
+                }
+                ')' => {
+                    self.i += 1;
+                    Ok(Token::RightParen)
+                }
+                '[' => {
+                    self.i += 1;
+                    Ok(Token::LeftSquare)
+                }
+                ']' => {
+                    self.i += 1;
+                    Ok(Token::RightSquare)
+                }
                 _ => Err(LexerError::new(
                     self.line,
                     "Invalid character: ".to_string() + &self.input[self.i..self.i + 1],
                 )),
             }
         }
+    }
+}
+#[cfg(test)]
+mod test {
+    use crate::lexer::{Lexer, Token};
+
+    fn expect_tokens(contents: String, tokens: Vec<Token>) {
+        let mut lexer = Lexer::new(contents);
+        for token in tokens {
+            let next_token = lexer.get_next_token().unwrap();
+            println!("{:?} {:?}", token, next_token);
+            assert_eq!(next_token, token);
+        }
+    }
+    #[test]
+    fn test_lexer() {
+        let contents: String = "var a_ = '\\\\''\n'\nfn".to_string();
+
+        let tokens: Vec<Token> = vec![
+            Token::Var,
+            Token::Ident("a_".to_string()),
+            Token::OpEq,
+            Token::Char('\\'),
+            Token::Char('\n'),
+            Token::EndOfStatement,
+            Token::Fn,
+            Token::EOF,
+        ];
+        expect_tokens(contents, tokens);
+    }
+
+    #[test]
+    fn test_variables() {
+        let mut contents = "a_";
+        let mut tokens: Vec<Token> = vec![Token::Ident("a_".to_string()), Token::EOF];
+        expect_tokens(contents.to_string(), tokens);
+        contents = "a_1";
+        tokens = vec![Token::Ident("a_1".to_string()), Token::EOF];
+        expect_tokens(contents.to_string(), tokens);
+        contents = "a1";
+        tokens = vec![Token::Ident("a1".to_string()), Token::EOF];
+        expect_tokens(contents.to_string(), tokens);
+    }
+
+    #[test]
+    fn test_numbers() {
+        let mut contents = "1";
+        let mut tokens: Vec<Token> = vec![Token::Number(1.0), Token::EOF];
+        expect_tokens(contents.to_string(), tokens);
+        contents = "1.0";
+        tokens = vec![Token::Number(1.0), Token::EOF];
+        expect_tokens(contents.to_string(), tokens);
+
+        contents = "1.01";
+        tokens = vec![Token::Number(1.01), Token::EOF];
+        expect_tokens(contents.to_string(), tokens);
+    }
+
+    #[test]
+    fn test_ops() {
+        let mut contents = "==";
+        let mut tokens: Vec<Token> = vec![Token::OpEqEq, Token::EOF];
+        expect_tokens(contents.to_string(), tokens);
+        contents = "=";
+        tokens = vec![Token::OpEq, Token::EOF];
+        expect_tokens(contents.to_string(), tokens);
     }
 }
