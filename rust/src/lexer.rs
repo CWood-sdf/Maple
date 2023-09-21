@@ -30,7 +30,7 @@ impl GetFromIndex<char> for String {
         }
     }
 }
-#[derive(Debug, PartialEq)]
+#[derive(Debug, PartialEq, Clone)]
 pub enum Token {
     Number(f64),
     Char(char),
@@ -55,12 +55,43 @@ pub enum Token {
     RightParen,
     LeftSquare,
     RightSquare,
+    OpPls,
+}
+impl Token {
+    pub fn get_op_prec(&self) -> Result<i32, Box<dyn std::error::Error>> {
+        match self {
+            Token::OpEq => Ok(16),
+            Token::OpEqEq => Ok(10),
+            Token::OpPls => Ok(6),
+            _ => Err(format!("Unknown operator: {:?}", self).into()),
+        }
+    }
+    pub fn get_op_assoc(&self) -> Result<Assoc, Box<dyn std::error::Error>> {
+        match self {
+            Token::OpEq => Ok(Assoc::Right),
+            Token::OpEqEq => Ok(Assoc::Left),
+            Token::OpPls => Ok(Assoc::Left),
+            _ => Err(format!("Unknown operator: {:?}", self).into()),
+        }
+    }
+    pub fn is_op(&self) -> bool {
+        match self {
+            Token::OpEq | Token::OpEqEq | Token::OpPls => true,
+            _ => false,
+        }
+    }
+}
+#[derive(PartialEq)]
+pub enum Assoc {
+    Left,
+    Right,
 }
 #[derive(Debug)]
 pub struct Lexer {
     i: usize,
     line: usize,
     input: String,
+    current_token: Token,
 }
 impl Lexer {
     pub fn new(input: String) -> Lexer {
@@ -68,9 +99,12 @@ impl Lexer {
             i: 0,
             line: 1,
             input,
+            current_token: Token::EOF,
         }
     }
-
+    pub fn get_current_token(&self) -> Token {
+        self.current_token.clone()
+    }
     fn get_number(&mut self) -> Result<Token, LexerError> {
         let number;
         let start_index = self.i;
@@ -114,6 +148,14 @@ impl Lexer {
                 self.i += 1;
                 Self::get_special_char(self.input.at(self.i, self.line)?)?
             }
+            '\n' => {
+                self.line += 1;
+                self.i += 1;
+                return Err(LexerError::new(
+                    self.line,
+                    "Newline in character literal".to_string(),
+                ));
+            }
             c => c,
         };
 
@@ -127,7 +169,36 @@ impl Lexer {
         Ok(Token::Char(c))
     }
     fn get_string(&mut self) -> Result<Token, LexerError> {
-        Ok(Token::String("".to_string()))
+        self.i += 1;
+        let mut string = String::new();
+        while self.i < self.input.len() {
+            match self.input.at(self.i, self.line)? {
+                '\\' => {
+                    self.i += 2;
+                    string.push(Self::get_special_char(self.input.at(self.i, self.line)?)?);
+                }
+                '"' => {
+                    self.i += 1;
+                    return Ok(Token::String(string));
+                }
+                '\n' => {
+                    self.line += 1;
+                    self.i += 1;
+                    return Err(LexerError::new(
+                        self.line,
+                        "Newline in string literal".to_string(),
+                    ));
+                }
+                c => {
+                    string.push(c);
+                    self.i += 1;
+                }
+            }
+        }
+        Err(LexerError::new(
+            self.line,
+            "Unterminated string literal".to_string(),
+        ))
     }
     fn read_ident(&mut self) -> Result<Token, LexerError> {
         let ident;
@@ -161,61 +232,77 @@ impl Lexer {
             self.input.as_bytes()[self.i + 1] as char
         }
     }
+    pub fn peek_next_token(&mut self) -> Result<Token, LexerError> {
+        let i = self.i;
+        let line = self.line;
+        let token = self.get_next_token();
+        self.i = i;
+        self.line = line;
+        token
+    }
     pub fn get_next_token(&mut self) -> Result<Token, LexerError> {
         if self.i >= self.input.len() {
             Ok(Token::EOF)
         } else {
-            match self.input.at(self.i, self.line)? {
-                'a'..='z' | 'A'..='Z' | '_' => self.read_ident(),
-                '0'..='9' => self.get_number(),
-                '\'' => self.get_char(),
-                '"' => self.get_string(),
+            let current_token = match self.input.at(self.i, self.line)? {
+                'a'..='z' | 'A'..='Z' | '_' => self.read_ident()?,
+                '0'..='9' => self.get_number()?,
+                '\'' => self.get_char()?,
+                '"' => self.get_string()?,
                 '\n' => {
                     self.line += 1;
                     self.i += 1;
-                    Ok(Token::EndOfStatement)
+                    Token::EndOfStatement
                 }
                 ' ' | '\t' => {
                     self.i += 1;
-                    self.get_next_token()
+                    self.get_next_token()?
                 }
                 '=' if self.peek_next_char() == '=' => {
                     self.i += 2;
-                    Ok(Token::OpEqEq)
+                    Token::OpEqEq
                 }
                 '=' => {
                     self.i += 1;
-                    Ok(Token::OpEq)
+                    Token::OpEq
+                }
+                '+' => {
+                    self.i += 1;
+                    Token::OpPls
                 }
                 '{' => {
                     self.i += 1;
-                    Ok(Token::LeftBrace)
+                    Token::LeftBrace
                 }
                 '}' => {
                     self.i += 1;
-                    Ok(Token::RightBrace)
+                    Token::RightBrace
                 }
                 '(' => {
                     self.i += 1;
-                    Ok(Token::LeftParen)
+                    Token::LeftParen
                 }
                 ')' => {
                     self.i += 1;
-                    Ok(Token::RightParen)
+                    Token::RightParen
                 }
                 '[' => {
                     self.i += 1;
-                    Ok(Token::LeftSquare)
+                    Token::LeftSquare
                 }
                 ']' => {
                     self.i += 1;
-                    Ok(Token::RightSquare)
+                    Token::RightSquare
                 }
-                _ => Err(LexerError::new(
-                    self.line,
-                    "Invalid character: ".to_string() + &self.input[self.i..self.i + 1],
-                )),
-            }
+                _ => {
+                    return Err(LexerError::new(
+                        self.line,
+                        "Invalid character: ".to_string() + &self.input[self.i..self.i + 1],
+                    ))
+                }
+            };
+            self.current_token = current_token.clone();
+            Ok(current_token)
         }
     }
 }
