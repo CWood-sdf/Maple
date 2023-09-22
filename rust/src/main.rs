@@ -1,5 +1,6 @@
 mod lexer;
 // use crate::lexer::{Lexer, Token};
+mod ast;
 mod parser;
 
 mod scopechain;
@@ -33,10 +34,16 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     for (_, stmt) in ast.iter().enumerate() {
         stmt.get_value(&mut scope_chain)?;
     }
-    let a_name = "b".to_string();
+    let b_name = "b".to_string();
     println!("Time: {}us", timer.elapsed().as_micros());
+    let b = scope_chain.get_variable(&b_name)?;
+    println!("b: {:?}", b);
+    let a_name = "a".to_string();
     let a = scope_chain.get_variable(&a_name)?;
-    println!("b: {:?}", a);
+    println!("a: {:?}", a);
+    let c_name = "c".to_string();
+    let c = scope_chain.get_variable(&c_name)?;
+    println!("c: {:?}", c);
 
     Result::Ok(())
 }

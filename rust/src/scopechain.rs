@@ -109,7 +109,7 @@ impl ScopeChain {
         for scope in self.scopes.iter_mut().rev() {
             let can_set = scope.set_variable(&name, value.clone())?;
             if !can_set {
-                return Err(format!("Cannot set const variable {}", name).into());
+                return Err(format!("Cannot change const variable {}", name).into());
             } else {
                 return Ok(());
             }
