@@ -37,6 +37,7 @@ pub enum Token {
     String(String),
     Ident(String),
     Var,
+    Const,
     Fn,
     If,
     Else,
@@ -48,6 +49,8 @@ pub enum Token {
     EndOfStatement,
     OpEq,
     OpEqEq,
+    OpPls,
+    OpPlsEq,
     EOF,
     LeftBrace,
     RightBrace,
@@ -55,12 +58,12 @@ pub enum Token {
     RightParen,
     LeftSquare,
     RightSquare,
-    OpPls,
 }
 impl Token {
     pub fn get_op_prec(&self) -> Result<i32, Box<dyn std::error::Error>> {
         match self {
             Token::OpEq => Ok(16),
+            Token::OpPlsEq => Ok(16),
             Token::OpEqEq => Ok(10),
             Token::OpPls => Ok(6),
             _ => Err(format!("Unknown operator: {:?}", self).into()),
@@ -69,6 +72,7 @@ impl Token {
     pub fn get_op_assoc(&self) -> Result<Assoc, Box<dyn std::error::Error>> {
         match self {
             Token::OpEq => Ok(Assoc::Right),
+            Token::OpPlsEq => Ok(Assoc::Right),
             Token::OpEqEq => Ok(Assoc::Left),
             Token::OpPls => Ok(Assoc::Left),
             _ => Err(format!("Unknown operator: {:?}", self).into()),
@@ -76,7 +80,7 @@ impl Token {
     }
     pub fn is_op(&self) -> bool {
         match self {
-            Token::OpEq | Token::OpEqEq | Token::OpPls => true,
+            Token::OpPlsEq | Token::OpEq | Token::OpEqEq | Token::OpPls => true,
             _ => false,
         }
     }
@@ -212,18 +216,19 @@ impl Lexer {
             }
         }
         ident = self.input[start_index..self.i].to_string();
-        match ident.as_str() {
-            "while" => Ok(Token::While),
-            "if" => Ok(Token::If),
-            "else" => Ok(Token::Else),
-            "elseif" => Ok(Token::Elseif),
-            "return" => Ok(Token::Return),
-            "break" => Ok(Token::Break),
-            "continue" => Ok(Token::Continue),
-            "var" => Ok(Token::Var),
-            "fn" => Ok(Token::Fn),
-            _ => Ok(Token::Ident(ident)),
-        }
+        Ok(match ident.as_str() {
+            "while" => Token::While,
+            "const" => Token::Const,
+            "if" => Token::If,
+            "else" => Token::Else,
+            "elseif" => Token::Elseif,
+            "return" => Token::Return,
+            "break" => Token::Break,
+            "continue" => Token::Continue,
+            "var" => Token::Var,
+            "fn" => Token::Fn,
+            _ => Token::Ident(ident),
+        })
     }
     fn peek_next_char(&self) -> char {
         if self.i + 1 >= self.input.len() {
@@ -242,6 +247,7 @@ impl Lexer {
     }
     pub fn get_next_token(&mut self) -> Result<Token, LexerError> {
         if self.i >= self.input.len() {
+            self.current_token = Token::EOF;
             Ok(Token::EOF)
         } else {
             let current_token = match self.input.at(self.i, self.line)? {
@@ -266,10 +272,15 @@ impl Lexer {
                     self.i += 1;
                     Token::OpEq
                 }
+                '+' if self.peek_next_char() == '=' => {
+                    self.i += 2;
+                    Token::OpPlsEq
+                }
                 '+' => {
                     self.i += 1;
                     Token::OpPls
                 }
+
                 '{' => {
                     self.i += 1;
                     Token::LeftBrace
