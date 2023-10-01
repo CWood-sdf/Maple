@@ -6,6 +6,7 @@ use std::rc::Rc;
 
 #[derive(Debug)]
 pub struct Scope {
+    // this must never be an Rc because it slows down prog by ~20%
     variables: Vec<Variable>,
 }
 impl Scope {
