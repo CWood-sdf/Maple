@@ -1,3 +1,5 @@
+use std::error::Error;
+
 #[derive(Debug, PartialEq)]
 pub struct LexerError {
     line: usize,
@@ -8,7 +10,7 @@ impl std::fmt::Display for LexerError {
         write!(f, "Lexer error at line {}: {}", self.line, self.msg)
     }
 }
-impl std::error::Error for LexerError {}
+impl Error for LexerError {}
 
 impl LexerError {
     pub fn new(line: usize, msg: String) -> LexerError {
@@ -36,6 +38,8 @@ pub enum Token {
     Char(char),
     String(String),
     Ident(String),
+    True,
+    False,
     Var,
     Const,
     Fn,
@@ -48,6 +52,7 @@ pub enum Token {
     Continue,
     EndOfStatement,
     OpEq,
+    OpNotEq,
     OpEqEq,
     OpPls,
     OpPlsEq,
@@ -60,27 +65,29 @@ pub enum Token {
     RightSquare,
 }
 impl Token {
-    pub fn get_op_prec(&self) -> Result<i32, Box<dyn std::error::Error>> {
+    pub fn get_op_prec(&self) -> Result<i32, Box<dyn Error>> {
         match self {
             Token::OpEq => Ok(16),
             Token::OpPlsEq => Ok(16),
             Token::OpEqEq => Ok(10),
+            Token::OpNotEq => Ok(10),
             Token::OpPls => Ok(6),
             _ => Err(format!("Unknown operator: {:?}", self).into()),
         }
     }
-    pub fn get_op_assoc(&self) -> Result<Assoc, Box<dyn std::error::Error>> {
+    pub fn get_op_assoc(&self) -> Result<Assoc, Box<dyn Error>> {
         match self {
             Token::OpEq => Ok(Assoc::Right),
             Token::OpPlsEq => Ok(Assoc::Right),
             Token::OpEqEq => Ok(Assoc::Left),
+            Token::OpNotEq => Ok(Assoc::Left),
             Token::OpPls => Ok(Assoc::Left),
             _ => Err(format!("Unknown operator: {:?}", self).into()),
         }
     }
     pub fn is_op(&self) -> bool {
         match self {
-            Token::OpPlsEq | Token::OpEq | Token::OpEqEq | Token::OpPls => true,
+            Token::OpPlsEq | Token::OpEq | Token::OpNotEq | Token::OpEqEq | Token::OpPls => true,
             _ => false,
         }
     }
@@ -96,6 +103,7 @@ pub struct Lexer {
     line: usize,
     input: String,
     current_token: Token,
+    fed_token: bool,
 }
 impl Lexer {
     pub fn new(input: String) -> Lexer {
@@ -104,9 +112,11 @@ impl Lexer {
             line: 1,
             input,
             current_token: Token::EOF,
+            fed_token: false,
         }
     }
     pub fn get_current_token(&self) -> Token {
+        // println!("Current token: {:?}", self.current_token);
         self.current_token.clone()
     }
     fn get_number(&mut self) -> Result<Token, LexerError> {
@@ -172,6 +182,10 @@ impl Lexer {
         self.i += 2;
         Ok(Token::Char(c))
     }
+    pub fn feed_token(&mut self, token: Token) {
+        self.current_token = token;
+        self.fed_token = true;
+    }
     fn get_string(&mut self) -> Result<Token, LexerError> {
         self.i += 1;
         let mut string = String::new();
@@ -227,6 +241,8 @@ impl Lexer {
             "continue" => Token::Continue,
             "var" => Token::Var,
             "fn" => Token::Fn,
+            "true" => Token::True,
+            "false" => Token::False,
             _ => Token::Ident(ident),
         })
     }
@@ -240,12 +256,18 @@ impl Lexer {
     pub fn peek_next_token(&mut self) -> Result<Token, LexerError> {
         let i = self.i;
         let line = self.line;
+        let current_token = self.current_token.clone();
         let token = self.get_next_token();
         self.i = i;
         self.line = line;
+        self.current_token = current_token;
         token
     }
     pub fn get_next_token(&mut self) -> Result<Token, LexerError> {
+        if self.fed_token {
+            self.fed_token = false;
+            return Ok(self.current_token.clone());
+        }
         if self.i >= self.input.len() {
             self.current_token = Token::EOF;
             Ok(Token::EOF)
@@ -260,9 +282,13 @@ impl Lexer {
                     self.i += 1;
                     Token::EndOfStatement
                 }
-                ' ' | '\t' => {
+                ' ' | '\t' | '\r' => {
                     self.i += 1;
                     self.get_next_token()?
+                }
+                '!' if self.peek_next_char() == '=' => {
+                    self.i += 2;
+                    Token::OpNotEq
                 }
                 '=' if self.peek_next_char() == '=' => {
                     self.i += 2;
@@ -312,9 +338,13 @@ impl Lexer {
                     ))
                 }
             };
+            // println!("Current token: {:?}", current_token);
             self.current_token = current_token.clone();
             Ok(current_token)
         }
+    }
+    pub fn get_line(&self) -> usize {
+        self.line
     }
 }
 #[cfg(test)]
@@ -325,13 +355,13 @@ mod test {
         let mut lexer = Lexer::new(contents);
         for token in tokens {
             let next_token = lexer.get_next_token().unwrap();
-            println!("{:?} {:?}", token, next_token);
+            // println!("{:?} {:?}", token, next_token);
             assert_eq!(next_token, token);
         }
     }
     #[test]
     fn test_lexer() {
-        let contents: String = "var a_ = '\\\\''\n'\nfn".to_string();
+        let contents: String = "var a_ = '\\\\''\\n'\nfn".to_string();
 
         let tokens: Vec<Token> = vec![
             Token::Var,

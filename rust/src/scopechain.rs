@@ -29,6 +29,14 @@ impl Scope {
         }
         Err(format!("Variable {} not found", name).into())
     }
+    fn is_const(&self, name: &String) -> Result<bool, Box<dyn std::error::Error>> {
+        for var in self.variables.iter() {
+            if var.name == *name {
+                return Ok(var.is_const);
+            }
+        }
+        Err(format!("Variable {} not found", name).into())
+    }
     fn get_variable(&self, name: &String) -> Result<Rc<Value>, Box<dyn std::error::Error>> {
         for var in self.variables.iter() {
             if var.name == *name {
@@ -91,6 +99,15 @@ impl ScopeChain {
         }
         Err(format!("Variable {} not found", name).into())
     }
+    pub fn is_const(&self, name: &String) -> Result<bool, Box<dyn std::error::Error>> {
+        for scope in self.scopes.iter().rev() {
+            match scope.is_const(&name) {
+                Ok(value) => return Ok(value),
+                Err(_) => (),
+            }
+        }
+        Err(format!("Variable {} not found", name).into())
+    }
     pub fn add_variable(
         &mut self,
         name: &String,
@@ -107,8 +124,11 @@ impl ScopeChain {
         value: Rc<Value>,
     ) -> Result<(), Box<dyn std::error::Error>> {
         for scope in self.scopes.iter_mut().rev() {
-            let can_set = scope.set_variable(&name, value.clone())?;
-            if !can_set {
+            let can_set = scope.set_variable(&name, value.clone());
+            if can_set.is_err() {
+                continue;
+            }
+            if !can_set.unwrap() {
                 return Err(format!("Cannot change const variable {}", name).into());
             } else {
                 return Ok(());

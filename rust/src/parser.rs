@@ -2,7 +2,7 @@
 #![allow(dead_code)]
 use std::{error::Error, rc::Rc};
 
-use crate::ast::AST;
+use crate::ast::{IfLiteral, AST};
 use crate::lexer::{Assoc, Lexer, Token};
 use crate::scopechain::ScopeChain;
 
@@ -70,6 +70,8 @@ impl Parser {
                 )
                 .into())
             }
+            Token::True => ret = Some(Box::new(AST::BooleanLiteral(true))),
+            Token::False => ret = Some(Box::new(AST::BooleanLiteral(false))),
             Token::Ident(name) => ret = Some(Box::new(AST::VariableAccess(name))),
             Token::LeftParen => {
                 _ = self.lexer.get_next_token()?;
@@ -105,6 +107,7 @@ impl Parser {
                 Token::OpEq => Box::new(AST::OpEq(ret.unwrap(), rhs)),
                 Token::OpPls => Box::new(AST::OpPls(ret.unwrap(), rhs)),
                 Token::OpPlsEq => Box::new(AST::OpPlsEq(ret.unwrap(), rhs)),
+                Token::OpNotEq => Box::new(AST::OpNotEq(ret.unwrap(), rhs)),
                 _ => {
                     return Err(format!("Operator not implemented in parse clause {:?}", op).into())
                 }
@@ -144,6 +147,83 @@ impl Parser {
     //         _ => return Err(format!("Token not yet implemented in parser: {:?}", token).into()),
     //     })
     // }
+    fn parse_block(&mut self) -> Result<Vec<Box<AST>>, Box<dyn Error>> {
+        while self.lexer.get_current_token() == Token::EndOfStatement {
+            self.lexer.get_next_token()?;
+        }
+        match self.lexer.get_current_token() {
+            Token::LeftBrace => (),
+            _ => {
+                return Err(format!(
+                    "Expected left brace to start block, got {:?}",
+                    self.lexer.get_current_token()
+                )
+                .into())
+            }
+        };
+        match self.lexer.get_next_token()? {
+            Token::EndOfStatement => (),
+            _ => {
+                return Err(format!(
+                    "Expected newline after left brace, got {:?}",
+                    self.lexer.get_current_token()
+                )
+                .into())
+            }
+        };
+        let body = self.parse(false)?;
+        Ok(body)
+    }
+    fn parse_condition_and_block(&mut self) -> Result<(Box<AST>, Vec<Box<AST>>), Box<dyn Error>> {
+        let cond = self.parse_clause(1000)?;
+        self.lexer.get_next_token()?;
+        let body = self.parse_block()?;
+        Ok((cond, body))
+    }
+    fn parse_while(&mut self) -> Result<Box<AST>, Box<dyn Error>> {
+        self.lexer.get_next_token()?;
+        let (cond, body) = self.parse_condition_and_block()?;
+        self.lexer.get_next_token()?;
+        self.lexer.feed_token(Token::EndOfStatement);
+        Ok(Box::new(AST::While(cond, body)))
+    }
+    fn parse_if(&mut self) -> Result<Box<AST>, Box<dyn Error>> {
+        self.lexer.get_next_token()?;
+        let (cond, body) = self.parse_condition_and_block()?;
+        let mut elseifs: Vec<(Box<AST>, Vec<Box<AST>>)> = vec![];
+        self.lexer.get_next_token()?;
+        loop {
+            while self.lexer.get_current_token() == Token::EndOfStatement {
+                self.lexer.get_next_token()?;
+            }
+            if self.lexer.get_current_token() != Token::Elseif {
+                break;
+            }
+            self.lexer.get_next_token()?;
+            let block = self.parse_condition_and_block()?;
+            elseifs.push(block);
+            self.lexer.get_next_token()?;
+        }
+        while self.lexer.get_current_token() == Token::EndOfStatement {
+            self.lexer.get_next_token()?;
+        }
+        let else_body = if self.lexer.get_current_token() == Token::Else {
+            self.lexer.get_next_token()?;
+            let body = self.parse_block()?;
+            Some(body)
+        } else {
+            None
+        };
+        self.lexer.feed_token(Token::EndOfStatement);
+
+        // parse takes care of }, so we don't need to check for it here
+        Ok(Box::new(AST::If(IfLiteral {
+            cond,
+            body,
+            elseifs,
+            else_body,
+        })))
+    }
     pub fn parse(&mut self, top_level: bool) -> Result<Vec<Box<AST>>, Box<dyn Error>> {
         let mut ret: Vec<Box<AST>> = vec![];
         if top_level {
@@ -155,11 +235,20 @@ impl Parser {
                 Token::Var => Some(self.parse_variable_declaration(false)?),
                 Token::Ident(_) => {
                     let ast = self.parse_clause(1000)?;
+                    // self.lexer.get_next_token()?;
                     Some(ast)
                 }
+                Token::While => Some(self.parse_while()?),
+                Token::If => Some(self.parse_if()?),
                 Token::EOF if top_level => break,
                 Token::EOF if !top_level => {
                     return Err("Unexpected EOF (aka unclosed brace)".into());
+                }
+                Token::RightBrace if !top_level => {
+                    break;
+                }
+                Token::RightBrace if top_level => {
+                    return Err("Unexpected right brace in top level".into());
                 }
                 Token::EndOfStatement => None,
                 _ => {
@@ -168,7 +257,7 @@ impl Parser {
                     )
                 }
             };
-            match self.lexer.get_current_token() {
+            match self.lexer.get_next_token()? {
                 Token::RightBrace if !top_level => {
                     break;
                 }
@@ -176,30 +265,164 @@ impl Parser {
                     return Err("Unexpected right brace in top level".into());
                 }
                 Token::EndOfStatement => (),
+                Token::EOF if !top_level => {
+                    return Err("Unexpected EOF (aka unclosed brace)".into());
+                }
                 Token::EOF => break,
+                _ if ast.is_none() => (),
                 _ => {
                     return Err(format!(
-                        "Expected newline after statement \"{}\", instead got {:?}",
+                        "Expected newline after statement \"{}\", instead got {:?}, at line {}",
                         match ast {
                             Some(ast) => ast.pretty_print(),
                             None => "".to_string(),
                         },
-                        self.lexer.get_current_token()
+                        self.lexer.get_current_token(),
+                        self.lexer.get_line()
                     )
                     .into())
                 }
             };
-            _ = self.lexer.get_next_token()?;
+            // _ = self.lexer.get_next_token()?;
             match ast {
                 Some(ast) => {
                     // println!("{}", ast.pretty_print());
                     ret.push(ast)
                 }
-                None => println!(""),
+                None => {}
             }
         }
         Ok(ret)
     }
 }
 #[cfg(test)]
-mod test_parser {}
+mod test_parser {
+    #[test]
+    fn test_newline_placement() {
+        let code = r#"
+var x = 0
+x = 1
+const c = 0"#;
+        let mut parser = super::Parser::new(code.to_string());
+        let ast = parser.parse(true);
+        println!("{}", code.to_string());
+        assert!(ast.is_ok());
+        let code_copy = code.to_string();
+        // replace all newlines in code with 2 newlines
+        let code_copy = code_copy.replace("\n", "\n\n");
+        let mut parser = super::Parser::new(code_copy);
+        let ast = parser.parse(true);
+        assert!(ast.is_ok());
+    }
+    #[test]
+    fn test_newline_in_if() {
+        let code = r#"
+if true {
+    var x = 0
+}"#;
+        let mut parser = super::Parser::new(code.to_string());
+        let ast = parser.parse(true);
+        assert!(ast.is_ok());
+        let code_copy = code.to_string();
+        // replace all newlines in code with 2 newlines
+        let code_copy = code_copy.replace("\n", "\n\n");
+        let mut parser = super::Parser::new(code_copy);
+        let ast = parser.parse(true);
+        assert!(ast.is_ok());
+    }
+    #[test]
+    fn test_newline_in_if2() {
+        let mut code = r#"
+if true {
+    var x = 0
+}
+"#;
+        let mut parser = super::Parser::new(code.to_string());
+        let ast = parser.parse(true);
+        assert!(ast.is_ok());
+        let code_copy = code.to_string();
+        // replace all newlines in code with 2 newlines
+        let code_copy = code_copy.replace("\n", "\n\n");
+        let mut parser = super::Parser::new(code_copy);
+        let ast = parser.parse(true);
+        assert!(ast.is_ok());
+        code = r#"
+if true {
+    var x = 0
+} elseif true {
+    var y = 0
+} "#;
+        parser = super::Parser::new(code.to_string());
+        let ast = parser.parse(true);
+        assert!(ast.is_ok());
+        let code_copy = code.to_string();
+        // replace all newlines in code with 2 newlines
+        let code_copy = code_copy.replace("\n", "\n\n");
+        let mut parser = super::Parser::new(code_copy);
+        let ast = parser.parse(true);
+        assert!(ast.is_ok());
+        code = r#"
+if true {
+    var x = 0
+} 
+
+elseif true {
+    var y = 0
+} elseif true {
+    var z = 0
+} else {
+    var a = 0
+}"#;
+        parser = super::Parser::new(code.to_string());
+        let ast = parser.parse(true);
+        assert!(ast.is_ok());
+        let code_copy = code.to_string();
+        // replace all newlines in code with 2 newlines
+        let code_copy = code_copy.replace("\n", "\n\n");
+        let mut parser = super::Parser::new(code_copy);
+        let ast = parser.parse(true);
+        assert!(ast.is_ok());
+    }
+    #[test]
+    fn fails_on_unclosed_brace() {
+        let code = r#"
+if true {
+    var x = 0
+"#;
+        let mut parser = super::Parser::new(code.to_string());
+        let ast = parser.parse(true);
+        assert!(ast.is_err());
+    }
+    #[test]
+    fn fails_on_no_brace() {
+        let code = r#"
+if true
+    var x = 0
+"#;
+        let mut parser = super::Parser::new(code.to_string());
+        let ast = parser.parse(true);
+        assert!(ast.is_err());
+    }
+    #[test]
+    fn fails_on_no_newline() {
+        let code = r#"
+var x = 0 var y = 0"#;
+        let mut parser = super::Parser::new(code.to_string());
+        let ast = parser.parse(true);
+        assert!(ast.is_err());
+    }
+    #[test]
+    fn fails_on_extra_else() {
+        let code = r#"
+if true {
+    var x = 0
+} else {
+    var y = 0
+} else {
+    var z = 0
+}"#;
+        let mut parser = super::Parser::new(code.to_string());
+        let ast = parser.parse(true);
+        assert!(ast.is_err());
+    }
+}

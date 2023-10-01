@@ -1,9 +1,9 @@
-var a = 1 + 2
+var a = true
+var b = 0
 
-var b = a == 2 + 1
+while a {
+    b += 1
+    a = b != 10
+}
 
-a += 1
-
-const c = 1
-
-c += 2
+const c = 0

@@ -4,17 +4,13 @@ mod ast;
 mod parser;
 
 mod scopechain;
+use std::error::Error;
+
 use scopechain::ScopeChain;
 
 use crate::parser::Parser;
 
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    // let y: Rc<i32> = Rc::new(5);
-    // unsafe {
-    //     let ptr: *mut i32 = Rc::<i32>::as_ptr(&y) as *mut i32;
-    //     *ptr = 6;
-    // }
-    // println!("y: {}", y);
+fn main() -> Result<(), Box<dyn Error>> {
     let contents: String = std::fs::read_to_string("./maple.mpl")?;
 
     let timer = std::time::Instant::now();
@@ -29,18 +25,18 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         }
     };
     // for (_, stmt) in ast.iter().enumerate() {
-    //     // println!("{}", stmt.pretty_print());
+    //     println!("{}", stmt.pretty_print());
     // }
     for (_, stmt) in ast.iter().enumerate() {
         stmt.get_value(&mut scope_chain)?;
     }
-    let b_name = "b".to_string();
     println!("Time: {}us", timer.elapsed().as_micros());
-    let b = scope_chain.get_variable(&b_name)?;
-    println!("b: {:?}", b);
     let a_name = "a".to_string();
     let a = scope_chain.get_variable(&a_name)?;
     println!("a: {:?}", a);
+    let b_name = "b".to_string();
+    let b = scope_chain.get_variable(&b_name)?;
+    println!("b: {:?}", b);
     let c_name = "c".to_string();
     let c = scope_chain.get_variable(&c_name)?;
     println!("c: {:?}", c);
