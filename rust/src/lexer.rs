@@ -56,6 +56,12 @@ pub enum Token {
     OpEqEq,
     OpPls,
     OpPlsEq,
+    OpLt,
+    OpGt,
+    OpLtEq,
+    OpGtEq,
+    OpAndAnd,
+    OpOrOr,
     EOF,
     LeftBrace,
     RightBrace,
@@ -63,10 +69,17 @@ pub enum Token {
     RightParen,
     LeftSquare,
     RightSquare,
+    Comma,
 }
 impl Token {
     pub fn get_op_prec(&self) -> Result<i32, Box<dyn Error>> {
         match self {
+            Token::OpLt => Ok(9),
+            Token::OpGt => Ok(9),
+            Token::OpLtEq => Ok(9),
+            Token::OpGtEq => Ok(9),
+            Token::OpAndAnd => Ok(14),
+            Token::OpOrOr => Ok(15),
             Token::OpEq => Ok(16),
             Token::OpPlsEq => Ok(16),
             Token::OpEqEq => Ok(10),
@@ -77,6 +90,12 @@ impl Token {
     }
     pub fn get_op_assoc(&self) -> Result<Assoc, Box<dyn Error>> {
         match self {
+            Token::OpLt => Ok(Assoc::Left),
+            Token::OpGt => Ok(Assoc::Left),
+            Token::OpLtEq => Ok(Assoc::Left),
+            Token::OpGtEq => Ok(Assoc::Left),
+            Token::OpAndAnd => Ok(Assoc::Left),
+            Token::OpOrOr => Ok(Assoc::Left),
             Token::OpEq => Ok(Assoc::Right),
             Token::OpPlsEq => Ok(Assoc::Right),
             Token::OpEqEq => Ok(Assoc::Left),
@@ -87,7 +106,17 @@ impl Token {
     }
     pub fn is_op(&self) -> bool {
         match self {
-            Token::OpPlsEq | Token::OpEq | Token::OpNotEq | Token::OpEqEq | Token::OpPls => true,
+            Token::OpLt
+            | Token::OpGt
+            | Token::OpLtEq
+            | Token::OpGtEq
+            | Token::OpPlsEq
+            | Token::OpAndAnd
+            | Token::OpOrOr
+            | Token::OpEq
+            | Token::OpNotEq
+            | Token::OpEqEq
+            | Token::OpPls => true,
             _ => false,
         }
     }
@@ -103,7 +132,7 @@ pub struct Lexer {
     line: usize,
     input: String,
     current_token: Token,
-    fed_token: bool,
+    feed_tokens: Vec<Token>,
 }
 impl Lexer {
     pub fn new(input: String) -> Lexer {
@@ -112,7 +141,7 @@ impl Lexer {
             line: 1,
             input,
             current_token: Token::EOF,
-            fed_token: false,
+            feed_tokens: Vec::new(),
         }
     }
     pub fn get_current_token(&self) -> Token {
@@ -183,8 +212,7 @@ impl Lexer {
         Ok(Token::Char(c))
     }
     pub fn feed_token(&mut self, token: Token) {
-        self.current_token = token;
-        self.fed_token = true;
+        self.feed_tokens.push(token);
     }
     fn get_string(&mut self) -> Result<Token, LexerError> {
         self.i += 1;
@@ -264,8 +292,8 @@ impl Lexer {
         token
     }
     pub fn get_next_token(&mut self) -> Result<Token, LexerError> {
-        if self.fed_token {
-            self.fed_token = false;
+        if self.feed_tokens.len() > 0 {
+            self.current_token = self.feed_tokens.remove(0);
             return Ok(self.current_token.clone());
         }
         if self.i >= self.input.len() {
@@ -286,6 +314,10 @@ impl Lexer {
                     self.i += 1;
                     self.get_next_token()?
                 }
+                ',' => {
+                    self.i += 1;
+                    Token::Comma
+                }
                 '!' if self.peek_next_char() == '=' => {
                     self.i += 2;
                     Token::OpNotEq
@@ -305,6 +337,30 @@ impl Lexer {
                 '+' => {
                     self.i += 1;
                     Token::OpPls
+                }
+                '&' if self.peek_next_char() == '&' => {
+                    self.i += 2;
+                    Token::OpAndAnd
+                }
+                '|' if self.peek_next_char() == '|' => {
+                    self.i += 2;
+                    Token::OpOrOr
+                }
+                '<' if self.peek_next_char() == '=' => {
+                    self.i += 2;
+                    Token::OpLtEq
+                }
+                '<' => {
+                    self.i += 1;
+                    Token::OpLt
+                }
+                '>' if self.peek_next_char() == '=' => {
+                    self.i += 2;
+                    Token::OpGtEq
+                }
+                '>' => {
+                    self.i += 1;
+                    Token::OpGt
                 }
 
                 '{' => {
