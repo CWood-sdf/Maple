@@ -1,32 +1,15 @@
-use std::error::Error;
+use crate::error::{LexerError, MapleError, ParserError};
 
-#[derive(Debug, PartialEq)]
-pub struct LexerError {
-    line: usize,
-    msg: String,
-}
-impl std::fmt::Display for LexerError {
-    fn fmt(&self, f: &mut std::fmt::Formatter) -> std::fmt::Result {
-        write!(f, "Lexer error at line {}: {}", self.line, self.msg)
-    }
-}
-impl Error for LexerError {}
-
-impl LexerError {
-    pub fn new(line: usize, msg: String) -> LexerError {
-        LexerError { line, msg }
-    }
-}
-trait GetFromIndex<Ret, Err = LexerError> {
-    fn at(&self, i: usize, line: usize) -> Result<Ret, Err>;
+trait GetFromIndex<Ret> {
+    fn at(&self, i: usize, line: usize) -> Result<Ret, Box<dyn MapleError>>;
 }
 impl GetFromIndex<char> for String {
-    fn at(&self, i: usize, line: usize) -> Result<char, LexerError> {
+    fn at(&self, i: usize, line: usize) -> Result<char, Box<dyn MapleError>> {
         if i >= self.len() {
-            Err(LexerError::new(
-                line,
+            Err(Box::new(LexerError::new(
                 "Index out of bounds".to_string() + &i.to_string(),
-            ))
+                line,
+            )))
         } else {
             Ok(self.as_bytes()[i] as char)
         }
@@ -72,7 +55,7 @@ pub enum Token {
     Comma,
 }
 impl Token {
-    pub fn get_op_prec(&self) -> Result<i32, Box<dyn Error>> {
+    pub fn get_op_prec(&self, lexer: &Lexer) -> Result<i32, Box<dyn MapleError>> {
         match self {
             Token::OpLt => Ok(9),
             Token::OpGt => Ok(9),
@@ -85,10 +68,13 @@ impl Token {
             Token::OpEqEq => Ok(10),
             Token::OpNotEq => Ok(10),
             Token::OpPls => Ok(6),
-            _ => Err(format!("Unknown operator: {:?}", self).into()),
+            _ => Err(Box::new(ParserError::new(
+                format!("Unknown operator: {:?}", self).into(),
+                lexer.line,
+            ))),
         }
     }
-    pub fn get_op_assoc(&self) -> Result<Assoc, Box<dyn Error>> {
+    pub fn get_op_assoc(&self, lexer: &Lexer) -> Result<Assoc, Box<dyn MapleError>> {
         match self {
             Token::OpLt => Ok(Assoc::Left),
             Token::OpGt => Ok(Assoc::Left),
@@ -101,7 +87,10 @@ impl Token {
             Token::OpEqEq => Ok(Assoc::Left),
             Token::OpNotEq => Ok(Assoc::Left),
             Token::OpPls => Ok(Assoc::Left),
-            _ => Err(format!("Unknown operator: {:?}", self).into()),
+            _ => Err(Box::new(ParserError::new(
+                format!("Unknown operator: {:?}", self).into(),
+                lexer.line,
+            ))),
         }
     }
     pub fn is_op(&self) -> bool {
@@ -148,65 +137,142 @@ impl Lexer {
         // println!("Current token: {:?}", self.current_token);
         self.current_token.clone()
     }
-    fn get_number(&mut self) -> Result<Token, LexerError> {
+    fn get_number(&mut self) -> Result<Token, Box<dyn MapleError>> {
         let number;
         let start_index = self.i;
+        let starts_with_zero = self.input.at(self.i, self.line)? == '0'
+            && self.input.at(self.i + 1, self.line)? != '.';
+        let mut char_number = 0;
+        let mut integer_base = 10;
+        let mut err = Option::None;
+        let mut decimal_count = 0;
         while self.i < self.input.len() {
             match self.input.at(self.i, self.line)? {
-                '0'..='9' | '.' => {
-                    self.i += 1;
+                'b' if starts_with_zero && char_number == 1 => {
+                    integer_base = 2;
+                }
+                'x' if starts_with_zero && char_number == 1 => {
+                    integer_base = 16;
+                }
+                'o' if starts_with_zero && char_number == 1 => {
+                    integer_base = 8;
+                }
+                '.' if !starts_with_zero && decimal_count > 0 => {
+                    err = Some(Box::new(LexerError::new(
+                        "Invalid number \"\", note: number already has decimal point".to_string(),
+                        self.line,
+                    )));
+                }
+                '.' if !starts_with_zero => {
+                    decimal_count += 1;
+                }
+                '.' if starts_with_zero => {
+                    err = Some(Box::new(LexerError::new(
+                        "Integer \"\" starting with 0 cannot have decimal point".to_string(),
+                        self.line,
+                    )));
+                }
+                '0'..='1' if integer_base == 2 => {}
+                '0'..='7' if integer_base == 8 => {}
+                '0'..='9' if integer_base == 10 => {}
+                '0'..='9' | 'a'..='f' | 'A'..='F' if integer_base == 16 => {}
+                '0'..='9' | 'a'..='z' | 'A'..='Z' | '_' => {
+                    err = Some(Box::new(LexerError::new(
+                        format!(
+                            "Invalid number \"\", note: number is in base {}",
+                            integer_base
+                        ),
+                        self.line,
+                    )));
                 }
                 _ => break,
-            }
+            };
+            self.i += 1;
+            char_number += 1;
         }
-        number = match self.input[start_index..self.i].parse::<f64>() {
-            Ok(n) => n,
-            Err(_) => {
-                return Err(LexerError::new(
+        if err.is_some() {
+            let mut err = err.unwrap();
+            err.set_msg(
+                err.get_msg()
+                    .replace("\"\"", &self.input[start_index..self.i]),
+            );
+            return Err(err);
+        }
+        if integer_base != 10 {
+            let start_index = start_index + 2;
+            if self.i - start_index == 0 {
+                return Err(Box::new(LexerError::new(
+                    format!("Integer number has no digits"),
                     self.line,
-                    "Invalid number".to_string() + &self.input[start_index..self.i],
-                ))
+                )));
             }
-        };
+            number = match i32::from_str_radix(&self.input[start_index..self.i], integer_base) {
+                Ok(n) => n as f64,
+                Err(_) => {
+                    return Err(Box::new(LexerError::new(
+                        format!(
+                            "Invalid integer \"{}\" with base {}",
+                            &self.input[start_index..self.i],
+                            integer_base
+                        ),
+                        self.line,
+                    )))
+                }
+            };
+            self.i += 1;
+        } else {
+            number = match self.input[start_index..self.i].parse::<f64>() {
+                Ok(n) => n,
+                Err(_) => {
+                    return Err(Box::new(LexerError::new(
+                        "Invalid number".to_string() + &self.input[start_index..self.i],
+                        self.line,
+                    )))
+                }
+            };
+        }
         Ok(Token::Number(number))
     }
-    fn get_special_char(c: char) -> Result<char, LexerError> {
+    fn get_special_char(c: char, lexer: &Lexer) -> Result<char, Box<dyn MapleError>> {
         match c {
             'n' => Ok('\n'),
             't' => Ok('\t'),
             'r' => Ok('\r'),
             '0' => Ok('\0'),
             '\\' => Ok('\\'),
-            _ => Err(LexerError::new(
-                0,
-                "Invalid special character: ".to_string() + &c.to_string(),
-            )),
+            _ => Err(Box::new(LexerError::new(
+                format!("Invalid special character: '\\{}'", &c.to_string()),
+                lexer.line,
+            ))),
         }
     }
-    fn get_char(&mut self) -> Result<Token, LexerError> {
+    fn get_char(&mut self) -> Result<Token, Box<dyn MapleError>> {
+        // eat the first '
         self.i += 1;
 
         let c = match self.input.at(self.i, self.line)? {
             '\\' => {
+                // eat
                 self.i += 1;
-                Self::get_special_char(self.input.at(self.i, self.line)?)?
+                Self::get_special_char(self.input.at(self.i, self.line)?, self)?
             }
             '\n' => {
+                // eat
                 self.line += 1;
                 self.i += 1;
-                return Err(LexerError::new(
-                    self.line,
+                return Err(Box::new(LexerError::new(
                     "Newline in character literal".to_string(),
-                ));
+                    self.line,
+                )));
             }
             c => c,
         };
 
         if self.input.at(self.i + 1, self.line)? != '\'' {
-            return Err(LexerError::new(
-                self.line,
+            return Err(Box::new(LexerError::new(
                 "Unterminated or overlong character literal: ".to_string() + &c.to_string(),
-            ));
+                self.line,
+            )));
         }
         self.i += 2;
         Ok(Token::Char(c))
@@ -214,14 +280,17 @@ impl Lexer {
     pub fn feed_token(&mut self, token: Token) {
         self.feed_tokens.push(token);
     }
-    fn get_string(&mut self) -> Result<Token, LexerError> {
+    fn get_string(&mut self) -> Result<Token, Box<dyn MapleError>> {
         self.i += 1;
         let mut string = String::new();
         while self.i < self.input.len() {
             match self.input.at(self.i, self.line)? {
                 '\\' => {
                     self.i += 2;
-                    string.push(Self::get_special_char(self.input.at(self.i, self.line)?)?);
+                    string.push(Self::get_special_char(
+                        self.input.at(self.i - 1, self.line)?,
+                        self,
+                    )?);
                 }
                 '"' => {
                     self.i += 1;
@@ -230,10 +299,10 @@ impl Lexer {
                 '\n' => {
                     self.line += 1;
                     self.i += 1;
-                    return Err(LexerError::new(
-                        self.line,
+                    return Err(Box::new(LexerError::new(
                         "Newline in string literal".to_string(),
-                    ));
+                        self.line,
+                    )));
                 }
                 c => {
                     string.push(c);
@@ -241,12 +310,12 @@ impl Lexer {
                 }
             }
         }
-        Err(LexerError::new(
-            self.line,
+        Err(Box::new(LexerError::new(
             "Unterminated string literal".to_string(),
-        ))
+            self.line,
+        )))
     }
-    fn read_ident(&mut self) -> Result<Token, LexerError> {
+    fn read_ident(&mut self) -> Result<Token, Box<dyn MapleError>> {
         let ident;
         let start_index = self.i;
         while self.i < self.input.len() {
@@ -281,7 +350,7 @@ impl Lexer {
             self.input.as_bytes()[self.i + 1] as char
         }
     }
-    pub fn peek_next_token(&mut self) -> Result<Token, LexerError> {
+    pub fn peek_next_token(&mut self) -> Result<Token, Box<dyn MapleError>> {
         let i = self.i;
         let line = self.line;
         let current_token = self.current_token.clone();
@@ -291,7 +360,7 @@ impl Lexer {
         self.current_token = current_token;
         token
     }
-    pub fn get_next_token(&mut self) -> Result<Token, LexerError> {
+    pub fn get_next_token(&mut self) -> Result<Token, Box<dyn MapleError>> {
         if self.feed_tokens.len() > 0 {
             self.current_token = self.feed_tokens.remove(0);
             return Ok(self.current_token.clone());
@@ -388,10 +457,10 @@ impl Lexer {
                     Token::RightSquare
                 }
                 _ => {
-                    return Err(LexerError::new(
-                        self.line,
+                    return Err(Box::new(LexerError::new(
                         "Invalid character: ".to_string() + &self.input[self.i..self.i + 1],
-                    ))
+                        self.line,
+                    )))
                 }
             };
             // println!("Current token: {:?}", current_token);
@@ -467,5 +536,30 @@ mod test {
         contents = "=";
         tokens = vec![Token::OpEq, Token::EOF];
         expect_tokens(contents.to_string(), tokens);
+    }
+
+    #[test]
+    fn test_chars() {
+        let mut contents = "'a";
+        let mut lexer = Lexer::new(contents.to_string());
+        assert!(lexer.get_next_token().is_err());
+
+        contents = "'a ";
+        lexer = Lexer::new(contents.to_string());
+        assert!(lexer.get_next_token().is_err());
+
+        contents = "'a\n";
+        lexer = Lexer::new(contents.to_string());
+        assert!(lexer.get_next_token().is_err());
+
+        contents = "const c = '0\n";
+        lexer = Lexer::new(contents.to_string());
+        let tokens: Vec<Token> = vec![Token::Const, Token::Ident("c".to_string()), Token::OpEq];
+        for token in tokens {
+            let next_token = lexer.get_next_token().unwrap();
+            // println!("{:?} {:?}", token, next_token);
+            assert_eq!(next_token, token);
+        }
+        assert!(lexer.get_next_token().is_err());
     }
 }

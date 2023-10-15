@@ -1,7 +1,9 @@
 #![allow(dead_code)]
+use crate::error::ScopeError;
 use crate::parser::Value;
 use crate::parser::Variable;
 
+use std::error::Error;
 use std::rc::Rc;
 
 #[derive(Debug, Clone, PartialEq)]
@@ -26,11 +28,7 @@ impl Scope {
             is_global: true,
         }
     }
-    fn set_variable(
-        &mut self,
-        name: &String,
-        value: Rc<Value>,
-    ) -> Result<bool, Box<dyn std::error::Error>> {
+    fn set_variable(&mut self, name: &String, value: Rc<Value>) -> Result<bool, Box<dyn Error>> {
         for var in self.variables.iter_mut() {
             if var.name == *name {
                 if var.is_const && *var.value != Value::Undefined {
@@ -52,7 +50,7 @@ impl Scope {
         }
         Err(format!("Variable {} not found", name).into())
     }
-    fn is_const(&self, name: &String) -> Result<bool, Box<dyn std::error::Error>> {
+    fn is_const(&self, name: &String) -> Result<bool, Box<dyn Error>> {
         for var in self.variables.iter() {
             if var.name == *name {
                 return Ok(var.is_const);
@@ -60,7 +58,7 @@ impl Scope {
         }
         Err(format!("Variable {} not found", name).into())
     }
-    fn get_variable(&self, name: &String) -> Result<Rc<Value>, Box<dyn std::error::Error>> {
+    fn get_variable(&self, name: &String) -> Result<Rc<Value>, Box<dyn Error>> {
         for var in self.variables.iter() {
             if var.name == *name {
                 return Ok(var.value.clone());
@@ -72,10 +70,14 @@ impl Scope {
         &mut self,
         name: &String,
         is_const: bool,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+        line: usize,
+    ) -> Result<(), ScopeError> {
         for var in self.variables.iter() {
             if var.name == *name {
-                return Err(format!("Variable {} already exists", name).into());
+                return Err(ScopeError::new(
+                    format!("Variable {} already exists", name),
+                    line,
+                ));
             }
         }
         self.variables.push(Variable {
@@ -128,7 +130,7 @@ impl ScopeChain {
             return_register: ReturnType::None,
         }
     }
-    pub fn add_fn_scope(&mut self, closure: &ScopeChain) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn add_fn_scope(&mut self, closure: &ScopeChain) {
         let mut i = 0;
         for scope in closure.scopes.iter() {
             self.scopes.push(scope.clone());
@@ -143,19 +145,18 @@ impl ScopeChain {
         } else {
             self.scopes.push(Scope::new(false));
         }
-        Ok(())
     }
-    pub fn add_scope(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn add_scope(&mut self) -> Result<(), ScopeError> {
         self.scopes.push(Scope::new(false));
         Ok(())
     }
-    pub fn pop_scope(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn pop_scope(&mut self) -> Result<(), ScopeError> {
         self.scopes.pop();
         Ok(())
     }
-    pub fn pop_fn_scope(&mut self) -> Result<(), Box<dyn std::error::Error>> {
+    pub fn pop_fn_scope(&mut self, line: usize) -> Result<(), ScopeError> {
         if self.scopes.len() == 1 {
-            return Err("Cannot pop global scope".into());
+            return Err(ScopeError::new("Cannot pop global scope".into(), line));
         }
         while !self.scopes.last().unwrap().is_fn {
             self.scopes.pop();
@@ -163,8 +164,15 @@ impl ScopeChain {
         self.scopes.pop();
         Ok(())
     }
-    pub fn set_return_register(&mut self, value: ReturnType) {
+    pub fn set_return_register(&mut self, value: ReturnType) -> Result<(), ScopeError> {
+        if self.return_register != ReturnType::None {
+            return Err(ScopeError::new(
+                format!("Return register already set to {:?}", self.return_register).into(),
+                0,
+            ));
+        }
         self.return_register = value;
+        Ok(())
     }
     pub fn get_return_register(&self) -> ReturnType {
         self.return_register.clone()
@@ -174,7 +182,7 @@ impl ScopeChain {
         self.return_register = ReturnType::None;
         ret
     }
-    pub fn get_variable(&self, name: &String) -> Result<Rc<Value>, Box<dyn std::error::Error>> {
+    pub fn get_variable(&self, name: &String, line: usize) -> Result<Rc<Value>, ScopeError> {
         let mut i = self.scopes.len() - 1;
         loop {
             let scope = &self.scopes[i];
@@ -190,9 +198,12 @@ impl ScopeChain {
             }
             i -= 1;
         }
-        Err(format!("Variable {} not found", name).into())
+        Err(ScopeError::new(
+            format!("Variable {} not found", name).into(),
+            line,
+        ))
     }
-    pub fn is_const(&self, name: &String) -> Result<bool, Box<dyn std::error::Error>> {
+    pub fn is_const(&self, name: &String, line: usize) -> Result<bool, ScopeError> {
         let mut i = self.scopes.len() - 1;
         loop {
             let scope = &self.scopes[i];
@@ -208,23 +219,29 @@ impl ScopeChain {
             }
             i -= 1;
         }
-        Err(format!("Variable {} not found", name).into())
+        Err(ScopeError::new(
+            format!("Variable {} not found", name).into(),
+            line,
+        ))
     }
     pub fn add_variable(
         &mut self,
         name: &String,
         is_const: bool,
-    ) -> Result<(), Box<dyn std::error::Error>> {
-        self.scopes
-            .last_mut()
-            .unwrap()
-            .add_variable(&name, is_const)
+        line: usize,
+    ) -> Result<(), ScopeError> {
+        match self.scopes.last_mut() {
+            Some(scope) => scope.add_variable(&name, is_const, line)?,
+            None => return Err(ScopeError::new("No scope to add variable to".into(), 0)),
+        }
+        Ok(())
     }
     pub fn set_variable(
         &mut self,
         name: &String,
         value: Rc<Value>,
-    ) -> Result<(), Box<dyn std::error::Error>> {
+        line: usize,
+    ) -> Result<(), ScopeError> {
         let mut i: isize = self.scopes.len() as isize - 1;
         while i >= 0 {
             let scope = &mut self.scopes[i as usize];
@@ -237,11 +254,17 @@ impl ScopeChain {
                 continue;
             }
             if !can_set.unwrap() {
-                return Err(format!("Cannot change const variable {}", name).into());
+                return Err(ScopeError::new(
+                    format!("Cannot change const variable {}", name).into(),
+                    line,
+                ));
             } else {
                 return Ok(());
             }
         }
-        Err(format!("Variable {} not found", name).into())
+        Err(ScopeError::new(
+            format!("Variable {} not found", name).into(),
+            line,
+        ))
     }
 }
