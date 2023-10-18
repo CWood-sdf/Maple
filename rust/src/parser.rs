@@ -17,6 +17,23 @@ pub trait Unpack<T> {
         ast: &AST,
     ) -> Result<Rc<Value>, Box<RuntimeError>>;
 }
+impl Unpack<Rc<Value>> for Result<Rc<Value>, Box<RuntimeError>> {
+    fn unpack(&self, _scope_chain: &ScopeChain, _line: usize) -> Result<Rc<Value>, ScopeError> {
+        panic!("Yo this is never gonna be implemented")
+    }
+    fn unpack_and_transform(
+        &self,
+        scope_chain: &ScopeChain,
+        line: usize,
+        ast: &AST,
+    ) -> Result<Rc<Value>, Box<RuntimeError>> {
+        match self {
+            Ok(value) => Ok(value.unpack_and_transform(scope_chain, line, ast)?),
+            Err(e) => Err(e.clone()),
+        }
+    }
+}
+
 impl Unpack<Rc<Value>> for Rc<Value> {
     fn unpack(&self, scope_chain: &ScopeChain, line: usize) -> Result<Rc<Value>, ScopeError> {
         match self.as_ref() {
@@ -40,7 +57,7 @@ impl Unpack<Rc<Value>> for Rc<Value> {
         let value = self.unpack(scope_chain, line);
         match value {
             Ok(value) => Ok(value),
-            Err(e) => Err(Box::new(e.to_runtime_error(ast.clone()))),
+            Err(e) => Err(Box::new(e.to_runtime_error().add_base_ast(ast.clone()))),
         }
     }
 }

@@ -72,7 +72,6 @@ impl ParserError {
 pub struct RuntimeError {
     msg: String,
     line: usize,
-    current_ast: AST,
     base_asts: Vec<AST>,
 }
 
@@ -86,10 +85,9 @@ impl std::fmt::Display for RuntimeError {
             .collect::<Vec<String>>();
         write!(
             f,
-            "\nRuntime error at line {}: {}\n while evaluating: {:?}\n while evaluating: {}",
+            "\nRuntime error at line {}: {}\n while evaluating: {}",
             self.line,
             self.msg,
-            self.current_ast.pretty_print(),
             ast_and_line.join("\n while evaluating: ")
         )
     }
@@ -98,16 +96,16 @@ impl std::fmt::Display for RuntimeError {
 impl std::error::Error for RuntimeError {}
 
 impl RuntimeError {
-    pub fn new(msg: String, line: usize, current_ast: AST) -> RuntimeError {
+    pub fn new(msg: String, line: usize) -> RuntimeError {
         RuntimeError {
             msg,
             line,
-            current_ast,
             base_asts: vec![],
         }
     }
-    pub fn add_base_ast(&mut self, base_ast: AST) {
+    pub fn add_base_ast(&mut self, base_ast: AST) -> Self {
         self.base_asts.push(base_ast);
+        self.clone()
     }
 }
 
@@ -138,7 +136,7 @@ impl ScopeError {
     pub fn new(msg: String, line: usize) -> ScopeError {
         ScopeError { msg, line }
     }
-    pub fn to_runtime_error(&self, current_ast: AST) -> RuntimeError {
-        RuntimeError::new(self.msg.clone(), self.line, current_ast)
+    pub fn to_runtime_error(&self) -> RuntimeError {
+        RuntimeError::new(self.msg.clone(), self.line)
     }
 }

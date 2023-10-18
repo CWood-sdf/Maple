@@ -7,17 +7,17 @@ use crate::ScopeChain;
 use std::rc::Rc;
 
 pub trait ConvertScopeErrorResult<T> {
-    fn to_runtime_error(&self, ast: &AST) -> Result<T, Box<RuntimeError>>;
+    fn to_runtime_error(&self) -> Result<T, Box<RuntimeError>>;
 }
 
 impl<T> ConvertScopeErrorResult<T> for Result<T, ScopeError>
 where
     T: Copy,
 {
-    fn to_runtime_error(&self, ast: &AST) -> Result<T, Box<RuntimeError>> {
+    fn to_runtime_error(&self) -> Result<T, Box<RuntimeError>> {
         match self {
             Ok(v) => Ok(*v),
-            Err(e) => Err(Box::new(e.to_runtime_error(ast.clone()))),
+            Err(e) => Err(Box::new(e.to_runtime_error())),
         }
     }
 }
@@ -75,9 +75,15 @@ impl FunctionLiteral {
         &self,
         scope_chain: &mut ScopeChain,
         params: &Vec<Box<AST>>,
-        call_ast: &AST,
         line: usize,
     ) -> Result<Rc<Value>, Box<RuntimeError>> {
+        let params_value = params
+            .iter()
+            .map(|ast| {
+                ast.get_value(scope_chain)
+                    .unpack_and_transform(scope_chain, line, ast)
+            })
+            .collect::<Vec<Result<Rc<Value>, Box<RuntimeError>>>>();
         scope_chain.add_fn_scope(&self.closure);
         if params.len() != self.params.len() {
             return Err(Box::new(RuntimeError::new(
@@ -87,18 +93,16 @@ impl FunctionLiteral {
                     params.len()
                 ),
                 line,
-                call_ast.clone(),
             )));
         }
         for (i, param) in self.params.iter().enumerate() {
             scope_chain
                 .add_variable(param, false, line)
-                .to_runtime_error(call_ast)?;
-            let param_value = params[i].get_value(scope_chain)?;
-            let param_unpacked = param_value.unpack_and_transform(scope_chain, line, &params[i])?;
+                .to_runtime_error()?;
+            let param_value = params_value[i].clone()?;
             scope_chain
-                .set_variable(param, param_unpacked, line)
-                .to_runtime_error(call_ast)?;
+                .set_variable(param, param_value, line)
+                .to_runtime_error()?;
         }
         for ast in self.body.iter() {
             ast.get_value(scope_chain)?;
@@ -109,7 +113,7 @@ impl FunctionLiteral {
         }
         match scope_chain.pop_fn_scope(line) {
             Ok(_) => (),
-            Err(e) => return Err(Box::new(e.to_runtime_error(call_ast.clone()))),
+            Err(e) => return Err(Box::new(e.to_runtime_error())),
         };
         match scope_chain.get_return_register() {
             ReturnType::None => Ok(Rc::new(Value::Undefined)),
@@ -120,12 +124,10 @@ impl FunctionLiteral {
             ReturnType::Break => Err(Box::new(RuntimeError::new(
                 "Cannot call 'break' inside a function".into(),
                 line,
-                call_ast.clone(),
             ))),
             ReturnType::Continue => Err(Box::new(RuntimeError::new(
                 "Cannot call 'continue' inside a function".into(),
                 line,
-                call_ast.clone(),
             ))),
         }
     }
@@ -266,7 +268,6 @@ impl AST {
                         left_val.pretty_type(scope_chain, left.get_line())
                     ),
                     left.get_line(),
-                    left.as_ref().clone(),
                 )))
             }
         };
@@ -285,7 +286,6 @@ impl AST {
                     right_val.pretty_type(scope_chain, right.get_line())
                 ),
                 right.get_line(),
-                right.as_ref().clone(),
             ))),
         }
     }
@@ -310,7 +310,6 @@ impl AST {
                         left_val.pretty_type(scope_chain, left.get_line())
                     ),
                     left.get_line(),
-                    left.as_ref().clone(),
                 )))
             }
         };
@@ -329,7 +328,6 @@ impl AST {
                     right_val.pretty_type(scope_chain, right.get_line())
                 ),
                 right.get_line(),
-                right.as_ref().clone(),
             ))),
         }
     }
@@ -375,7 +373,6 @@ impl AST {
                     right_val.pretty_type(scope_chain, right.get_line())
                 ),
                 left.get_line(),
-                left.as_ref().clone(),
             ))),
         }
     }
@@ -429,14 +426,13 @@ impl AST {
             Value::Variable(name) => {
                 match scope_chain.set_variable(&name, right_val, left.get_line()) {
                     Ok(_) => (),
-                    Err(e) => return Err(Box::new(e.to_runtime_error(left.as_ref().clone()))),
+                    Err(e) => return Err(Box::new(e.to_runtime_error())),
                 };
                 Ok(left_val)
             }
             _ => Err(Box::new(RuntimeError::new(
                 "Cannot assign to a non-variable".into(),
                 left.get_line(),
-                left.as_ref().clone(),
             ))),
         }
     }
@@ -475,7 +471,6 @@ impl AST {
                     right_val.pretty_type(scope_chain, right.get_line())
                 ),
                 left.get_line(),
-                left.as_ref().clone(),
             ))),
         }
     }
@@ -512,7 +507,6 @@ impl AST {
                     right_val.pretty_type(scope_chain, right.get_line())
                 ),
                 left.get_line(),
-                left.as_ref().clone(),
             ))),
         }
     }
@@ -549,7 +543,6 @@ impl AST {
                     right_val.pretty_type(scope_chain, right.get_line())
                 ),
                 left.get_line(),
-                left.as_ref().clone(),
             ))),
         }
     }
@@ -588,7 +581,6 @@ impl AST {
                     right_val.pretty_type(scope_chain, right.get_line())
                 ),
                 left.get_line(),
-                left.as_ref().clone(),
             ))),
         }
     }
@@ -607,17 +599,16 @@ impl AST {
                 )?;
                 if match scope_chain.is_const(&name, left.get_line()) {
                     Ok(v) => v,
-                    Err(e) => return Err(Box::new(e.to_runtime_error(left.as_ref().clone()))),
+                    Err(e) => return Err(Box::new(e.to_runtime_error())),
                 } {
                     return Err(Box::new(RuntimeError::new(
                         format!("Cannot change const variable {}", name),
                         left.get_line(),
-                        left.as_ref().clone(),
                     )));
                 }
                 let a = match scope_chain.get_variable(&name, left.get_line()) {
                     Ok(v) => v,
-                    Err(e) => return Err(Box::new(e.to_runtime_error(left.as_ref().clone()))),
+                    Err(e) => return Err(Box::new(e.to_runtime_error())),
                 };
                 let a_ptr = Rc::<Value>::as_ptr(&a) as *mut Value;
                 let b = right_val.unpack_and_transform(scope_chain, right.get_line(), right)?;
@@ -651,7 +642,6 @@ impl AST {
                                 b.pretty_type(scope_chain, right.get_line())
                             ),
                             left.get_line(),
-                            left.as_ref().clone(),
                         )));
                     }
                 };
@@ -660,7 +650,6 @@ impl AST {
             _ => Err(Box::new(RuntimeError::new(
                 "Cannot assign to a non-variable in +=".into(),
                 left.get_line(),
-                left.as_ref().clone(),
             ))),
         }
     }
@@ -676,7 +665,7 @@ impl AST {
         )?;
         match cond.as_ref() {
             Value::Boolean(true) => {
-                scope_chain.add_scope().to_runtime_error(if_lit_ast)?;
+                scope_chain.add_scope().to_runtime_error()?;
                 for ast in if_lit.body.iter() {
                     ast.get_value(scope_chain)?;
                     match scope_chain.get_return_register() {
@@ -684,17 +673,19 @@ impl AST {
                         _ => break,
                     }
                 }
-                scope_chain.pop_scope().to_runtime_error(if_lit_ast)?;
+                scope_chain.pop_scope().to_runtime_error()?;
                 // if ignores return register, so we just let it pass through
                 return Ok(Rc::new(Value::Undefined));
             }
             Value::Boolean(false) => (),
             _ => {
-                return Err(Box::new(RuntimeError::new(
-                    "If condition must be a boolean".into(),
-                    if_lit.cond.get_line(),
-                    if_lit.cond.as_ref().clone(),
-                )))
+                return Err(Box::new(
+                    RuntimeError::new(
+                        "If condition must be a boolean".into(),
+                        if_lit.cond.get_line(),
+                    )
+                    .add_base_ast(if_lit.cond.as_ref().clone()),
+                ))
             }
         }
         for (_, elseif) in if_lit.elseifs.iter().enumerate() {
@@ -705,7 +696,7 @@ impl AST {
             )?;
             match cond.as_ref() {
                 Value::Boolean(true) => {
-                    scope_chain.add_scope().to_runtime_error(if_lit_ast)?;
+                    scope_chain.add_scope().to_runtime_error()?;
                     for ast in elseif.1.iter() {
                         ast.get_value(scope_chain)?;
                         match scope_chain.get_return_register() {
@@ -713,21 +704,23 @@ impl AST {
                             _ => break,
                         }
                     }
-                    scope_chain.pop_scope().to_runtime_error(if_lit_ast)?;
+                    scope_chain.pop_scope().to_runtime_error()?;
                     return Ok(Rc::new(Value::Undefined));
                 }
                 Value::Boolean(false) => (),
                 _ => {
-                    return Err(Box::new(RuntimeError::new(
-                        "If condition must be a boolean".into(),
-                        elseif.0.get_line(),
-                        elseif.0.as_ref().clone(),
-                    )))
+                    return Err(Box::new(
+                        RuntimeError::new(
+                            "If condition must be a boolean".into(),
+                            elseif.0.get_line(),
+                        )
+                        .add_base_ast(elseif.0.as_ref().clone()),
+                    ))
                 }
             }
         }
         if let Some(else_body) = &if_lit.else_body {
-            scope_chain.add_scope().to_runtime_error(if_lit_ast)?;
+            scope_chain.add_scope().to_runtime_error()?;
             for ast in else_body.iter() {
                 ast.get_value(scope_chain)?;
                 match scope_chain.get_return_register() {
@@ -735,7 +728,7 @@ impl AST {
                     _ => break,
                 }
             }
-            scope_chain.pop_scope().to_runtime_error(if_lit_ast)?;
+            scope_chain.pop_scope().to_runtime_error()?;
         }
         return Ok(Rc::new(Value::Undefined));
     }
@@ -752,7 +745,7 @@ impl AST {
             )?;
             match cond_val.as_ref() {
                 Value::Boolean(true) => {
-                    scope_chain.add_scope().to_runtime_error(cond)?;
+                    scope_chain.add_scope().to_runtime_error()?;
                     for ast in block.iter() {
                         ast.get_value(scope_chain)?;
                         match scope_chain.get_return_register() {
@@ -760,7 +753,7 @@ impl AST {
                             _ => break,
                         }
                     }
-                    scope_chain.pop_scope().to_runtime_error(cond)?;
+                    scope_chain.pop_scope().to_runtime_error()?;
                     match scope_chain.get_return_register() {
                         ReturnType::None => (),
                         ReturnType::Break => {
@@ -778,7 +771,6 @@ impl AST {
                     return Err(Box::new(RuntimeError::new(
                         "While condition must be a boolean".into(),
                         cond.get_line(),
-                        cond.as_ref().clone(),
                     )))
                 }
             }
@@ -794,44 +786,44 @@ impl AST {
             .unpack_and_transform(scope_chain, v.get_line(), v)?;
         scope_chain
             .set_return_register(ReturnType::Return(v_val))
-            .to_runtime_error(v.as_ref())?;
+            .to_runtime_error()?;
         Ok(Rc::new(Value::Undefined))
     }
 
     pub fn get_value(&self, scope_chain: &mut ScopeChain) -> Result<Rc<Value>, Box<RuntimeError>> {
         let ret = match self {
             AST::Return(v, _) => AST::eval_return(v, scope_chain),
-            AST::Break(_) => {
-                scope_chain
-                    .set_return_register(ReturnType::Break)
-                    .to_runtime_error(self)?;
-                Ok(Rc::new(Value::Undefined))
-            }
+            AST::Break(_) => match scope_chain
+                .set_return_register(ReturnType::Break)
+                .to_runtime_error()
+            {
+                Ok(_) => Ok(Rc::new(Value::Undefined)),
+                Err(e) => return Err(e),
+            },
             AST::Continue(_) => {
                 scope_chain
                     .set_return_register(ReturnType::Continue)
-                    .to_runtime_error(self)?;
+                    .to_runtime_error()?;
                 Ok(Rc::new(Value::Undefined))
             }
             AST::FunctionCall(func, params, line) => {
                 let func =
-                    func.get_value(scope_chain)?
+                    func.get_value(scope_chain)
                         .unpack_and_transform(scope_chain, *line, self)?;
                 match func.as_ref() {
-                    Value::Function(func) => func.call(scope_chain, params, self, *line),
+                    Value::Function(func) => func.call(scope_chain, params, *line),
                     Value::BuiltinFunction(f, arg_len) => {
                         if arg_len != &params.len() {
                             return Err(Box::new(RuntimeError::new(
                                 format!("Expected {} arguments, got {}", arg_len, params.len()),
                                 *line,
-                                self.clone(),
                             )));
                         }
                         // convert params to values
                         let mut params = params
                             .iter()
                             .map(|ast| {
-                                ast.get_value(scope_chain)?.unpack_and_transform(
+                                ast.get_value(scope_chain).unpack_and_transform(
                                     scope_chain,
                                     ast.get_line(),
                                     ast,
@@ -853,7 +845,6 @@ impl AST {
                         return Err(Box::new(RuntimeError::new(
                             "Cannot call a non-function".into(),
                             *line,
-                            self.clone(),
                         )))
                     }
                 }
@@ -867,7 +858,7 @@ impl AST {
             AST::VariableDeclaration(name, is_const, _) => {
                 match scope_chain
                     .add_variable(name, *is_const, self.get_line())
-                    .to_runtime_error(self)
+                    .to_runtime_error()
                 {
                     Ok(_) => Ok(Rc::new(Value::Variable(name.clone()))),
                     Err(e) => return Err(e),
@@ -901,21 +892,18 @@ impl AST {
     pub fn interpret(&self, scope_chain: &mut ScopeChain) -> Result<(), Box<RuntimeError>> {
         self.get_value(scope_chain)?;
         match scope_chain.get_return_register() {
-            ReturnType::Return(_) => Err(Box::new(RuntimeError::new(
-                "Return statement at top level".into(),
-                self.get_line(),
-                self.clone(),
-            ))),
-            ReturnType::Continue => Err(Box::new(RuntimeError::new(
-                "Continue statement at top level".into(),
-                self.get_line(),
-                self.clone(),
-            ))),
-            ReturnType::Break => Err(Box::new(RuntimeError::new(
-                "Break statement at top level".into(),
-                self.get_line(),
-                self.clone(),
-            ))),
+            ReturnType::Return(_) => Err(Box::new(
+                RuntimeError::new("Return statement at top level".into(), self.get_line())
+                    .add_base_ast(self.clone()),
+            )),
+            ReturnType::Continue => Err(Box::new(
+                RuntimeError::new("Continue statement at top level".into(), self.get_line())
+                    .add_base_ast(self.clone()),
+            )),
+            ReturnType::Break => Err(Box::new(
+                RuntimeError::new("Break statement at top level".into(), self.get_line())
+                    .add_base_ast(self.clone()),
+            )),
             ReturnType::None => Ok(()),
         }
     }

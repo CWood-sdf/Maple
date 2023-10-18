@@ -1,153 +1,18 @@
 mod lexer;
 // use crate::lexer::{Lexer, Token};
 mod ast;
+mod builtins;
 mod error;
 mod parser;
 
 mod scopechain;
-use std::{error::Error, rc::Rc};
+use std::error::Error;
 
-use ast::{ConvertScopeErrorResult, AST};
-use error::RuntimeError;
-use parser::{Unpack, Value};
+use builtins::create_builtins;
 use scopechain::ScopeChain;
 
 use crate::{error::MapleError, parser::Parser};
 
-fn create_builtins(scope_chain: &mut ScopeChain) -> Result<(), Box<RuntimeError>> {
-    let ast: AST = AST::Break(0);
-    let println_name = "println".to_string();
-    scope_chain
-        .add_variable(&println_name, true, 0)
-        .to_runtime_error(&ast)?;
-    scope_chain
-        .set_variable(
-            &println_name,
-            Rc::new(Value::BuiltinFunction(
-                |args, ast, scopechain, line| {
-                    match args[0]
-                        .unpack_and_transform(scopechain, line, ast)?
-                        .as_ref()
-                    {
-                        &Value::String(ref s) => {
-                            println!("{}", s);
-                        }
-                        &Value::Number(ref n) => {
-                            println!("{}", n);
-                        }
-                        &Value::Boolean(ref b) => {
-                            println!("{}", b);
-                        }
-                        &Value::Undefined => {
-                            println!("undefined");
-                        }
-                        &Value::BuiltinFunction(_, len) => {
-                            println!("builtin_function(<{}>)", len);
-                        }
-                        &Value::Function(ref lit) => {
-                            println!("{}", lit.pretty_print());
-                        }
-                        &Value::Char(ref c) => {
-                            println!("{}", c);
-                        }
-                        &Value::Variable(_) => {
-                            return Err(Box::new(RuntimeError::new(
-                                "Cannot println variable".to_string(),
-                                line,
-                                ast.clone(),
-                            )));
-                        }
-                    };
-                    Ok(Rc::new(Value::Undefined))
-                },
-                1,
-            )),
-            0,
-        )
-        .to_runtime_error(&ast)?;
-    let print_name = "print".to_string();
-    scope_chain
-        .add_variable(&print_name, true, 0)
-        .to_runtime_error(&ast)?;
-    scope_chain
-        .set_variable(
-            &print_name,
-            Rc::new(Value::BuiltinFunction(
-                |args, ast, scopechain, line| {
-                    match args[0]
-                        .unpack_and_transform(scopechain, line, ast)?
-                        .as_ref()
-                    {
-                        &Value::String(ref s) => {
-                            print!("{}", s);
-                        }
-                        &Value::Number(ref n) => {
-                            print!("{}", n);
-                        }
-                        &Value::Boolean(ref b) => {
-                            print!("{}", b);
-                        }
-                        &Value::Undefined => {
-                            print!("undefined");
-                        }
-                        &Value::BuiltinFunction(_, len) => {
-                            print!("builtin_function(<{}>)", len);
-                        }
-                        &Value::Function(ref lit) => {
-                            print!("{}", lit.pretty_print());
-                        }
-                        &Value::Char(ref c) => {
-                            print!("{}", c);
-                        }
-                        &Value::Variable(_) => {
-                            return Err(Box::new(RuntimeError::new(
-                                "Cannot print variable".to_string(),
-                                line,
-                                ast.clone(),
-                            )));
-                        }
-                    };
-                    Ok(Rc::new(Value::Undefined))
-                },
-                1,
-            )),
-            0,
-        )
-        .to_runtime_error(&ast)?;
-    let concat_name = "concat".to_string();
-    let concat_fn = |args: Vec<Rc<Value>>, ast: &AST, scopechain: &ScopeChain, line| {
-        match (args[0].unpack_and_transform(scopechain, line, ast)?.as_ref(), args[1].unpack_and_transform(scopechain, line, ast)?.as_ref()) {
-                    (Value::String(ref s1), Value::String(ref s2)) => {
-                        Ok(Rc::new(Value::String(format!("{}{}", s1, s2))))
-                    }
-                    (Value::Char(ref c1), Value::Char(ref c2)) => {
-                        Ok(Rc::new(Value::String(format!("{}{}", c1, c2))))
-                    }
-                    (Value::Char(ref c1), Value::String(ref s2)) => {
-                        Ok(Rc::new(Value::String(format!("{}{}", c1, s2))))
-                    }
-                    (Value::String(ref s1), Value::Char(ref c2)) => {
-                        Ok(Rc::new(Value::String(format!("{}{}", s1, c2))))
-                    }
-                    (vl, vr) => Err(Box::new(RuntimeError::new(
-                        format!("Cannot concat values that are not a character or string, note: given types are {} and {}", vl.pretty_type(scopechain, line), vr.pretty_type(scopechain, line)),
-                        line,
-                        ast.clone(),
-                    ))),
-                }
-    };
-    scope_chain
-        .add_variable(&concat_name, true, 0)
-        .to_runtime_error(&ast)?;
-    scope_chain
-        .set_variable(
-            &concat_name,
-            Rc::new(Value::BuiltinFunction(concat_fn, 2)),
-            0,
-        )
-        .to_runtime_error(&ast)?;
-    Ok(())
-}
 fn time_interpreter(contents: String, demo: bool) -> Result<f64, Box<dyn Error>> {
     let mut parser = Parser::new(contents);
     let mut scope_chain: ScopeChain = ScopeChain::new();
@@ -222,7 +87,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     let timer = std::time::Instant::now();
     times.reserve(1000000);
     let start = std::time::Instant::now();
-    while amount < 1 {
+    while amount < 1000000 {
         let time = match time_interpreter(contents.clone(), amount == 0) {
             Ok(time) => time,
             Err(_) => {
