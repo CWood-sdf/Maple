@@ -21,6 +21,7 @@ pub enum Token {
     Char(char),
     String(String),
     Ident(String),
+    Dot,
     True,
     False,
     Var,
@@ -382,6 +383,10 @@ impl Lexer {
                 ' ' | '\t' | '\r' => {
                     self.i += 1;
                     self.get_next_token()?
+                }
+                '.' => {
+                    self.i += 1;
+                    Token::Dot
                 }
                 ',' => {
                     self.i += 1;

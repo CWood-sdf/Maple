@@ -1,5 +1,6 @@
 // turn off dead code warnings
 #![allow(dead_code)]
+use core::fmt;
 use std::rc::Rc;
 
 use crate::error::{MapleError, ParserError, RuntimeError, ScopeError};
@@ -8,6 +9,53 @@ use crate::ast::{FunctionLiteral, IfLiteral, AST};
 use crate::lexer::{Assoc, Lexer, Token};
 use crate::scopechain::ScopeChain;
 
+#[derive(Debug, Clone, PartialEq, PartialOrd)]
+pub enum ObjectKey {
+    String(String),
+    Number(f64),
+}
+impl fmt::Display for ObjectKey {
+    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+        match self {
+            ObjectKey::String(s) => write!(f, "{}", s),
+            ObjectKey::Number(n) => write!(f, "{}", n),
+        }
+    }
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct Object {
+    pub fields: Vec<(ObjectKey, Rc<Value>)>,
+}
+
+impl Object {
+    pub fn get(&self, key: ObjectKey, line: usize) -> Result<Rc<Value>, Box<dyn MapleError>> {
+        for (k, v) in self.fields.iter() {
+            if k == &key {
+                return Ok(v.clone());
+            }
+        }
+        Err(Box::new(RuntimeError::new(
+            format!("Object does not have key {:?}", key),
+            line,
+        )))
+    }
+    pub fn set(&mut self, key: ObjectKey, value: Rc<Value>) {
+        for (k, v) in self.fields.iter_mut() {
+            if k == &key {
+                let val_ptr = Rc::<Value>::as_ptr(&v) as *mut Value;
+                unsafe {
+                    *val_ptr = value.as_ref().clone();
+                }
+                return;
+            }
+        }
+        self.fields.push((key, value));
+    }
+    pub fn new() -> Object {
+        Object { fields: vec![] }
+    }
+}
 pub trait Unpack<T> {
     fn unpack(&self, scope_chain: &ScopeChain, line: usize) -> Result<T, ScopeError>;
     fn unpack_and_transform(
@@ -44,6 +92,20 @@ impl Unpack<Rc<Value>> for Rc<Value> {
                     Err(e) => Err(e),
                 }
             }
+            Value::ObjectAccess(v, key) => match v.as_ref() {
+                Value::Object(l) => match l.get(key.clone(), line) {
+                    Ok(value) => value.unpack(scope_chain, line),
+                    Err(_) => Err(ScopeError::new(
+                        format!("Object does not have key {}", key),
+                        line,
+                    )),
+                },
+
+                _ => Err(ScopeError::new(
+                    "Cannot get object access of non-object".into(),
+                    line,
+                )),
+            },
             // Value::Undefined => Err("Unpacking an undefined value".into()),
             _ => Ok(self.clone()),
         }
@@ -69,6 +131,8 @@ pub enum Value {
     Variable(String),
     Char(char),
     Function(FunctionLiteral),
+    Object(Object),
+    ObjectAccess(Rc<Value>, ObjectKey),
     BuiltinFunction(
         fn(Vec<Rc<Value>>, &AST, &ScopeChain, usize) -> Result<Rc<Value>, Box<RuntimeError>>,
         usize,
@@ -78,6 +142,14 @@ pub enum Value {
 impl Value {
     pub fn pretty_type(&self, scope_chain: &ScopeChain, line: usize) -> String {
         match self {
+            Value::ObjectAccess(obj, key) => match obj.as_ref() {
+                Value::Object(l) => l
+                    .get(key.clone(), line)
+                    .unwrap()
+                    .pretty_type(scope_chain, line),
+                _ => format!("unknown type"),
+            },
+            Value::Object(_) => "object".to_string(),
             Value::BuiltinFunction(_, count) => format!("builtin_function(<{}>)", count),
             Value::Function(_) => "function".to_string(),
             Value::String(_) => "string".to_string(),
@@ -219,9 +291,98 @@ impl Parser {
             )))
         }
     }
+    fn parse_object_literal(&mut self) -> Result<Box<AST>, Box<dyn MapleError>> {
+        _ = self.lexer.get_next_token()?;
+        let mut fields: Vec<(ObjectKey, Box<AST>)> = vec![];
+        loop {
+            while self.lexer.get_current_token() == Token::EndOfStatement {
+                self.lexer.get_next_token()?;
+            }
+            if self.lexer.get_current_token() == Token::RightBrace {
+                break;
+            }
+            let name = match self.lexer.get_current_token() {
+                Token::Ident(name) => ObjectKey::String(name),
+                Token::Number(num) => ObjectKey::Number(num),
+                _ => {
+                    return Err(Box::new(ParserError::new(
+                        format!(
+                            "Expected identifier, got {:?} in object literal",
+                            self.lexer.get_current_token()
+                        ),
+                        self.lexer.get_line(),
+                    )))
+                }
+            };
+            match self.lexer.get_next_token()? {
+                Token::OpEq => (),
+                _ => {
+                    return Err(Box::new(ParserError::new(
+                        format!(
+                            "Expected =, got {:?} in object literal",
+                            self.lexer.get_current_token()
+                        ),
+                        self.lexer.get_line(),
+                    )))
+                }
+            }
+            self.lexer.get_next_token()?;
+            let expr = self.parse_clause(1000)?;
+            fields.push((name, expr));
+            match self.lexer.get_next_token()? {
+                Token::RightBrace => break,
+                Token::Comma | Token::EndOfStatement => (),
+                _ => {
+                    return Err(Box::new(ParserError::new(
+                        format!(
+                            "Expected comma or right brace, got {:?} in object literal",
+                            self.lexer.get_current_token()
+                        ),
+                        self.lexer.get_line(),
+                    )))
+                }
+            }
+            self.lexer.get_next_token()?;
+        }
+        Ok(Box::new(AST::ObjectLiteral(fields, self.lexer.get_line())))
+    }
+    fn parse_array_literal(&mut self) -> Result<Box<AST>, Box<dyn MapleError>> {
+        self.lexer.get_next_token()?;
+        let mut fields: Vec<(ObjectKey, Box<AST>)> = vec![];
+        let mut index = 0f64;
+        loop {
+            while self.lexer.get_current_token() == Token::EndOfStatement {
+                self.lexer.get_next_token()?;
+            }
+            if self.lexer.get_current_token() == Token::RightSquare {
+                break;
+            }
+            let expr = self.parse_clause(1000)?;
+            fields.push((ObjectKey::Number(index), expr));
+            match self.lexer.get_next_token()? {
+                Token::RightSquare => break,
+                Token::Comma | Token::EndOfStatement => (),
+                _ => {
+                    return Err(Box::new(ParserError::new(
+                        format!(
+                            "Expected comma or right brace, got {:?} in object literal",
+                            self.lexer.get_current_token()
+                        ),
+                        self.lexer.get_line(),
+                    )))
+                }
+            }
+            self.lexer.get_next_token()?;
+            index += 1.0;
+        }
+        Ok(Box::new(AST::ObjectLiteral(fields, self.lexer.get_line())))
+    }
     fn parse_clause(&mut self, max_op_prec: i32) -> Result<Box<AST>, Box<dyn MapleError>> {
         let mut ret: Option<Box<AST>>;
         match self.lexer.get_current_token() {
+            Token::LeftSquare => {
+                ret = Some(self.parse_array_literal()?);
+            }
             Token::Fn => ret = Some(self.parse_function(true)?),
             Token::Number(num) => {
                 ret = Some(Box::new(AST::NumberLiteral(num, self.lexer.get_line())))
@@ -234,6 +395,9 @@ impl Parser {
             Token::False => ret = Some(Box::new(AST::BooleanLiteral(false, self.lexer.get_line()))),
             Token::Ident(name) => {
                 ret = Some(Box::new(AST::VariableAccess(name, self.lexer.get_line())))
+            }
+            Token::LeftBrace => {
+                ret = Some(self.parse_object_literal()?);
             }
             Token::LeftParen => {
                 _ = self.lexer.get_next_token()?;
@@ -264,33 +428,82 @@ impl Parser {
                 )))
             }
         }
-        if self.lexer.peek_next_token()? == Token::LeftParen {
-            _ = self.lexer.get_next_token()?;
-            let mut args: Vec<Box<AST>> = vec![];
-            loop {
-                if args.len() == 0 && self.lexer.get_next_token()? == Token::RightParen {
-                    break;
+        loop {
+            match self.lexer.peek_next_token()? {
+                Token::LeftParen => {
+                    _ = self.lexer.get_next_token()?;
+                    let mut args: Vec<Box<AST>> = vec![];
+                    loop {
+                        if args.len() == 0 && self.lexer.get_next_token()? == Token::RightParen {
+                            break;
+                        }
+                        args.push(self.parse_clause(1000)?);
+                        match self.lexer.get_next_token()? {
+                            Token::RightParen => break,
+                            Token::Comma => _ = self.lexer.get_next_token()?,
+                            _ => {
+                                return Err(Box::new(ParserError::new(
+                                    format!(
+                                        "Expected comma or right paren, got {:?} in function call",
+                                        self.lexer.get_current_token()
+                                    ),
+                                    self.lexer.get_line(),
+                                )))
+                            }
+                        }
+                    }
+                    ret = Some(Box::new(AST::FunctionCall(
+                        ret.unwrap(),
+                        args,
+                        self.lexer.get_line(),
+                    )));
                 }
-                args.push(self.parse_clause(1000)?);
-                match self.lexer.get_next_token()? {
-                    Token::RightParen => break,
-                    Token::Comma => _ = self.lexer.get_next_token()?,
-                    _ => {
-                        return Err(Box::new(ParserError::new(
-                            format!(
-                                "Expected comma or right paren, got {:?} in function call",
-                                self.lexer.get_current_token()
-                            ),
-                            self.lexer.get_line(),
-                        )))
+                Token::LeftSquare => {
+                    _ = self.lexer.get_next_token()?;
+                    _ = self.lexer.get_next_token()?;
+                    let index = self.parse_clause(1000)?;
+                    match self.lexer.get_next_token()? {
+                        Token::RightSquare => (),
+                        _ => {
+                            return Err(Box::new(ParserError::new(
+                                format!(
+                                    "Expected right square bracket, got {:?} on right side of '['",
+                                    self.lexer.get_current_token()
+                                ),
+                                self.lexer.get_line(),
+                            )))
+                        }
+                    }
+                    ret = Some(Box::new(AST::BracketAccess(
+                        ret.unwrap(),
+                        index,
+                        self.lexer.get_line(),
+                    )));
+                }
+                Token::Dot => {
+                    _ = self.lexer.get_next_token()?;
+                    let name = self.lexer.get_next_token()?;
+                    match name {
+                        Token::Ident(name) => {
+                            ret = Some(Box::new(AST::DotAccess(
+                                ret.unwrap(),
+                                name,
+                                self.lexer.get_line(),
+                            )));
+                        }
+                        _ => {
+                            return Err(Box::new(ParserError::new(
+                                format!(
+                                    "Expected identifier, got {:?} on right side of '.'",
+                                    self.lexer.get_current_token()
+                                ),
+                                self.lexer.get_line(),
+                            )))
+                        }
                     }
                 }
+                _ => break,
             }
-            ret = Some(Box::new(AST::FunctionCall(
-                ret.unwrap(),
-                args,
-                self.lexer.get_line(),
-            )));
         }
         while self.lexer.peek_next_token()?.is_op()
             && usable_operator(&self.lexer.peek_next_token()?, max_op_prec, &self.lexer)?

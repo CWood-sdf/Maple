@@ -17,6 +17,8 @@ fn builtin_println(
         .unpack_and_transform(scopechain, line, ast)?
         .as_ref()
     {
+        &Value::Object(_) => todo!(),
+
         &Value::String(ref s) => {
             println!("{}", s);
         }
@@ -44,6 +46,12 @@ fn builtin_println(
                 line,
             )));
         }
+        &Value::ObjectAccess(_,_) => {
+            return Err(Box::new(RuntimeError::new(
+                "Cannot println object access".to_string(),
+                line,
+            )));
+        }
     };
     Ok(Rc::new(Value::Undefined))
 }
@@ -58,6 +66,8 @@ fn builtin_print(
         .unpack_and_transform(scopechain, line, ast)?
         .as_ref()
     {
+        &Value::Object(_) => todo!(),
+
         &Value::String(ref s) => {
             print!("{}", s);
         }
@@ -78,6 +88,12 @@ fn builtin_print(
         }
         &Value::Char(ref c) => {
             print!("{}", c);
+        }
+        &Value::ObjectAccess(_,_) => {
+            return Err(Box::new(RuntimeError::new(
+                "Cannot print object access".to_string(),
+                line,
+            )));
         }
         &Value::Variable(_) => {
             return Err(Box::new(RuntimeError::new(

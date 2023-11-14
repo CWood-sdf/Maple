@@ -1,22 +1,22 @@
 #![allow(dead_code)]
 use crate::error::{RuntimeError, ScopeError};
-use crate::parser::{Unpack, Value};
+use crate::parser::{Object, ObjectKey, Unpack, Value};
 use crate::scopechain::ReturnType;
 use crate::ScopeChain;
 
 use std::rc::Rc;
 
 pub trait ConvertScopeErrorResult<T> {
-    fn to_runtime_error(&self) -> Result<T, Box<RuntimeError>>;
+    fn to_runtime_error(&self) -> Result<&T, Box<RuntimeError>>;
 }
 
 impl<T> ConvertScopeErrorResult<T> for Result<T, ScopeError>
 where
-    T: Copy,
+    T: Clone,
 {
-    fn to_runtime_error(&self) -> Result<T, Box<RuntimeError>> {
+    fn to_runtime_error(&self) -> Result<&T, Box<RuntimeError>> {
         match self {
-            Ok(v) => Ok(*v),
+            Ok(v) => Ok(v),
             Err(e) => Err(Box::new(e.to_runtime_error())),
         }
     }
@@ -190,6 +190,9 @@ impl IfLiteral {
 // paren is only for pretty printing
 #[derive(Debug, Clone, PartialEq)]
 pub enum AST {
+    DotAccess(Box<AST>, String, usize),
+    BracketAccess(Box<AST>, Box<AST>, usize),
+    ObjectLiteral(Vec<(ObjectKey, Box<AST>)>, usize),
     CharacterLiteral(char, usize),
     StringLiteral(String, usize),
     NumberLiteral(f64, usize),
@@ -220,6 +223,9 @@ pub enum AST {
 impl AST {
     pub fn get_line(&self) -> usize {
         match *self {
+            AST::ObjectLiteral(_, line) => line,
+            AST::DotAccess(_, _, line) => line,
+            AST::BracketAccess(_, _, line) => line,
             AST::CharacterLiteral(_, line) => line,
             AST::StringLiteral(_, line) => line,
             AST::NumberLiteral(_, line) => line,
@@ -429,6 +435,23 @@ impl AST {
                     Err(e) => return Err(Box::new(e.to_runtime_error())),
                 };
                 Ok(left_val)
+            }
+            Value::ObjectAccess(orgobj, key) => {
+                let obj = match orgobj.as_ref() {
+                    Value::Object(obj) => obj as *const Object as *mut Object,
+                    _ => {
+                        return Err(Box::new(RuntimeError::new(
+                            format!("Cannot access field of non-object",),
+                            left.get_line(),
+                        )))
+                    }
+                };
+                unsafe {
+                    obj.as_mut()
+                        .expect("how we get a null pointer in 3 lines")
+                        .set(key.clone(), right_val);
+                }
+                Ok(orgobj.clone())
             }
             _ => Err(Box::new(RuntimeError::new(
                 "Cannot assign to a non-variable".into(),
@@ -792,6 +815,41 @@ impl AST {
 
     pub fn get_value(&self, scope_chain: &mut ScopeChain) -> Result<Rc<Value>, Box<RuntimeError>> {
         let ret = match self {
+            AST::ObjectLiteral(arr, _) => {
+                let mut obj = Object::new();
+                for (key, value) in arr.iter() {
+                    let value = value.get_value(scope_chain)?.unpack_and_transform(
+                        scope_chain,
+                        value.get_line(),
+                        value,
+                    )?;
+                    obj.set(key.clone(), value);
+                }
+                Ok(Rc::new(Value::Object(obj)))
+            }
+            AST::DotAccess(left, name, line) => Ok(Rc::new(Value::ObjectAccess(
+                left.get_value(scope_chain)?
+                    .unpack_and_transform(scope_chain, *line, self)?,
+                ObjectKey::String(name.to_string()),
+            ))),
+            AST::BracketAccess(left, value, line) => {
+                let val = value.get_value(scope_chain)?.unpack_and_transform(
+                    scope_chain,
+                    value.get_line(),
+                    value,
+                )?;
+                let key = match val.as_ref() {
+                    Value::Number(n) => ObjectKey::Number(*n),
+                    Value::String(s) => ObjectKey::String(s.clone()),
+                    Value::Char(c) => ObjectKey::String(c.to_string()),
+                    v => return Err(Box::new(RuntimeError::new(format!("Cannot use type {} as an object key, can only use char, string, or number types", v.pretty_type(scope_chain, *line)), *line))),
+                };
+                Ok(Rc::new(Value::ObjectAccess(
+                    left.get_value(scope_chain)?
+                        .unpack_and_transform(scope_chain, *line, self)?,
+                    key,
+                )))
+            }
             AST::Return(v, _) => AST::eval_return(v, scope_chain),
             AST::Break(_) => match scope_chain
                 .set_return_register(ReturnType::Break)
@@ -910,6 +968,11 @@ impl AST {
 
     pub fn debug_pretty_print(&self) -> String {
         match self {
+            AST::ObjectLiteral(_, _) => todo!(),
+            AST::BracketAccess(l, v, _) => {
+                format!("{}[{}]", l.debug_pretty_print(), v.debug_pretty_print())
+            }
+            AST::DotAccess(l, v, _) => format!("{}.{}", l.debug_pretty_print(), v),
             AST::Return(v, _) => format!("return {}", v.debug_pretty_print()),
             AST::Break(_) => "break".to_string(),
             AST::Continue(_) => "continue".to_string(),
@@ -1027,6 +1090,11 @@ impl AST {
 
     pub fn pretty_print(&self) -> String {
         match self {
+            AST::ObjectLiteral(_, _) => todo!(),
+            AST::BracketAccess(l, v, _) => {
+                format!("{}[{}]", l.pretty_print(), v.pretty_print())
+            }
+            AST::DotAccess(l, v, _) => format!("{}.{}", l.pretty_print(), v),
             AST::Return(v, _) => format!("return {}", v.pretty_print()),
             AST::Break(_) => "break".to_string(),
             AST::Continue(_) => "continue".to_string(),
