@@ -379,6 +379,7 @@ impl Parser {
     }
     fn parse_clause(&mut self, max_op_prec: i32) -> Result<Box<AST>, Box<dyn MapleError>> {
         let mut ret: Option<Box<AST>>;
+
         match self.lexer.get_current_token() {
             Token::LeftSquare => {
                 ret = Some(self.parse_array_literal()?);
@@ -413,6 +414,24 @@ impl Parser {
                                 "Expected right paren, got {:?} while evaluating a parenthese expression",
                                 self.lexer.get_current_token()
                             ),
+                            self.lexer.get_line(),
+                        )))
+                    }
+                }
+            }
+            op if op.is_unary_prefix_op() && op.get_unary_op_prec(&self.lexer)? <= max_op_prec => {
+                self.lexer.get_next_token()?;
+                let innards = self.parse_clause(op.get_unary_op_prec(&self.lexer)?)?;
+                match op {
+                    Token::OpMns => {
+                        ret = Some(Box::new(AST::OpMnsPrefix(innards, self.lexer.get_line())));
+                    }
+                    Token::OpNot => {
+                        ret = Some(Box::new(AST::OpNot(innards, self.lexer.get_line())));
+                    }
+                    _ => {
+                        return Err(Box::new(ParserError::new(
+                            format!("Unusable unary prefix operator {:?}", op),
                             self.lexer.get_line(),
                         )))
                     }
@@ -515,6 +534,7 @@ impl Parser {
             ret = Some(match op {
                 Token::OpEqEq => Box::new(AST::OpEqEq(ret.unwrap(), rhs, self.lexer.get_line())),
                 Token::OpEq => Box::new(AST::OpEq(ret.unwrap(), rhs, self.lexer.get_line())),
+                Token::OpMns => Box::new(AST::OpMns(ret.unwrap(), rhs, self.lexer.get_line())),
                 Token::OpPls => Box::new(AST::OpPls(ret.unwrap(), rhs, self.lexer.get_line())),
                 Token::OpPlsEq => Box::new(AST::OpPlsEq(ret.unwrap(), rhs, self.lexer.get_line())),
                 Token::OpNotEq => Box::new(AST::OpNotEq(ret.unwrap(), rhs, self.lexer.get_line())),

@@ -36,6 +36,7 @@ pub enum Token {
     Continue,
     EndOfStatement,
     OpEq,
+    OpNot,
     OpNotEq,
     OpEqEq,
     OpPls,
@@ -46,6 +47,7 @@ pub enum Token {
     OpGtEq,
     OpAndAnd,
     OpOrOr,
+    OpMns,
     EOF,
     LeftBrace,
     RightBrace,
@@ -69,8 +71,19 @@ impl Token {
             Token::OpEqEq => Ok(10),
             Token::OpNotEq => Ok(10),
             Token::OpPls => Ok(6),
+            Token::OpMns => Ok(6),
             _ => Err(Box::new(ParserError::new(
                 format!("Unknown operator: {:?}", self).into(),
+                lexer.line,
+            ))),
+        }
+    }
+    pub fn get_unary_op_prec(&self, lexer: &Lexer) -> Result<i32, Box<dyn MapleError>> {
+        match self {
+            Token::OpMns => Ok(3),
+            Token::OpNot => Ok(3),
+            _ => Err(Box::new(ParserError::new(
+                format!("Unknown unary operator: {:?}", self).into(),
                 lexer.line,
             ))),
         }
@@ -88,6 +101,7 @@ impl Token {
             Token::OpEqEq => Ok(Assoc::Left),
             Token::OpNotEq => Ok(Assoc::Left),
             Token::OpPls => Ok(Assoc::Left),
+            Token::OpMns => Ok(Assoc::Left),
             _ => Err(Box::new(ParserError::new(
                 format!("Unknown operator: {:?}", self).into(),
                 lexer.line,
@@ -106,7 +120,20 @@ impl Token {
             | Token::OpEq
             | Token::OpNotEq
             | Token::OpEqEq
+            | Token::OpMns
             | Token::OpPls => true,
+            _ => false,
+        }
+    }
+    pub fn is_unary_prefix_op(&self) -> bool {
+        match self {
+            Token::OpMns => true,
+            Token::OpNot => true,
+            _ => false,
+        }
+    }
+    pub fn is_unary_postfix_op(&self) -> bool {
+        match self {
             _ => false,
         }
     }
@@ -396,6 +423,10 @@ impl Lexer {
                     self.i += 2;
                     Token::OpNotEq
                 }
+                '!' => {
+                    self.i += 1;
+                    Token::OpNot
+                }
                 '=' if self.peek_next_char() == '=' => {
                     self.i += 2;
                     Token::OpEqEq
@@ -436,6 +467,10 @@ impl Lexer {
                     self.i += 1;
                     Token::OpGt
                 }
+                '-' => {
+                    self.i += 1;
+                    Token::OpMns
+                }
 
                 '{' => {
                     self.i += 1;
@@ -460,6 +495,13 @@ impl Lexer {
                 ']' => {
                     self.i += 1;
                     Token::RightSquare
+                }
+                '/' if self.peek_next_char() == '/' => {
+                    while self.i < self.input.len() && self.peek_next_char() != '\n' {
+                        self.i += 1;
+                    }
+                    self.i += 1;
+                    Token::EndOfStatement
                 }
                 _ => {
                     return Err(Box::new(LexerError::new(

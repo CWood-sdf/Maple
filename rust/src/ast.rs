@@ -203,17 +203,20 @@ pub enum AST {
     FunctionCall(Box<AST>, Vec<Box<AST>>, usize),
     If(IfLiteral, usize),
     While(Box<AST>, Vec<Box<AST>>, usize),
-    OpPls(Box<AST>, Box<AST>, usize),
-    OpEq(Box<AST>, Box<AST>, usize),
-    OpEqEq(Box<AST>, Box<AST>, usize),
-    OpPlsEq(Box<AST>, Box<AST>, usize),
-    OpNotEq(Box<AST>, Box<AST>, usize),
-    OpAndAnd(Box<AST>, Box<AST>, usize),
-    OpOrOr(Box<AST>, Box<AST>, usize),
-    OpGt(Box<AST>, Box<AST>, usize),
-    OpLt(Box<AST>, Box<AST>, usize),
-    OpGtEq(Box<AST>, Box<AST>, usize),
-    OpLtEq(Box<AST>, Box<AST>, usize),
+    OpPls(Box<AST>, Box<AST>, usize),    // +
+    OpMns(Box<AST>, Box<AST>, usize),    // -
+    OpMnsPrefix(Box<AST>, usize),        // -
+    OpEq(Box<AST>, Box<AST>, usize),     // =
+    OpEqEq(Box<AST>, Box<AST>, usize),   // ==
+    OpPlsEq(Box<AST>, Box<AST>, usize),  // +=
+    OpNotEq(Box<AST>, Box<AST>, usize),  // !=
+    OpNot(Box<AST>, usize),              // !
+    OpAndAnd(Box<AST>, Box<AST>, usize), // &&
+    OpOrOr(Box<AST>, Box<AST>, usize),   // ||
+    OpGt(Box<AST>, Box<AST>, usize),     // >
+    OpLt(Box<AST>, Box<AST>, usize),     // <
+    OpGtEq(Box<AST>, Box<AST>, usize),   // >=
+    OpLtEq(Box<AST>, Box<AST>, usize),   // <=
     VariableAccess(String, usize),
     Return(Box<AST>, usize),
     Break(usize),
@@ -237,6 +240,9 @@ impl AST {
             AST::If(_, line) => line,
             AST::While(_, _, line) => line,
             AST::OpPls(_, _, line) => line,
+            AST::OpMns(_, _, line) => line,
+            AST::OpMnsPrefix(_, line) => line,
+            AST::OpNot(_, line) => line,
             AST::OpEq(_, _, line) => line,
             AST::OpEqEq(_, _, line) => line,
             AST::OpPlsEq(_, _, line) => line,
@@ -334,6 +340,85 @@ impl AST {
                     right_val.pretty_type(scope_chain, right.get_line())
                 ),
                 right.get_line(),
+            ))),
+        }
+    }
+    fn eval_op_mns_prefix(
+        left: &Box<AST>,
+        scope_chain: &mut ScopeChain,
+    ) -> Result<Rc<Value>, Box<RuntimeError>> {
+        let left_val = left.get_value(scope_chain)?.unpack_and_transform(
+            scope_chain,
+            left.get_line(),
+            left,
+        )?;
+        match left_val.as_ref() {
+            Value::Number(left) => Ok(Rc::new(Value::Number(-left))),
+            Value::Char(left) => Ok(Rc::new(Value::Number(-(*left as i32 as f64)))),
+            _ => Err(Box::new(RuntimeError::new(
+                format!(
+                    "Cannot negate type {}",
+                    left_val.pretty_type(scope_chain, left.get_line()),
+                ),
+                left.get_line(),
+            ))),
+        }
+    }
+    fn eval_op_not(
+        left: &Box<AST>,
+        scope_chain: &mut ScopeChain,
+    ) -> Result<Rc<Value>, Box<RuntimeError>> {
+        let left_val = left.get_value(scope_chain)?.unpack_and_transform(
+            scope_chain,
+            left.get_line(),
+            left,
+        )?;
+        match left_val.as_ref() {
+            Value::Number(left) => Ok(Rc::new(Value::Boolean(*left == 0.0))),
+            Value::Char(left) => Ok(Rc::new(Value::Boolean(*left == '\0'))),
+            Value::Boolean(left) => Ok(Rc::new(Value::Boolean(!*left))),
+            _ => Err(Box::new(RuntimeError::new(
+                format!(
+                    "Cannot negate type {}",
+                    left_val.pretty_type(scope_chain, left.get_line()),
+                ),
+                left.get_line(),
+            ))),
+        }
+    }
+    fn eval_op_mns(
+        left: &Box<AST>,
+        right: &Box<AST>,
+        scope_chain: &mut ScopeChain,
+    ) -> Result<Rc<Value>, Box<RuntimeError>> {
+        let left_val = left.get_value(scope_chain)?.unpack_and_transform(
+            scope_chain,
+            left.get_line(),
+            left,
+        )?;
+        let right_val = right.get_value(scope_chain)?.unpack_and_transform(
+            scope_chain,
+            right.get_line(),
+            right,
+        )?;
+        match (left_val.as_ref(), right_val.as_ref()) {
+            (Value::Number(left), Value::Number(right)) => Ok(Rc::new(Value::Number(left - right))),
+            (Value::Char(left), Value::Char(right)) => Ok(Rc::new(Value::Number(
+                *left as i32 as f64 - *right as i32 as f64,
+            ))),
+            (Value::Number(left), Value::Char(right)) => {
+                Ok(Rc::new(Value::Number(*left - *right as i32 as f64)))
+            }
+            (Value::Char(left), Value::Number(right)) => {
+                Ok(Rc::new(Value::Number(*left as i32 as f64 - *right)))
+            }
+            _ => Err(Box::new(RuntimeError::new(
+                format!(
+                    "Cannot subtract types {} and {}",
+                    left_val.pretty_type(scope_chain, left.get_line()),
+                    right_val.pretty_type(scope_chain, right.get_line())
+                ),
+                left.get_line(),
             ))),
         }
     }
@@ -925,7 +1010,10 @@ impl AST {
             AST::OpAndAnd(left, right, _) => AST::eval_op_andand(left, right, scope_chain),
             AST::OpOrOr(left, right, _) => AST::eval_op_oror(left, right, scope_chain),
             AST::OpNotEq(left, right, _) => AST::eval_op_noteq(left, right, scope_chain),
+            AST::OpNot(right, _) => AST::eval_op_not(right, scope_chain),
             AST::OpPls(left, right, _) => AST::eval_op_pls(left, right, scope_chain),
+            AST::OpMns(left, right, _) => AST::eval_op_mns(left, right, scope_chain),
+            AST::OpMnsPrefix(left, _) => AST::eval_op_mns_prefix(left, scope_chain),
             AST::OpPlsEq(left, right, _) => AST::eval_op_plseq(left, right, scope_chain),
             AST::OpEq(left, right, _) => AST::eval_op_eq(left, right, scope_chain),
             AST::OpGt(left, right, _) => AST::eval_op_gt(left, right, scope_chain),
@@ -1013,6 +1101,19 @@ impl AST {
             AST::OpOrOr(left, right, _) => {
                 format!(
                     "({} || {})",
+                    left.debug_pretty_print(),
+                    right.debug_pretty_print()
+                )
+            }
+            AST::OpNot(left, _) => {
+                format!("!({})", left.debug_pretty_print(),)
+            }
+            AST::OpMnsPrefix(left, _) => {
+                format!("-({})", left.debug_pretty_print(),)
+            }
+            AST::OpMns(left, right, _) => {
+                format!(
+                    "({} - {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
@@ -1130,6 +1231,15 @@ impl AST {
             }
             AST::OpOrOr(left, right, _) => {
                 format!("{} || {}", left.pretty_print(), right.pretty_print())
+            }
+            AST::OpNot(left, _) => {
+                format!("!{}", left.pretty_print())
+            }
+            AST::OpMnsPrefix(left, _) => {
+                format!("-{}", left.pretty_print())
+            }
+            AST::OpMns(left, right, _) => {
+                format!("{} - {}", left.pretty_print(), right.pretty_print())
             }
             AST::OpPls(left, right, _) => {
                 format!("{} + {}", left.pretty_print(), right.pretty_print())
