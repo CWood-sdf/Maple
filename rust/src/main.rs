@@ -80,66 +80,115 @@ impl ToShortDigits<f64> for f64 {
 }
 
 fn main() -> Result<(), Box<dyn Error>> {
-    let contents: String = std::fs::read_to_string("./maple.mpl")?;
+    let args = std::env::args().collect::<Vec<String>>();
+    let filename;
+    let file_arg = "--file".to_string();
+    if args.contains(&file_arg) {
+        let index = args.iter().position(|x| x == &file_arg).unwrap();
+        if index + 1 < args.len() {
+            filename = args[index + 1].clone();
+        } else {
+            println!("No file specified");
+            return Ok(());
+        }
+    } else {
+        filename = "./maple.mpl".to_string();
+    }
+    let time_arg = "--time".to_string();
+    if args.contains(&time_arg) {
+        let contents: String = std::fs::read_to_string(filename)?;
 
-    let mut times: Vec<f64> = Vec::new();
-    let mut amount = 0;
-    let timer = std::time::Instant::now();
-    times.reserve(1000000);
-    let start = std::time::Instant::now();
-    while amount < 1000000 {
-        let time = match time_interpreter(contents.clone(), amount == 0) {
-            Ok(time) => time,
-            Err(_) => {
-                return Ok(());
+        let mut times: Vec<f64> = Vec::new();
+        let mut amount = 0;
+        let timer = std::time::Instant::now();
+        times.reserve(1000000);
+        let start = std::time::Instant::now();
+        while amount < 1000000 {
+            let time = match time_interpreter(contents.clone(), amount == 0) {
+                Ok(time) => time,
+                Err(_) => {
+                    return Ok(());
+                }
+            };
+            times.push(time);
+            amount += 1;
+
+            if timer.elapsed().as_secs_f64() * 1000.0 >= 500.0 {
+                break;
+            }
+        }
+        println!("Time: {}ms", start.elapsed().as_millis(),);
+        let mut total: f64 = 0.0;
+        // let times_copy = times.clone();
+        let mut min = times[0];
+        let mut max = times[0];
+        let mut i = 0;
+        let top80 = (amount as f64 * 0.8) as usize;
+        times.sort_by(|a, b| a.partial_cmp(b).unwrap());
+        for time in &times {
+            let time = *time;
+            if i < top80 {
+                total += time as f64;
+            }
+            if time < min {
+                min = time;
+            }
+            if time > max {
+                max = time;
+            }
+            i += 1;
+        }
+        total /= top80 as f64;
+        let mut std_dev: f64 = 0.0;
+        for time in &times {
+            let time = *time;
+            std_dev += (time as f64 - total).square();
+        }
+        std_dev = (std_dev / amount as f64).sqrt();
+
+        println!(
+            "Mean of top 80%: {}us, 󰘫: {}, min: {}, max: {}",
+            total.to_short_digits(3),
+            std_dev.to_short_digits(3),
+            min,
+            max
+        );
+        // std::fs::write("./times.csv", file_out)?;
+
+        println!("Total time: {}ms", timer.elapsed().as_millis());
+    } else {
+        let contents: String = std::fs::read_to_string(filename)?;
+        let mut parser = Parser::new(contents);
+        let mut scope_chain: ScopeChain = ScopeChain::new();
+
+        match create_builtins(&mut scope_chain) {
+            Ok(_) => {}
+            Err(e) => {
+                println!("Error: {}", e.get_msg());
+                return Result::Err(e.get_msg().into());
             }
         };
-        times.push(time);
-        amount += 1;
+        let ast = match parser.parse(true) {
+            Ok(ast) => ast,
+            Err(e) => {
+                println!("Error: {}", e.get_msg());
+                return Result::Err(e.get_msg().into());
+            }
+        };
 
-        if timer.elapsed().as_secs_f64() * 1000.0 >= 500.0 {
-            break;
+        // for (_, stmt) in ast.iter().enumerate() {
+        //     println!("{}", stmt.pretty_print());
+        // }
+        for (_, stmt) in ast.iter().enumerate() {
+            match stmt.interpret(&mut scope_chain) {
+                Ok(_) => {}
+                Err(e) => {
+                    println!("Error: {}", e.get_msg());
+                    return Result::Err(e.get_msg().into());
+                }
+            };
         }
     }
-    println!("Time: {}ms", start.elapsed().as_millis(),);
-    let mut total: f64 = 0.0;
-    // let times_copy = times.clone();
-    let mut min = times[0];
-    let mut max = times[0];
-    let mut i = 0;
-    let top80 = (amount as f64 * 0.8) as usize;
-    times.sort_by(|a, b| a.partial_cmp(b).unwrap());
-    for time in &times {
-        let time = *time;
-        if i < top80 {
-            total += time as f64;
-        }
-        if time < min {
-            min = time;
-        }
-        if time > max {
-            max = time;
-        }
-        i += 1;
-    }
-    total /= top80 as f64;
-    let mut std_dev: f64 = 0.0;
-    for time in &times {
-        let time = *time;
-        std_dev += (time as f64 - total).square();
-    }
-    std_dev = (std_dev / amount as f64).sqrt();
-
-    println!(
-        "Mean of top 80%: {}us, 󰘫: {}, min: {}, max: {}",
-        total.to_short_digits(3),
-        std_dev.to_short_digits(3),
-        min,
-        max
-    );
-    // std::fs::write("./times.csv", file_out)?;
-
-    println!("Total time: {}ms", timer.elapsed().as_millis());
 
     Result::Ok(())
 }

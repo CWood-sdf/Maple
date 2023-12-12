@@ -536,6 +536,8 @@ impl Parser {
                 Token::OpEq => Box::new(AST::OpEq(ret.unwrap(), rhs, self.lexer.get_line())),
                 Token::OpMns => Box::new(AST::OpMns(ret.unwrap(), rhs, self.lexer.get_line())),
                 Token::OpPls => Box::new(AST::OpPls(ret.unwrap(), rhs, self.lexer.get_line())),
+                Token::OpTimes => Box::new(AST::OpTimes(ret.unwrap(), rhs, self.lexer.get_line())),
+                Token::OpDiv => Box::new(AST::OpDiv(ret.unwrap(), rhs, self.lexer.get_line())),
                 Token::OpPlsEq => Box::new(AST::OpPlsEq(ret.unwrap(), rhs, self.lexer.get_line())),
                 Token::OpNotEq => Box::new(AST::OpNotEq(ret.unwrap(), rhs, self.lexer.get_line())),
                 Token::OpGt => Box::new(AST::OpGt(ret.unwrap(), rhs, self.lexer.get_line())),

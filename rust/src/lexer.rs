@@ -48,6 +48,8 @@ pub enum Token {
     OpAndAnd,
     OpOrOr,
     OpMns,
+    OpTimes,
+    OpDiv,
     EOF,
     LeftBrace,
     RightBrace,
@@ -72,6 +74,8 @@ impl Token {
             Token::OpNotEq => Ok(10),
             Token::OpPls => Ok(6),
             Token::OpMns => Ok(6),
+            Token::OpTimes => Ok(5),
+            Token::OpDiv => Ok(5),
             _ => Err(Box::new(ParserError::new(
                 format!("Unknown operator: {:?}", self).into(),
                 lexer.line,
@@ -102,6 +106,8 @@ impl Token {
             Token::OpNotEq => Ok(Assoc::Left),
             Token::OpPls => Ok(Assoc::Left),
             Token::OpMns => Ok(Assoc::Left),
+            Token::OpTimes => Ok(Assoc::Left),
+            Token::OpDiv => Ok(Assoc::Left),
             _ => Err(Box::new(ParserError::new(
                 format!("Unknown operator: {:?}", self).into(),
                 lexer.line,
@@ -121,6 +127,8 @@ impl Token {
             | Token::OpNotEq
             | Token::OpEqEq
             | Token::OpMns
+            | Token::OpTimes
+            | Token::OpDiv
             | Token::OpPls => true,
             _ => false,
         }
@@ -427,6 +435,10 @@ impl Lexer {
                     self.i += 1;
                     Token::OpNot
                 }
+                '*' => {
+                    self.i += 1;
+                    Token::OpTimes
+                }
                 '=' if self.peek_next_char() == '=' => {
                     self.i += 2;
                     Token::OpEqEq
@@ -502,6 +514,10 @@ impl Lexer {
                     }
                     self.i += 1;
                     Token::EndOfStatement
+                }
+                '/' => {
+                    self.i += 1;
+                    Token::OpDiv
                 }
                 _ => {
                     return Err(Box::new(LexerError::new(

@@ -1,3 +1,4 @@
+var startNanos = nanos()
 var a = 1
 var b = 0
 
@@ -27,3 +28,6 @@ b = b[4 - 1]
 b = -4
 
 b = !!true
+
+var time = nanos() - startNanos
+println("Time: " + toStr(time / 1000.) + "us")

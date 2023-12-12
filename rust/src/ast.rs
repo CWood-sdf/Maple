@@ -205,6 +205,8 @@ pub enum AST {
     While(Box<AST>, Vec<Box<AST>>, usize),
     OpPls(Box<AST>, Box<AST>, usize),    // +
     OpMns(Box<AST>, Box<AST>, usize),    // -
+    OpTimes(Box<AST>, Box<AST>, usize),  // *
+    OpDiv(Box<AST>, Box<AST>, usize),    // /
     OpMnsPrefix(Box<AST>, usize),        // -
     OpEq(Box<AST>, Box<AST>, usize),     // =
     OpEqEq(Box<AST>, Box<AST>, usize),   // ==
@@ -241,6 +243,8 @@ impl AST {
             AST::While(_, _, line) => line,
             AST::OpPls(_, _, line) => line,
             AST::OpMns(_, _, line) => line,
+            AST::OpTimes(_, _, line) => line,
+            AST::OpDiv(_, _, line) => line,
             AST::OpMnsPrefix(_, line) => line,
             AST::OpNot(_, line) => line,
             AST::OpEq(_, _, line) => line,
@@ -415,6 +419,78 @@ impl AST {
             _ => Err(Box::new(RuntimeError::new(
                 format!(
                     "Cannot subtract types {} and {}",
+                    left_val.pretty_type(scope_chain, left.get_line()),
+                    right_val.pretty_type(scope_chain, right.get_line())
+                ),
+                left.get_line(),
+            ))),
+        }
+    }
+    fn eval_op_times(
+        left: &Box<AST>,
+        right: &Box<AST>,
+        scope_chain: &mut ScopeChain,
+    ) -> Result<Rc<Value>, Box<RuntimeError>> {
+        let left_val = left.get_value(scope_chain)?.unpack_and_transform(
+            scope_chain,
+            left.get_line(),
+            left,
+        )?;
+        let right_val = right.get_value(scope_chain)?.unpack_and_transform(
+            scope_chain,
+            right.get_line(),
+            right,
+        )?;
+        match (left_val.as_ref(), right_val.as_ref()) {
+            (Value::Number(left), Value::Number(right)) => Ok(Rc::new(Value::Number(left * right))),
+            (Value::Char(left), Value::Char(right)) => Ok(Rc::new(Value::Number(
+                *left as i32 as f64 * *right as i32 as f64,
+            ))),
+            (Value::Number(left), Value::Char(right)) => {
+                Ok(Rc::new(Value::Number(*left * *right as i32 as f64)))
+            }
+            (Value::Char(left), Value::Number(right)) => {
+                Ok(Rc::new(Value::Number(*left as i32 as f64 * *right)))
+            }
+            _ => Err(Box::new(RuntimeError::new(
+                format!(
+                    "Cannot multiply types {} and {}",
+                    left_val.pretty_type(scope_chain, left.get_line()),
+                    right_val.pretty_type(scope_chain, right.get_line())
+                ),
+                left.get_line(),
+            ))),
+        }
+    }
+    fn eval_op_div(
+        left: &Box<AST>,
+        right: &Box<AST>,
+        scope_chain: &mut ScopeChain,
+    ) -> Result<Rc<Value>, Box<RuntimeError>> {
+        let left_val = left.get_value(scope_chain)?.unpack_and_transform(
+            scope_chain,
+            left.get_line(),
+            left,
+        )?;
+        let right_val = right.get_value(scope_chain)?.unpack_and_transform(
+            scope_chain,
+            right.get_line(),
+            right,
+        )?;
+        match (left_val.as_ref(), right_val.as_ref()) {
+            (Value::Number(left), Value::Number(right)) => Ok(Rc::new(Value::Number(left / right))),
+            (Value::Char(left), Value::Char(right)) => Ok(Rc::new(Value::Number(
+                *left as i32 as f64 / *right as i32 as f64,
+            ))),
+            (Value::Number(left), Value::Char(right)) => {
+                Ok(Rc::new(Value::Number(*left / *right as i32 as f64)))
+            }
+            (Value::Char(left), Value::Number(right)) => {
+                Ok(Rc::new(Value::Number(*left as i32 as f64 / *right)))
+            }
+            _ => Err(Box::new(RuntimeError::new(
+                format!(
+                    "Cannot divide types {} and {}",
                     left_val.pretty_type(scope_chain, left.get_line()),
                     right_val.pretty_type(scope_chain, right.get_line())
                 ),
@@ -1013,6 +1089,8 @@ impl AST {
             AST::OpNot(right, _) => AST::eval_op_not(right, scope_chain),
             AST::OpPls(left, right, _) => AST::eval_op_pls(left, right, scope_chain),
             AST::OpMns(left, right, _) => AST::eval_op_mns(left, right, scope_chain),
+            AST::OpTimes(left, right, _) => AST::eval_op_times(left, right, scope_chain),
+            AST::OpDiv(left, right, _) => AST::eval_op_div(left, right, scope_chain),
             AST::OpMnsPrefix(left, _) => AST::eval_op_mns_prefix(left, scope_chain),
             AST::OpPlsEq(left, right, _) => AST::eval_op_plseq(left, right, scope_chain),
             AST::OpEq(left, right, _) => AST::eval_op_eq(left, right, scope_chain),
@@ -1124,6 +1202,12 @@ impl AST {
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
+            }
+            AST::OpTimes(left, right, _) => {
+                format!("({} * {})", left.pretty_print(), right.pretty_print())
+            }
+            AST::OpDiv(left, right, _) => {
+                format!("({} / {})", left.pretty_print(), right.pretty_print())
             }
             AST::OpPlsEq(left, right, _) => {
                 format!(
@@ -1243,6 +1327,12 @@ impl AST {
             }
             AST::OpPls(left, right, _) => {
                 format!("{} + {}", left.pretty_print(), right.pretty_print())
+            }
+            AST::OpTimes(left, right, _) => {
+                format!("{} * {}", left.pretty_print(), right.pretty_print())
+            }
+            AST::OpDiv(left, right, _) => {
+                format!("{} / {}", left.pretty_print(), right.pretty_print())
             }
             AST::OpPlsEq(left, right, _) => {
                 format!("{} += {}", left.pretty_print(), right.pretty_print())
