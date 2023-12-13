@@ -17,6 +17,7 @@ impl GetFromIndex<char> for String {
 }
 #[derive(Debug, PartialEq, Clone)]
 pub enum Token {
+    Import,
     Number(f64),
     Char(char),
     String(String),
@@ -376,6 +377,7 @@ impl Lexer {
             "fn" => Token::Fn,
             "true" => Token::True,
             "false" => Token::False,
+            "import" => Token::Import,
             _ => Token::Ident(ident),
         })
     }

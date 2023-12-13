@@ -381,6 +381,23 @@ impl Parser {
         let mut ret: Option<Box<AST>>;
 
         match self.lexer.get_current_token() {
+            Token::Import => {
+                let import_str = self.lexer.get_next_token()?;
+                match import_str {
+                    Token::String(str) => {
+                        ret = Some(Box::new(AST::Import(str, self.lexer.get_line())));
+                    }
+                    _ => {
+                        return Err(Box::new(ParserError::new(
+                            format!(
+                                "Expected string, got {:?} while parsing import statement",
+                                self.lexer.get_current_token()
+                            ),
+                            self.lexer.get_line(),
+                        )))
+                    }
+                }
+            }
             Token::LeftSquare => {
                 ret = Some(self.parse_array_literal()?);
             }

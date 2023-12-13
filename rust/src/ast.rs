@@ -4,6 +4,7 @@ use crate::parser::{Object, ObjectKey, Unpack, Value};
 use crate::scopechain::ReturnType;
 use crate::ScopeChain;
 
+use std::fs;
 use std::rc::Rc;
 
 pub trait ConvertScopeErrorResult<T> {
@@ -190,6 +191,7 @@ impl IfLiteral {
 // paren is only for pretty printing
 #[derive(Debug, Clone, PartialEq)]
 pub enum AST {
+    Import(String, usize),
     DotAccess(Box<AST>, String, usize),
     BracketAccess(Box<AST>, Box<AST>, usize),
     ObjectLiteral(Vec<(ObjectKey, Box<AST>)>, usize),
@@ -228,6 +230,7 @@ pub enum AST {
 impl AST {
     pub fn get_line(&self) -> usize {
         match *self {
+            AST::Import(_, line) => line,
             AST::ObjectLiteral(_, line) => line,
             AST::DotAccess(_, _, line) => line,
             AST::BracketAccess(_, _, line) => line,
@@ -973,9 +976,64 @@ impl AST {
             .to_runtime_error()?;
         Ok(Rc::new(Value::Undefined))
     }
+    fn eval_import(filename: String) -> Result<Rc<Value>, Box<RuntimeError>> {
+        let contents = match fs::read_to_string(filename.clone()) {
+            Ok(v) => v,
+            Err(e) => {
+                return Err(Box::new(RuntimeError::new(
+                    format!("Cannot read file {}: {}", filename, e),
+                    0,
+                )))
+            }
+        };
+        let mut parser = crate::parser::Parser::new(contents);
+        let mut scope_chain: ScopeChain = ScopeChain::new();
+
+        match crate::builtins::create_builtins(&mut scope_chain) {
+            Ok(_) => {}
+            Err(e) => {
+                return Err(Box::new(RuntimeError::new(
+                    format!("Error creating builtins: {}", e),
+                    0,
+                )));
+            }
+        };
+        let ast = match parser.parse(true) {
+            Ok(ast) => ast,
+            Err(e) => {
+                return Err(Box::new(RuntimeError::new(
+                    format!("Error parsing file {}: {}", filename, e),
+                    0,
+                )));
+            }
+        };
+
+        // for (_, stmt) in ast.iter().enumerate() {
+        //     println!("{}", stmt.pretty_print());
+        // }
+        //
+        let mut ret = Rc::new(Value::Undefined);
+        for (_, stmt) in ast.iter().enumerate() {
+            match stmt.interpret(&mut scope_chain) {
+                Ok(ReturnType::None) => {}
+                Ok(ReturnType::Return(v)) => {
+                    ret = v;
+                    break;
+                }
+                Ok(_) => {
+                    break;
+                }
+                Err(e) => {
+                    return Err(e);
+                }
+            };
+        }
+        return Ok(ret);
+    }
 
     pub fn get_value(&self, scope_chain: &mut ScopeChain) -> Result<Rc<Value>, Box<RuntimeError>> {
         let ret = match self {
+            AST::Import(s, _) => AST::eval_import(s.clone()),
             AST::ObjectLiteral(arr, _) => {
                 let mut obj = Object::new();
                 for (key, value) in arr.iter() {
@@ -1113,13 +1171,13 @@ impl AST {
         }
     }
 
-    pub fn interpret(&self, scope_chain: &mut ScopeChain) -> Result<(), Box<RuntimeError>> {
+    pub fn interpret(&self, scope_chain: &mut ScopeChain) -> Result<ReturnType, Box<RuntimeError>> {
         self.get_value(scope_chain)?;
         match scope_chain.get_return_register() {
-            ReturnType::Return(_) => Err(Box::new(
-                RuntimeError::new("Return statement at top level".into(), self.get_line())
-                    .add_base_ast(self.clone()),
-            )),
+            // ReturnType::Return(_) => Err(Box::new(
+            //     RuntimeError::new("Return statement at top level".into(), self.get_line())
+            //         .add_base_ast(self.clone()),
+            // )),
             ReturnType::Continue => Err(Box::new(
                 RuntimeError::new("Continue statement at top level".into(), self.get_line())
                     .add_base_ast(self.clone()),
@@ -1128,12 +1186,14 @@ impl AST {
                 RuntimeError::new("Break statement at top level".into(), self.get_line())
                     .add_base_ast(self.clone()),
             )),
-            ReturnType::None => Ok(()),
+            ReturnType::Return(v) => Ok(ReturnType::Return(v)),
+            ReturnType::None => Ok(ReturnType::None),
         }
     }
 
     pub fn debug_pretty_print(&self) -> String {
         match self {
+            AST::Import(s, _) => format!("(import {})", s),
             AST::ObjectLiteral(_, _) => todo!(),
             AST::BracketAccess(l, v, _) => {
                 format!("{}[{}]", l.debug_pretty_print(), v.debug_pretty_print())
@@ -1275,6 +1335,7 @@ impl AST {
 
     pub fn pretty_print(&self) -> String {
         match self {
+            AST::Import(s, _) => format!("import {}", s),
             AST::ObjectLiteral(_, _) => todo!(),
             AST::BracketAccess(l, v, _) => {
                 format!("{}[{}]", l.pretty_print(), v.pretty_print())

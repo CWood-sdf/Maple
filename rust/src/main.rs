@@ -9,7 +9,7 @@ mod scopechain;
 use std::error::Error;
 
 use builtins::create_builtins;
-use scopechain::ScopeChain;
+use scopechain::{ReturnType, ScopeChain};
 
 use crate::{error::MapleError, parser::Parser};
 
@@ -181,10 +181,14 @@ fn main() -> Result<(), Box<dyn Error>> {
         // }
         for (_, stmt) in ast.iter().enumerate() {
             match stmt.interpret(&mut scope_chain) {
-                Ok(_) => {}
+                Ok(ReturnType::None) => {}
+                Ok(_) => {
+                    break;
+                }
                 Err(e) => {
                     println!("Error: {}", e.get_msg());
-                    return Result::Err(e.get_msg().into());
+                    break;
+                    // return Result::Err(e.get_msg().into());
                 }
             };
         }
