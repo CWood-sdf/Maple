@@ -77,7 +77,7 @@ while i < 100000000 {
     arr2[ballPos.y][ballPos.x] = " "
         spaces = spaces + " "
     printScreen(arr2)
-    arr2[ballPos.y][ballPos.x] = "#"
+    arr2[ballPos.y][ballPos.x] = "-"
     ballPos.x = ballPos.x + direction.x
     ballPos.y = ballPos.y + direction.y
     if ballPos.x >= std.arr.len(arr2[0]) {
