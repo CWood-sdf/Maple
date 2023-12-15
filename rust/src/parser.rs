@@ -5,8 +5,8 @@ use std::rc::Rc;
 
 use crate::error::{MapleError, ParserError, RuntimeError, ScopeError};
 
-use crate::ast::{FunctionLiteral, IfLiteral, AST};
-use crate::lexer::{Assoc, Lexer, Token};
+use crate::ast::{ASTType, FunctionLiteral, IfLiteral, AST};
+use crate::lexer::{Assoc, Lexer, Token, TokenType};
 use crate::scopechain::ScopeChain;
 
 #[derive(Debug, Clone, PartialEq, PartialOrd)]
@@ -29,7 +29,7 @@ pub struct Object {
 }
 
 impl Object {
-    pub fn get(&self, key: ObjectKey, line: usize) -> Result<Rc<Value>, Box<dyn MapleError>> {
+    pub fn get(&self, key: ObjectKey, line: usize) -> Result<Rc<Value>, Box<RuntimeError>> {
         for (k, v) in self.fields.iter() {
             if k == &key {
                 return Ok(v.clone());
@@ -176,7 +176,7 @@ pub struct Parser {
     lexer: Lexer,
 }
 fn usable_operator(
-    op: &Token,
+    op: &TokenType,
     max_op_prec: i32,
     lexer: &Lexer,
 ) -> Result<bool, Box<dyn MapleError>> {
@@ -201,8 +201,8 @@ impl Parser {
     fn parse_function(&mut self, anon: bool) -> Result<Box<AST>, Box<dyn MapleError>> {
         let mut params: Vec<String> = vec![];
         let body: Vec<Box<AST>>;
-        match self.lexer.get_current_token() {
-            Token::Fn => (),
+        match self.lexer.get_current_token().t {
+            TokenType::Fn => (),
             _ => {
                 return Err(Box::new(ParserError::new(
                     format!("Expected fn, got {:?}", self.lexer.get_current_token()).into(),
@@ -210,10 +210,11 @@ impl Parser {
                 )))
             }
         };
+        let fn_token = self.lexer.get_current_token();
         let name: String;
         if !anon {
-            match self.lexer.get_next_token()? {
-                Token::Ident(n) => {
+            match self.lexer.get_next_token()?.t {
+                TokenType::Ident(n) => {
                     name = n;
                 }
                 _ => {
@@ -229,8 +230,8 @@ impl Parser {
         } else {
             name = "".to_string();
         }
-        match self.lexer.get_next_token()? {
-            Token::LeftParen => (),
+        match self.lexer.get_next_token()?.t {
+            TokenType::LeftParen => (),
             _ => {
                 return Err(Box::new(ParserError::new(
                     format!(
@@ -242,9 +243,9 @@ impl Parser {
             }
         };
         loop {
-            match self.lexer.get_next_token()? {
-                Token::Ident(name) => params.push(name),
-                Token::RightParen => break,
+            match self.lexer.get_next_token()?.t {
+                TokenType::Ident(name) => params.push(name),
+                TokenType::RightParen => break,
                 _ => {
                     return Err(Box::new(ParserError::new(
                         format!(
@@ -255,9 +256,9 @@ impl Parser {
                     )))
                 }
             }
-            match self.lexer.get_next_token()? {
-                Token::RightParen => break,
-                Token::Comma => (),
+            match self.lexer.get_next_token()?.t {
+                TokenType::RightParen => break,
+                TokenType::Comma => (),
                 _ => {
                     return Err(Box::new(ParserError::new(
                         format!(
@@ -272,38 +273,39 @@ impl Parser {
         self.lexer.get_next_token()?;
         body = self.parse_block()?;
         if !anon {
-            Ok(Box::new(AST::OpEq(
-                Box::new(AST::VariableDeclaration(
-                    name.clone(),
-                    true,
-                    self.lexer.get_line(),
-                )),
-                Box::new(AST::FunctionLiteral(
-                    FunctionLiteral::basic(params, body),
-                    self.lexer.get_line(),
-                )),
-                self.lexer.get_line(),
-            )))
+            Ok(Box::new(AST {
+                t: ASTType::OpEq(
+                    Box::new(AST {
+                        t: ASTType::VariableDeclaration(name.clone(), true),
+                        token: fn_token.clone(),
+                    }),
+                    Box::new(AST {
+                        t: ASTType::FunctionLiteral(FunctionLiteral::basic(params, body)),
+                        token: fn_token.clone(),
+                    }),
+                ),
+                token: fn_token.clone(),
+            }))
         } else {
-            Ok(Box::new(AST::FunctionLiteral(
-                FunctionLiteral::basic(params, body),
-                self.lexer.get_line(),
-            )))
+            Ok(Box::new(AST {
+                t: ASTType::FunctionLiteral(FunctionLiteral::basic(params, body)),
+                token: fn_token,
+            }))
         }
     }
     fn parse_object_literal(&mut self) -> Result<Box<AST>, Box<dyn MapleError>> {
-        _ = self.lexer.get_next_token()?;
+        let token = self.lexer.get_next_token()?;
         let mut fields: Vec<(ObjectKey, Box<AST>)> = vec![];
         loop {
-            while self.lexer.get_current_token() == Token::EndOfStatement {
+            while self.lexer.get_current_token().t == TokenType::EndOfStatement {
                 self.lexer.get_next_token()?;
             }
-            if self.lexer.get_current_token() == Token::RightBrace {
+            if self.lexer.get_current_token().t == TokenType::RightBrace {
                 break;
             }
-            let name = match self.lexer.get_current_token() {
-                Token::Ident(name) => ObjectKey::String(name),
-                Token::Number(num) => ObjectKey::Number(num),
+            let name = match self.lexer.get_current_token().t {
+                TokenType::Ident(name) => ObjectKey::String(name),
+                TokenType::Number(num) => ObjectKey::Number(num),
                 _ => {
                     return Err(Box::new(ParserError::new(
                         format!(
@@ -314,8 +316,8 @@ impl Parser {
                     )))
                 }
             };
-            match self.lexer.get_next_token()? {
-                Token::OpEq => (),
+            match self.lexer.get_next_token()?.t {
+                TokenType::OpEq => (),
                 _ => {
                     return Err(Box::new(ParserError::new(
                         format!(
@@ -329,9 +331,9 @@ impl Parser {
             self.lexer.get_next_token()?;
             let expr = self.parse_clause(1000)?;
             fields.push((name, expr));
-            match self.lexer.get_next_token()? {
-                Token::RightBrace => break,
-                Token::Comma | Token::EndOfStatement => (),
+            match self.lexer.get_next_token()?.t {
+                TokenType::RightBrace => break,
+                TokenType::Comma | TokenType::EndOfStatement => (),
                 _ => {
                     return Err(Box::new(ParserError::new(
                         format!(
@@ -344,24 +346,28 @@ impl Parser {
             }
             self.lexer.get_next_token()?;
         }
-        Ok(Box::new(AST::ObjectLiteral(fields, self.lexer.get_line())))
+        Ok(Box::new(AST {
+            t: ASTType::ObjectLiteral(fields),
+            token,
+        }))
     }
     fn parse_array_literal(&mut self) -> Result<Box<AST>, Box<dyn MapleError>> {
+        let token = self.lexer.get_current_token();
         self.lexer.get_next_token()?;
         let mut fields: Vec<(ObjectKey, Box<AST>)> = vec![];
         let mut index = 0f64;
         loop {
-            while self.lexer.get_current_token() == Token::EndOfStatement {
+            while self.lexer.get_current_token().t == TokenType::EndOfStatement {
                 self.lexer.get_next_token()?;
             }
-            if self.lexer.get_current_token() == Token::RightSquare {
+            if self.lexer.get_current_token().t == TokenType::RightSquare {
                 break;
             }
             let expr = self.parse_clause(1000)?;
             fields.push((ObjectKey::Number(index), expr));
-            match self.lexer.get_next_token()? {
-                Token::RightSquare => break,
-                Token::Comma | Token::EndOfStatement => (),
+            match self.lexer.get_next_token()?.t {
+                TokenType::RightSquare => break,
+                TokenType::Comma | TokenType::EndOfStatement => (),
                 _ => {
                     return Err(Box::new(ParserError::new(
                         format!(
@@ -375,56 +381,73 @@ impl Parser {
             self.lexer.get_next_token()?;
             index += 1.0;
         }
-        Ok(Box::new(AST::ObjectLiteral(fields, self.lexer.get_line())))
+        Ok(Box::new(AST {
+            t: ASTType::ObjectLiteral(fields),
+            token,
+        }))
     }
     fn parse_clause(&mut self, max_op_prec: i32) -> Result<Box<AST>, Box<dyn MapleError>> {
         let mut ret: Option<Box<AST>>;
 
-        match self.lexer.get_current_token() {
-            Token::Import => {
-                let import_str = self.lexer.get_next_token()?;
-                match import_str {
-                    Token::String(str) => {
-                        ret = Some(Box::new(AST::Import(str, self.lexer.get_line())));
-                    }
-                    _ => {
-                        return Err(Box::new(ParserError::new(
-                            format!(
-                                "Expected string, got {:?} while parsing import statement",
-                                self.lexer.get_current_token()
-                            ),
-                            self.lexer.get_line(),
-                        )))
-                    }
-                }
+        match self.lexer.get_current_token().t {
+            TokenType::Import(import_str) => {
+                ret = Some(Box::new(AST {
+                    t: ASTType::Import(import_str),
+                    token: self.lexer.get_current_token(),
+                }));
             }
-            Token::LeftSquare => {
+            TokenType::LeftSquare => {
                 ret = Some(self.parse_array_literal()?);
             }
-            Token::Fn => ret = Some(self.parse_function(true)?),
-            Token::Number(num) => {
-                ret = Some(Box::new(AST::NumberLiteral(num, self.lexer.get_line())))
+            TokenType::Fn => ret = Some(self.parse_function(true)?),
+            TokenType::Number(num) => {
+                ret = Some(Box::new(AST {
+                    t: ASTType::NumberLiteral(num),
+                    token: self.lexer.get_current_token(),
+                }))
             }
-            Token::String(str) => {
-                ret = Some(Box::new(AST::StringLiteral(str, self.lexer.get_line())))
+            TokenType::String(str) => {
+                ret = Some(Box::new(AST {
+                    t: ASTType::StringLiteral(str),
+                    token: self.lexer.get_current_token(),
+                }))
             }
-            Token::Char(c) => ret = Some(Box::new(AST::CharacterLiteral(c, self.lexer.get_line()))),
-            Token::True => ret = Some(Box::new(AST::BooleanLiteral(true, self.lexer.get_line()))),
-            Token::False => ret = Some(Box::new(AST::BooleanLiteral(false, self.lexer.get_line()))),
-            Token::Ident(name) => {
-                ret = Some(Box::new(AST::VariableAccess(name, self.lexer.get_line())))
+            TokenType::Char(c) => {
+                ret = Some(Box::new(AST {
+                    t: ASTType::CharacterLiteral(c),
+                    token: self.lexer.get_current_token(),
+                }))
             }
-            Token::LeftBrace => {
+            TokenType::True => {
+                ret = Some(Box::new(AST {
+                    t: ASTType::BooleanLiteral(true),
+                    token: self.lexer.get_current_token(),
+                }))
+            }
+            TokenType::False => {
+                ret = Some(Box::new(AST {
+                    t: ASTType::BooleanLiteral(false),
+                    token: self.lexer.get_current_token(),
+                }))
+            }
+            TokenType::Ident(name) => {
+                ret = Some(Box::new(AST {
+                    t: ASTType::VariableAccess(name),
+                    token: self.lexer.get_current_token(),
+                }))
+            }
+            TokenType::LeftBrace => {
                 ret = Some(self.parse_object_literal()?);
             }
-            Token::LeftParen => {
+            TokenType::LeftParen => {
+                let token = self.lexer.get_current_token();
                 _ = self.lexer.get_next_token()?;
-                ret = Some(Box::new(AST::Paren(
-                    self.parse_clause(1000)?,
-                    self.lexer.get_line(),
-                )));
-                match self.lexer.get_next_token()? {
-                    Token::RightParen => (),
+                ret = Some(Box::new(AST {
+                    t: ASTType::Paren(self.parse_clause(1000)?),
+                    token,
+                }));
+                match self.lexer.get_next_token()?.t {
+                    TokenType::RightParen => (),
                     _ => {
                         return Err(Box::new(ParserError::new(
                             format!(
@@ -437,14 +460,21 @@ impl Parser {
                 }
             }
             op if op.is_unary_prefix_op() && op.get_unary_op_prec(&self.lexer)? <= max_op_prec => {
+                let token = self.lexer.get_current_token();
                 self.lexer.get_next_token()?;
                 let innards = self.parse_clause(op.get_unary_op_prec(&self.lexer)?)?;
                 match op {
-                    Token::OpMns => {
-                        ret = Some(Box::new(AST::OpMnsPrefix(innards, self.lexer.get_line())));
+                    TokenType::OpMns => {
+                        ret = Some(Box::new(AST {
+                            t: ASTType::OpMnsPrefix(innards),
+                            token,
+                        }));
                     }
-                    Token::OpNot => {
-                        ret = Some(Box::new(AST::OpNot(innards, self.lexer.get_line())));
+                    TokenType::OpNot => {
+                        ret = Some(Box::new(AST {
+                            t: ASTType::OpNot(innards),
+                            token,
+                        }));
                     }
                     _ => {
                         return Err(Box::new(ParserError::new(
@@ -465,18 +495,21 @@ impl Parser {
             }
         }
         loop {
-            match self.lexer.peek_next_token()? {
-                Token::LeftParen => {
-                    _ = self.lexer.get_next_token()?;
+            match self.lexer.peek_next_token()?.t {
+                TokenType::LeftParen => {
+                    self.lexer.get_next_token()?;
+                    let token = self.lexer.get_current_token();
                     let mut args: Vec<Box<AST>> = vec![];
                     loop {
-                        if args.len() == 0 && self.lexer.get_next_token()? == Token::RightParen {
+                        if args.len() == 0
+                            && self.lexer.get_next_token()?.t == TokenType::RightParen
+                        {
                             break;
                         }
                         args.push(self.parse_clause(1000)?);
-                        match self.lexer.get_next_token()? {
-                            Token::RightParen => break,
-                            Token::Comma => _ = self.lexer.get_next_token()?,
+                        match self.lexer.get_next_token()?.t {
+                            TokenType::RightParen => break,
+                            TokenType::Comma => _ = self.lexer.get_next_token()?,
                             _ => {
                                 return Err(Box::new(ParserError::new(
                                     format!(
@@ -488,18 +521,17 @@ impl Parser {
                             }
                         }
                     }
-                    ret = Some(Box::new(AST::FunctionCall(
-                        ret.unwrap(),
-                        args,
-                        self.lexer.get_line(),
-                    )));
+                    ret = Some(Box::new(AST {
+                        token,
+                        t: ASTType::FunctionCall(ret.unwrap(), args),
+                    }));
                 }
-                Token::LeftSquare => {
-                    _ = self.lexer.get_next_token()?;
+                TokenType::LeftSquare => {
+                    let token = self.lexer.get_next_token()?;
                     _ = self.lexer.get_next_token()?;
                     let index = self.parse_clause(1000)?;
-                    match self.lexer.get_next_token()? {
-                        Token::RightSquare => (),
+                    match self.lexer.get_next_token()?.t {
+                        TokenType::RightSquare => (),
                         _ => {
                             return Err(Box::new(ParserError::new(
                                 format!(
@@ -510,22 +542,20 @@ impl Parser {
                             )))
                         }
                     }
-                    ret = Some(Box::new(AST::BracketAccess(
-                        ret.unwrap(),
-                        index,
-                        self.lexer.get_line(),
-                    )));
+                    ret = Some(Box::new(AST {
+                        t: ASTType::BracketAccess(ret.unwrap(), index),
+                        token,
+                    }));
                 }
-                Token::Dot => {
-                    _ = self.lexer.get_next_token()?;
+                TokenType::Dot => {
+                    let token = self.lexer.get_next_token()?;
                     let name = self.lexer.get_next_token()?;
-                    match name {
-                        Token::Ident(name) => {
-                            ret = Some(Box::new(AST::DotAccess(
-                                ret.unwrap(),
-                                name,
-                                self.lexer.get_line(),
-                            )));
+                    match name.t {
+                        TokenType::Ident(name) => {
+                            ret = Some(Box::new(AST {
+                                t: ASTType::DotAccess(ret.unwrap(), name),
+                                token,
+                            }));
                         }
                         _ => {
                             return Err(Box::new(ParserError::new(
@@ -541,30 +571,30 @@ impl Parser {
                 _ => break,
             }
         }
-        while self.lexer.peek_next_token()?.is_op()
-            && usable_operator(&self.lexer.peek_next_token()?, max_op_prec, &self.lexer)?
+        while self.lexer.peek_next_token()?.t.is_op()
+            && usable_operator(&self.lexer.peek_next_token()?.t, max_op_prec, &self.lexer)?
         {
             let op = self.lexer.get_next_token()?;
             _ = self.lexer.get_next_token()?;
-            let rhs = self.parse_clause(op.get_op_prec(&self.lexer)?)?;
+            let rhs = self.parse_clause(op.t.get_op_prec(&self.lexer)?)?;
 
-            ret = Some(match op {
-                Token::OpEqEq => Box::new(AST::OpEqEq(ret.unwrap(), rhs, self.lexer.get_line())),
-                Token::OpEq => Box::new(AST::OpEq(ret.unwrap(), rhs, self.lexer.get_line())),
-                Token::OpMns => Box::new(AST::OpMns(ret.unwrap(), rhs, self.lexer.get_line())),
-                Token::OpPls => Box::new(AST::OpPls(ret.unwrap(), rhs, self.lexer.get_line())),
-                Token::OpTimes => Box::new(AST::OpTimes(ret.unwrap(), rhs, self.lexer.get_line())),
-                Token::OpDiv => Box::new(AST::OpDiv(ret.unwrap(), rhs, self.lexer.get_line())),
-                Token::OpPlsEq => Box::new(AST::OpPlsEq(ret.unwrap(), rhs, self.lexer.get_line())),
-                Token::OpNotEq => Box::new(AST::OpNotEq(ret.unwrap(), rhs, self.lexer.get_line())),
-                Token::OpGt => Box::new(AST::OpGt(ret.unwrap(), rhs, self.lexer.get_line())),
-                Token::OpLt => Box::new(AST::OpLt(ret.unwrap(), rhs, self.lexer.get_line())),
-                Token::OpGtEq => Box::new(AST::OpGtEq(ret.unwrap(), rhs, self.lexer.get_line())),
-                Token::OpLtEq => Box::new(AST::OpLtEq(ret.unwrap(), rhs, self.lexer.get_line())),
-                Token::OpAndAnd => {
-                    Box::new(AST::OpAndAnd(ret.unwrap(), rhs, self.lexer.get_line()))
+            ret = Some(match op.t {
+                TokenType::OpEqEq => Box::new(AST{t:ASTType::OpEqEq(ret.unwrap(), rhs), token: op}),
+                TokenType::OpEq => Box::new(AST{t:ASTType::OpEq(ret.unwrap(), rhs), token: op}),
+                TokenType::OpMns => Box::new(AST{t:ASTType::OpMns(ret.unwrap(), rhs), token: op}),
+                TokenType::OpPls => Box::new(AST{t:ASTType::OpPls(ret.unwrap(), rhs), token: op}),
+                TokenType::OpTimes => Box::new(AST{t:ASTType::OpTimes(ret.unwrap(), rhs), token: op}),
+                TokenType::OpDiv => Box::new(AST{t:ASTType::OpDiv(ret.unwrap(), rhs), token: op}),
+                TokenType::OpPlsEq => Box::new(AST{t:ASTType::OpPlsEq(ret.unwrap(), rhs), token: op}),
+                TokenType::OpNotEq => Box::new(AST{t:ASTType::OpNotEq(ret.unwrap(), rhs), token: op}),
+                TokenType::OpGt => Box::new(AST{t:ASTType::OpGt(ret.unwrap(), rhs), token: op}),
+                TokenType::OpLt => Box::new(AST{t:ASTType::OpLt(ret.unwrap(), rhs), token: op}),
+                TokenType::OpGtEq => Box::new(AST{t:ASTType::OpGtEq(ret.unwrap(), rhs), token: op}),
+                TokenType::OpLtEq => Box::new(AST{t:ASTType::OpLtEq(ret.unwrap(), rhs), token: op}),
+                TokenType::OpAndAnd => {
+                    Box::new(AST{t:ASTType::OpAndAnd(ret.unwrap(), rhs), token: op})
                 }
-                Token::OpOrOr => Box::new(AST::OpOrOr(ret.unwrap(), rhs, self.lexer.get_line())),
+                TokenType::OpOrOr => Box::new(AST{t:ASTType::OpOrOr(ret.unwrap(), rhs), token: op}),
                 _ => {
                     return Err(Box::new(ParserError::new(
                         format!("Operator not implemented in parse clause {:?}, note: this is an internal error, nothing necessarily wrong with ur code", op),
@@ -586,12 +616,11 @@ impl Parser {
         is_const: bool,
     ) -> Result<Box<AST>, Box<dyn MapleError>> {
         let token = self.lexer.get_next_token()?;
-        let var_decl = match token {
-            Token::Ident(name) => Box::new(AST::VariableDeclaration(
-                name,
-                is_const,
-                self.lexer.get_line(),
-            )),
+        let var_decl = match token.t {
+            TokenType::Ident(ref name) => Box::new(AST {
+                t: ASTType::VariableDeclaration(name.to_string(), is_const),
+                token,
+            }),
             _ => {
                 return Err(Box::new(ParserError::new(
                     format!("Expected identifier, got {:?}", token),
@@ -600,14 +629,23 @@ impl Parser {
             }
         };
 
-        match self.lexer.get_next_token()? {
-            Token::OpEq => {
+        match self.lexer.get_next_token()?.t {
+            TokenType::OpEq => {
+                let token = self.lexer.get_current_token();
                 self.lexer.get_next_token()?;
-                let expr = self.parse_clause(Token::OpEq.get_op_prec(&self.lexer)?)?;
-                Ok(Box::new(AST::OpEq(var_decl, expr, self.lexer.get_line())))
+                let expr = self.parse_clause(TokenType::OpEq.get_op_prec(&self.lexer)?)?;
+                Ok(Box::new(AST {
+                    t: ASTType::OpEq(var_decl, expr),
+                    token,
+                }))
             }
-            Token::EndOfStatement | Token::EOF => {
-                self.lexer.feed_token(Token::EndOfStatement);
+            TokenType::EndOfStatement | TokenType::EOF => {
+                self.lexer.feed_token(Token {
+                    t: TokenType::EndOfStatement,
+                    line: self.lexer.get_line(),
+                    char_start: 0,
+                    char_end: 0,
+                });
                 Ok(var_decl)
             }
             t => Err(Box::new(ParserError::new(
@@ -619,8 +657,8 @@ impl Parser {
     // fn parse_statement(&mut self) -> Result<Box<AST>, Box<dyn MapleError>> {
     //     let token = self.lexer.get_next_token()?;
     //     Ok(match token {
-    //         Token::Var => self.parse_variable_declaration()?,
-    //         Token::Ident(_) => {
+    //         TokenType::Var => self.parse_variable_declaration()?,
+    //         TokenType::Ident(_) => {
     //             let ast = self.parse_clause(1000)?;
     //             self.lexer.get_next_token()?;
     //             ast
@@ -630,11 +668,11 @@ impl Parser {
     // }
 
     fn parse_block(&mut self) -> Result<Vec<Box<AST>>, Box<dyn MapleError>> {
-        while self.lexer.get_current_token() == Token::EndOfStatement {
+        while self.lexer.get_current_token().t == TokenType::EndOfStatement {
             self.lexer.get_next_token()?;
         }
-        match self.lexer.get_current_token() {
-            Token::LeftBrace => (),
+        match self.lexer.get_current_token().t {
+            TokenType::LeftBrace => (),
             _ => {
                 return Err(Box::new(ParserError::new(
                     format!(
@@ -645,8 +683,8 @@ impl Parser {
                 )))
             }
         };
-        match self.lexer.get_next_token()? {
-            Token::EndOfStatement => (),
+        match self.lexer.get_next_token()?.t {
+            TokenType::EndOfStatement => (),
             _ => {
                 return Err(Box::new(ParserError::new(
                     format!(
@@ -670,23 +708,38 @@ impl Parser {
         Ok((cond, body))
     }
     fn parse_while(&mut self) -> Result<Box<AST>, Box<dyn MapleError>> {
+        let token = self.lexer.get_current_token();
         self.lexer.get_next_token()?;
         let (cond, body) = self.parse_condition_and_block()?;
         self.lexer.get_next_token()?;
-        self.lexer.feed_token(Token::EndOfStatement);
-        Ok(Box::new(AST::While(cond, body, self.lexer.get_line())))
+        self.lexer.feed_token(Token {
+            t: TokenType::EndOfStatement,
+            line: self.lexer.get_line(),
+            char_start: 0,
+            char_end: 0,
+        });
+        Ok(Box::new(AST {
+            t: ASTType::While(cond, body),
+            token,
+        }))
     }
     fn parse_if(&mut self) -> Result<Box<AST>, Box<dyn MapleError>> {
+        let token = self.lexer.get_current_token();
         self.lexer.get_next_token()?;
         let (cond, body) = self.parse_condition_and_block()?;
         let mut elseifs: Vec<(Box<AST>, Vec<Box<AST>>)> = vec![];
         self.lexer.get_next_token()?;
-        let mut feed_token = Token::EndOfStatement;
+        let mut feed_token = Token {
+            t: TokenType::EndOfStatement,
+            line: self.lexer.get_line(),
+            char_start: 0,
+            char_end: 0,
+        };
         loop {
-            while self.lexer.get_current_token() == Token::EndOfStatement {
+            while self.lexer.get_current_token().t == TokenType::EndOfStatement {
                 self.lexer.get_next_token()?;
             }
-            if self.lexer.get_current_token() != Token::Elseif {
+            if self.lexer.get_current_token().t != TokenType::Elseif {
                 break;
             }
             self.lexer.get_next_token()?;
@@ -694,10 +747,10 @@ impl Parser {
             elseifs.push(block);
             self.lexer.get_next_token()?;
         }
-        while self.lexer.get_current_token() == Token::EndOfStatement {
+        while self.lexer.get_current_token().t == TokenType::EndOfStatement {
             self.lexer.get_next_token()?;
         }
-        let else_body = if self.lexer.get_current_token() == Token::Else {
+        let else_body = if self.lexer.get_current_token().t == TokenType::Else {
             self.lexer.get_next_token()?;
             let body = self.parse_block()?;
             Some(body)
@@ -705,35 +758,53 @@ impl Parser {
             feed_token = self.lexer.get_current_token();
             None
         };
-        self.lexer.feed_token(Token::EndOfStatement);
-        if feed_token != Token::EndOfStatement {
+        self.lexer.feed_token(Token {
+            t: TokenType::EndOfStatement,
+            line: self.lexer.get_line(),
+            char_start: 0,
+            char_end: 0,
+        });
+        if feed_token.t != TokenType::EndOfStatement {
             self.lexer.feed_token(feed_token);
         }
 
         // parse takes care of }, so we don't need to check for it here
-        Ok(Box::new(AST::If(
-            IfLiteral {
+        Ok(Box::new(AST {
+            t: ASTType::If(IfLiteral {
                 cond,
                 body,
                 elseifs,
                 else_body,
-            },
-            self.lexer.get_line(),
-        )))
+            }),
+            token,
+        }))
     }
 
     fn parse_break(&mut self) -> Result<Box<AST>, Box<dyn MapleError>> {
+        let token = self.lexer.get_current_token();
         // self.lexer.get_next_token()?;
-        Ok(Box::new(AST::Break(self.lexer.get_line())))
+        Ok(Box::new(AST {
+            t: ASTType::Break,
+            token,
+        }))
     }
     fn parse_continue(&mut self) -> Result<Box<AST>, Box<dyn MapleError>> {
+        let token = self.lexer.get_current_token();
         // self.lexer.get_next_token()?;
-        Ok(Box::new(AST::Continue(self.lexer.get_line())))
+        Ok(Box::new(AST {
+            t: ASTType::Continue,
+            token,
+        }))
     }
     fn parse_return(&mut self) -> Result<Box<AST>, Box<dyn MapleError>> {
+        let token = self.lexer.get_current_token();
         self.lexer.get_next_token()?;
         let expr = self.parse_clause(1000)?;
-        Ok(Box::new(AST::Return(expr, self.lexer.get_line())))
+        // self.lexer.get_next_token()?;
+        Ok(Box::new(AST {
+            t: ASTType::Return(expr),
+            token,
+        }))
     }
     pub fn parse(&mut self, top_level: bool) -> Result<Vec<Box<AST>>, Box<dyn MapleError>> {
         let mut ret: Vec<Box<AST>> = vec![];
@@ -741,37 +812,37 @@ impl Parser {
             self.lexer.get_next_token()?;
         }
         loop {
-            let ast = match self.lexer.get_current_token() {
-                Token::Fn => Some(self.parse_function(false)?),
-                Token::Break => Some(self.parse_break()?),
-                Token::Continue => Some(self.parse_continue()?),
-                Token::Return => Some(self.parse_return()?),
-                Token::Const => Some(self.parse_variable_declaration(true)?),
-                Token::Var => Some(self.parse_variable_declaration(false)?),
-                Token::Ident(_) => {
+            let ast = match self.lexer.get_current_token().t {
+                TokenType::Fn => Some(self.parse_function(false)?),
+                TokenType::Break => Some(self.parse_break()?),
+                TokenType::Continue => Some(self.parse_continue()?),
+                TokenType::Return => Some(self.parse_return()?),
+                TokenType::Const => Some(self.parse_variable_declaration(true)?),
+                TokenType::Var => Some(self.parse_variable_declaration(false)?),
+                TokenType::Ident(_) => {
                     let ast = self.parse_clause(1000)?;
                     // self.lexer.get_next_token()?;
                     Some(ast)
                 }
-                Token::While => Some(self.parse_while()?),
-                Token::If => Some(self.parse_if()?),
-                Token::EOF if top_level => break,
-                Token::EOF if !top_level => {
+                TokenType::While => Some(self.parse_while()?),
+                TokenType::If => Some(self.parse_if()?),
+                TokenType::EOF if top_level => break,
+                TokenType::EOF if !top_level => {
                     return Err(Box::new(ParserError::new(
                         "Unexpected EOF (aka unclosed brace)".into(),
                         self.lexer.get_line(),
                     )));
                 }
-                Token::RightBrace if !top_level => {
+                TokenType::RightBrace if !top_level => {
                     break;
                 }
-                Token::RightBrace if top_level => {
+                TokenType::RightBrace if top_level => {
                     return Err(Box::new(ParserError::new(
                         "Unexpected right brace in top level".into(),
                         self.lexer.get_line(),
                     )));
                 }
-                Token::EndOfStatement => None,
+                TokenType::EndOfStatement => None,
                 _ => {
                     return Err(Box::new(ParserError::new(
                         format!("Unexpected token {:?}", self.lexer.get_current_token()),
@@ -779,24 +850,24 @@ impl Parser {
                     )))
                 }
             };
-            match self.lexer.get_next_token()? {
-                Token::RightBrace if !top_level => {
+            match self.lexer.get_next_token()?.t {
+                TokenType::RightBrace if !top_level => {
                     break;
                 }
-                Token::RightBrace if top_level => {
+                TokenType::RightBrace if top_level => {
                     return Err(Box::new(ParserError::new(
                         "Unexpected right brace in top level".into(),
                         self.lexer.get_line(),
                     )));
                 }
-                Token::EndOfStatement => (),
-                Token::EOF if !top_level => {
+                TokenType::EndOfStatement => (),
+                TokenType::EOF if !top_level => {
                     return Err(Box::new(ParserError::new(
                         "Unexpected EOF (aka unclosed brace)".into(),
                         self.lexer.get_line(),
                     )));
                 }
-                Token::EOF => break,
+                TokenType::EOF => break,
                 _ if ast.is_none() => (),
                 _ => {
                     return Err(Box::new(ParserError::new(

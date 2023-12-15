@@ -1,5 +1,6 @@
 #![allow(dead_code)]
 use crate::error::{RuntimeError, ScopeError};
+use crate::lexer::Token;
 use crate::parser::{Object, ObjectKey, Unpack, Value};
 use crate::scopechain::ReturnType;
 use crate::ScopeChain;
@@ -190,81 +191,52 @@ impl IfLiteral {
 }
 // paren is only for pretty printing
 #[derive(Debug, Clone, PartialEq)]
-pub enum AST {
-    Import(String, usize),
-    DotAccess(Box<AST>, String, usize),
-    BracketAccess(Box<AST>, Box<AST>, usize),
-    ObjectLiteral(Vec<(ObjectKey, Box<AST>)>, usize),
-    CharacterLiteral(char, usize),
-    StringLiteral(String, usize),
-    NumberLiteral(f64, usize),
-    BooleanLiteral(bool, usize),
-    Paren(Box<AST>, usize),
-    VariableDeclaration(String, bool, usize),
-    FunctionLiteral(FunctionLiteral, usize),
-    FunctionCall(Box<AST>, Vec<Box<AST>>, usize),
-    If(IfLiteral, usize),
-    While(Box<AST>, Vec<Box<AST>>, usize),
-    OpPls(Box<AST>, Box<AST>, usize),    // +
-    OpMns(Box<AST>, Box<AST>, usize),    // -
-    OpTimes(Box<AST>, Box<AST>, usize),  // *
-    OpDiv(Box<AST>, Box<AST>, usize),    // /
-    OpMnsPrefix(Box<AST>, usize),        // -
-    OpEq(Box<AST>, Box<AST>, usize),     // =
-    OpEqEq(Box<AST>, Box<AST>, usize),   // ==
-    OpPlsEq(Box<AST>, Box<AST>, usize),  // +=
-    OpNotEq(Box<AST>, Box<AST>, usize),  // !=
-    OpNot(Box<AST>, usize),              // !
-    OpAndAnd(Box<AST>, Box<AST>, usize), // &&
-    OpOrOr(Box<AST>, Box<AST>, usize),   // ||
-    OpGt(Box<AST>, Box<AST>, usize),     // >
-    OpLt(Box<AST>, Box<AST>, usize),     // <
-    OpGtEq(Box<AST>, Box<AST>, usize),   // >=
-    OpLtEq(Box<AST>, Box<AST>, usize),   // <=
-    VariableAccess(String, usize),
-    Return(Box<AST>, usize),
-    Break(usize),
-    Continue(usize),
+pub enum ASTType {
+    Import(String),
+    DotAccess(Box<AST>, String),
+    BracketAccess(Box<AST>, Box<AST>),
+    ObjectLiteral(Vec<(ObjectKey, Box<AST>)>),
+    CharacterLiteral(char),
+    StringLiteral(String),
+    NumberLiteral(f64),
+    BooleanLiteral(bool),
+    Paren(Box<AST>),
+    VariableDeclaration(String, bool),
+    FunctionLiteral(FunctionLiteral),
+    FunctionCall(Box<AST>, Vec<Box<AST>>),
+    If(IfLiteral),
+    While(Box<AST>, Vec<Box<AST>>),
+    OpPls(Box<AST>, Box<AST>),    // +
+    OpMns(Box<AST>, Box<AST>),    // -
+    OpTimes(Box<AST>, Box<AST>),  // *
+    OpDiv(Box<AST>, Box<AST>),    // /
+    OpMnsPrefix(Box<AST>),        // -
+    OpEq(Box<AST>, Box<AST>),     // =
+    OpEqEq(Box<AST>, Box<AST>),   // ==
+    OpPlsEq(Box<AST>, Box<AST>),  // +=
+    OpNotEq(Box<AST>, Box<AST>),  // !=
+    OpNot(Box<AST>),              // !
+    OpAndAnd(Box<AST>, Box<AST>), // &&
+    OpOrOr(Box<AST>, Box<AST>),   // ||
+    OpGt(Box<AST>, Box<AST>),     // >
+    OpLt(Box<AST>, Box<AST>),     // <
+    OpGtEq(Box<AST>, Box<AST>),   // >=
+    OpLtEq(Box<AST>, Box<AST>),   // <=
+    VariableAccess(String),
+    Return(Box<AST>),
+    Break,
+    Continue,
+}
+
+#[derive(Debug, Clone, PartialEq)]
+pub struct AST {
+    pub t: ASTType,
+    pub token: Token,
 }
 
 impl AST {
     pub fn get_line(&self) -> usize {
-        match *self {
-            AST::Import(_, line) => line,
-            AST::ObjectLiteral(_, line) => line,
-            AST::DotAccess(_, _, line) => line,
-            AST::BracketAccess(_, _, line) => line,
-            AST::CharacterLiteral(_, line) => line,
-            AST::StringLiteral(_, line) => line,
-            AST::NumberLiteral(_, line) => line,
-            AST::BooleanLiteral(_, line) => line,
-            AST::Paren(_, line) => line,
-            AST::VariableDeclaration(_, _, line) => line,
-            AST::FunctionLiteral(_, line) => line,
-            AST::FunctionCall(_, _, line) => line,
-            AST::If(_, line) => line,
-            AST::While(_, _, line) => line,
-            AST::OpPls(_, _, line) => line,
-            AST::OpMns(_, _, line) => line,
-            AST::OpTimes(_, _, line) => line,
-            AST::OpDiv(_, _, line) => line,
-            AST::OpMnsPrefix(_, line) => line,
-            AST::OpNot(_, line) => line,
-            AST::OpEq(_, _, line) => line,
-            AST::OpEqEq(_, _, line) => line,
-            AST::OpPlsEq(_, _, line) => line,
-            AST::OpNotEq(_, _, line) => line,
-            AST::OpAndAnd(_, _, line) => line,
-            AST::OpOrOr(_, _, line) => line,
-            AST::OpGt(_, _, line) => line,
-            AST::OpLt(_, _, line) => line,
-            AST::OpGtEq(_, _, line) => line,
-            AST::OpLtEq(_, _, line) => line,
-            AST::VariableAccess(_, line) => line,
-            AST::Return(_, line) => line,
-            AST::Break(line) => line,
-            AST::Continue(line) => line,
-        }
+        self.token.line + 1
     }
     fn eval_op_andand(
         left: &Box<AST>,
@@ -778,6 +750,59 @@ impl AST {
     ) -> Result<Rc<Value>, Box<RuntimeError>> {
         let left_val = left.get_value(scope_chain)?;
         match left_val.as_ref() {
+            Value::ObjectAccess(obj, key) => {
+                let right_val = right.get_value(scope_chain)?.unpack_and_transform(
+                    scope_chain,
+                    right.get_line(),
+                    right,
+                )?;
+                let o = match obj.as_ref() {
+                    Value::Object(obj) => obj,
+                    _ => {
+                        return Err(Box::new(RuntimeError::new(
+                            format!("Cannot access field of non-object",),
+                            left.get_line(),
+                        )))
+                    }
+                };
+                let a = (*o).get(key.clone(), left.get_line())?;
+                let a_ptr = Rc::<Value>::as_ptr(&a) as *mut Value;
+                let b = right_val.unpack_and_transform(scope_chain, right.get_line(), right)?;
+                match (a.as_ref(), b.as_ref()) {
+                    (Value::Number(a), Value::Number(b)) => unsafe {
+                        *a_ptr = Value::Number(*a + *b);
+                    },
+                    (Value::Char(a), Value::Char(b)) => unsafe {
+                        *a_ptr = Value::Number(*a as i32 as f64 + *b as i32 as f64);
+                    },
+                    (Value::Number(a), Value::Char(b)) => unsafe {
+                        *a_ptr = Value::Number(*a + *b as i32 as f64);
+                    },
+                    (Value::Char(a), Value::Number(b)) => unsafe {
+                        *a_ptr = Value::Number(*a as i32 as f64 + *b);
+                    },
+                    (Value::String(a), Value::String(b)) => unsafe {
+                        *a_ptr = Value::String(format!("{}{}", a, b));
+                    },
+                    (Value::String(a), Value::Char(b)) => unsafe {
+                        *a_ptr = Value::String(format!("{}{}", a, b));
+                    },
+                    (Value::Char(a), Value::String(b)) => unsafe {
+                        *a_ptr = Value::String(format!("{}{}", a, b));
+                    },
+                    _ => {
+                        return Err(Box::new(RuntimeError::new(
+                            format!(
+                                "Cannot add types {} and {}",
+                                a.pretty_type(scope_chain, left.get_line()),
+                                b.pretty_type(scope_chain, right.get_line())
+                            ),
+                            left.get_line(),
+                        )));
+                    }
+                };
+                Ok(left_val)
+            }
             Value::Variable(name) => {
                 let right_val = right.get_value(scope_chain)?.unpack_and_transform(
                     scope_chain,
@@ -1032,9 +1057,10 @@ impl AST {
     }
 
     pub fn get_value(&self, scope_chain: &mut ScopeChain) -> Result<Rc<Value>, Box<RuntimeError>> {
-        let ret = match self {
-            AST::Import(s, _) => AST::eval_import(s.clone()),
-            AST::ObjectLiteral(arr, _) => {
+        let line = self.get_line();
+        let ret = match &self.t {
+            ASTType::Import(s) => AST::eval_import(s.clone()),
+            ASTType::ObjectLiteral(arr) => {
                 let mut obj = Object::new();
                 for (key, value) in arr.iter() {
                     let value = value.get_value(scope_chain)?.unpack_and_transform(
@@ -1046,12 +1072,12 @@ impl AST {
                 }
                 Ok(Rc::new(Value::Object(obj)))
             }
-            AST::DotAccess(left, name, line) => Ok(Rc::new(Value::ObjectAccess(
+            ASTType::DotAccess(left, name) => Ok(Rc::new(Value::ObjectAccess(
                 left.get_value(scope_chain)?
-                    .unpack_and_transform(scope_chain, *line, self)?,
+                    .unpack_and_transform(scope_chain, line, self)?,
                 ObjectKey::String(name.to_string()),
             ))),
-            AST::BracketAccess(left, value, line) => {
+            ASTType::BracketAccess(left, value) => {
                 let val = value.get_value(scope_chain)?.unpack_and_transform(
                     scope_chain,
                     value.get_line(),
@@ -1061,39 +1087,39 @@ impl AST {
                     Value::Number(n) => ObjectKey::Number(*n),
                     Value::String(s) => ObjectKey::String(s.clone()),
                     Value::Char(c) => ObjectKey::String(c.to_string()),
-                    v => return Err(Box::new(RuntimeError::new(format!("Cannot use type {} as an object key, can only use char, string, or number types", v.pretty_type(scope_chain, *line)), *line))),
+                    v => return Err(Box::new(RuntimeError::new(format!("Cannot use type {} as an object key, can only use char, string, or number types", v.pretty_type(scope_chain, line)), line))),
                 };
                 Ok(Rc::new(Value::ObjectAccess(
                     left.get_value(scope_chain)?
-                        .unpack_and_transform(scope_chain, *line, self)?,
+                        .unpack_and_transform(scope_chain, line, self)?,
                     key,
                 )))
             }
-            AST::Return(v, _) => AST::eval_return(v, scope_chain),
-            AST::Break(_) => match scope_chain
+            ASTType::Return(v) => AST::eval_return(v, scope_chain),
+            ASTType::Break => match scope_chain
                 .set_return_register(ReturnType::Break)
                 .to_runtime_error()
             {
                 Ok(_) => Ok(Rc::new(Value::Undefined)),
                 Err(e) => return Err(e),
             },
-            AST::Continue(_) => {
+            ASTType::Continue => {
                 scope_chain
                     .set_return_register(ReturnType::Continue)
                     .to_runtime_error()?;
                 Ok(Rc::new(Value::Undefined))
             }
-            AST::FunctionCall(func, params, line) => {
+            ASTType::FunctionCall(func, params) => {
                 let func =
                     func.get_value(scope_chain)
-                        .unpack_and_transform(scope_chain, *line, self)?;
+                        .unpack_and_transform(scope_chain, line, self)?;
                 match func.as_ref() {
-                    Value::Function(func) => func.call(scope_chain, params, *line),
+                    Value::Function(func) => func.call(scope_chain, params, line),
                     Value::BuiltinFunction(f, arg_len) => {
                         if arg_len != &params.len() {
                             return Err(Box::new(RuntimeError::new(
                                 format!("Expected {} arguments, got {}", arg_len, params.len()),
-                                *line,
+                                line,
                             )));
                         }
                         // convert params to values
@@ -1121,18 +1147,18 @@ impl AST {
                     _ => {
                         return Err(Box::new(RuntimeError::new(
                             "Cannot call a non-function".into(),
-                            *line,
+                            line,
                         )))
                     }
                 }
             }
-            AST::BooleanLiteral(b, _) => Ok(Rc::new(Value::Boolean(*b))),
-            AST::If(if_lit, _) => AST::eval_if(if_lit, &self, scope_chain),
-            AST::While(cond, block, _) => AST::eval_while(cond, block, scope_chain),
-            AST::FunctionLiteral(f, _) => Ok(Rc::new(Value::Function(f.make_real(scope_chain)))),
-            AST::StringLiteral(str, _) => Ok(Rc::new(Value::String(str.to_string()))),
-            AST::NumberLiteral(num, _) => Ok(Rc::new(Value::Number(*num))),
-            AST::VariableDeclaration(name, is_const, _) => {
+            ASTType::BooleanLiteral(b) => Ok(Rc::new(Value::Boolean(*b))),
+            ASTType::If(if_lit) => AST::eval_if(if_lit, &self, scope_chain),
+            ASTType::While(cond, block) => AST::eval_while(cond, block, scope_chain),
+            ASTType::FunctionLiteral(f) => Ok(Rc::new(Value::Function(f.make_real(scope_chain)))),
+            ASTType::StringLiteral(str) => Ok(Rc::new(Value::String(str.to_string()))),
+            ASTType::NumberLiteral(num) => Ok(Rc::new(Value::Number(*num))),
+            ASTType::VariableDeclaration(name, is_const) => {
                 match scope_chain
                     .add_variable(name, *is_const, self.get_line())
                     .to_runtime_error()
@@ -1141,25 +1167,25 @@ impl AST {
                     Err(e) => return Err(e),
                 }
             }
-            AST::OpAndAnd(left, right, _) => AST::eval_op_andand(left, right, scope_chain),
-            AST::OpOrOr(left, right, _) => AST::eval_op_oror(left, right, scope_chain),
-            AST::OpNotEq(left, right, _) => AST::eval_op_noteq(left, right, scope_chain),
-            AST::OpNot(right, _) => AST::eval_op_not(right, scope_chain),
-            AST::OpPls(left, right, _) => AST::eval_op_pls(left, right, scope_chain),
-            AST::OpMns(left, right, _) => AST::eval_op_mns(left, right, scope_chain),
-            AST::OpTimes(left, right, _) => AST::eval_op_times(left, right, scope_chain),
-            AST::OpDiv(left, right, _) => AST::eval_op_div(left, right, scope_chain),
-            AST::OpMnsPrefix(left, _) => AST::eval_op_mns_prefix(left, scope_chain),
-            AST::OpPlsEq(left, right, _) => AST::eval_op_plseq(left, right, scope_chain),
-            AST::OpEq(left, right, _) => AST::eval_op_eq(left, right, scope_chain),
-            AST::OpGt(left, right, _) => AST::eval_op_gt(left, right, scope_chain),
-            AST::OpLt(left, right, _) => AST::eval_op_lt(left, right, scope_chain),
-            AST::OpGtEq(left, right, _) => AST::eval_op_gteq(left, right, scope_chain),
-            AST::OpLtEq(left, right, _) => AST::eval_op_lteq(left, right, scope_chain),
-            AST::CharacterLiteral(c, _) => Ok(Rc::new(Value::Char(*c))),
-            AST::OpEqEq(left, right, _) => AST::eval_op_eqeq(left, right, scope_chain),
-            AST::VariableAccess(name, _) => Ok(Value::Variable(name.clone()).into()),
-            AST::Paren(ast, _) => ast.get_value(scope_chain),
+            ASTType::OpAndAnd(left, right) => AST::eval_op_andand(left, right, scope_chain),
+            ASTType::OpOrOr(left, right) => AST::eval_op_oror(left, right, scope_chain),
+            ASTType::OpNotEq(left, right) => AST::eval_op_noteq(left, right, scope_chain),
+            ASTType::OpNot(right) => AST::eval_op_not(right, scope_chain),
+            ASTType::OpPls(left, right) => AST::eval_op_pls(left, right, scope_chain),
+            ASTType::OpMns(left, right) => AST::eval_op_mns(left, right, scope_chain),
+            ASTType::OpTimes(left, right) => AST::eval_op_times(left, right, scope_chain),
+            ASTType::OpDiv(left, right) => AST::eval_op_div(left, right, scope_chain),
+            ASTType::OpMnsPrefix(left) => AST::eval_op_mns_prefix(left, scope_chain),
+            ASTType::OpPlsEq(left, right) => AST::eval_op_plseq(left, right, scope_chain),
+            ASTType::OpEq(left, right) => AST::eval_op_eq(left, right, scope_chain),
+            ASTType::OpGt(left, right) => AST::eval_op_gt(left, right, scope_chain),
+            ASTType::OpLt(left, right) => AST::eval_op_lt(left, right, scope_chain),
+            ASTType::OpGtEq(left, right) => AST::eval_op_gteq(left, right, scope_chain),
+            ASTType::OpLtEq(left, right) => AST::eval_op_lteq(left, right, scope_chain),
+            ASTType::CharacterLiteral(c) => Ok(Rc::new(Value::Char(*c))),
+            ASTType::OpEqEq(left, right) => AST::eval_op_eqeq(left, right, scope_chain),
+            ASTType::VariableAccess(name) => Ok(Value::Variable(name.clone()).into()),
+            ASTType::Paren(ast) => ast.get_value(scope_chain),
         };
 
         match ret {
@@ -1174,7 +1200,7 @@ impl AST {
     pub fn interpret(&self, scope_chain: &mut ScopeChain) -> Result<ReturnType, Box<RuntimeError>> {
         self.get_value(scope_chain)?;
         match scope_chain.get_return_register() {
-            // ReturnType::Return(_) => Err(Box::new(
+            // ReturnType::Return => Err(Box::new(
             //     RuntimeError::new("Return statement at top level".into(), self.get_line())
             //         .add_base_ast(self.clone()),
             // )),
@@ -1192,17 +1218,17 @@ impl AST {
     }
 
     pub fn debug_pretty_print(&self) -> String {
-        match self {
-            AST::Import(s, _) => format!("(import {})", s),
-            AST::ObjectLiteral(_, _) => todo!(),
-            AST::BracketAccess(l, v, _) => {
+        match &self.t {
+            ASTType::Import(s) => format!("(import {})", s),
+            ASTType::ObjectLiteral(_) => todo!(),
+            ASTType::BracketAccess(l, v) => {
                 format!("{}[{}]", l.debug_pretty_print(), v.debug_pretty_print())
             }
-            AST::DotAccess(l, v, _) => format!("{}.{}", l.debug_pretty_print(), v),
-            AST::Return(v, _) => format!("return {}", v.debug_pretty_print()),
-            AST::Break(_) => "break".to_string(),
-            AST::Continue(_) => "continue".to_string(),
-            AST::FunctionCall(func, params, _) => {
+            ASTType::DotAccess(l, v) => format!("{}.{}", l.debug_pretty_print(), v),
+            ASTType::Return(v) => format!("return {}", v.debug_pretty_print()),
+            ASTType::Break => "break".to_string(),
+            ASTType::Continue => "continue".to_string(),
+            ASTType::FunctionCall(func, params) => {
                 format!(
                     "({}({}))",
                     func.debug_pretty_print(),
@@ -1213,8 +1239,8 @@ impl AST {
                         .join(", ")
                 )
             }
-            AST::BooleanLiteral(b, _) => b.to_string(),
-            AST::While(c, block, _) => {
+            ASTType::BooleanLiteral(b) => b.to_string(),
+            ASTType::While(c, block) => {
                 format!(
                     "while {} {{\n{}\n}}",
                     c.debug_pretty_print(),
@@ -1225,127 +1251,142 @@ impl AST {
                         .join("")
                 )
             }
-            AST::If(if_lit, _) => if_lit.pretty_print(),
-            AST::FunctionLiteral(func, _) => func.pretty_print(),
-            AST::StringLiteral(value, _) => format!("\"{}\"", value),
-            AST::NumberLiteral(value, _) => value.to_string(),
-            AST::OpAndAnd(left, right, _) => {
+            ASTType::If(if_lit) => if_lit.pretty_print(),
+            ASTType::FunctionLiteral(func) => func.pretty_print(),
+            ASTType::StringLiteral(value) => format!("\"{}\"", value),
+            ASTType::NumberLiteral(value) => value.to_string(),
+            ASTType::OpAndAnd(left, right) => {
                 format!(
                     "({} && {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
             }
-            AST::OpOrOr(left, right, _) => {
+            ASTType::OpOrOr(left, right) => {
                 format!(
                     "({} || {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
             }
-            AST::OpNot(left, _) => {
+            ASTType::OpNot(left) => {
                 format!("!({})", left.debug_pretty_print(),)
             }
-            AST::OpMnsPrefix(left, _) => {
+            ASTType::OpMnsPrefix(left) => {
                 format!("-({})", left.debug_pretty_print(),)
             }
-            AST::OpMns(left, right, _) => {
+            ASTType::OpMns(left, right) => {
                 format!(
                     "({} - {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
             }
-            AST::OpPls(left, right, _) => {
+            ASTType::OpPls(left, right) => {
                 format!(
                     "({} + {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
             }
-            AST::OpTimes(left, right, _) => {
+            ASTType::OpTimes(left, right) => {
                 format!("({} * {})", left.pretty_print(), right.pretty_print())
             }
-            AST::OpDiv(left, right, _) => {
+            ASTType::OpDiv(left, right) => {
                 format!("({} / {})", left.pretty_print(), right.pretty_print())
             }
-            AST::OpPlsEq(left, right, _) => {
+            ASTType::OpPlsEq(left, right) => {
                 format!(
                     "({} += {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
             }
-            AST::OpGt(left, right, _) => {
+            ASTType::OpGt(left, right) => {
                 format!(
                     "({} > {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
             }
-            AST::OpLt(left, right, _) => {
+            ASTType::OpLt(left, right) => {
                 format!(
                     "({} < {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
             }
-            AST::OpGtEq(left, right, _) => {
+            ASTType::OpGtEq(left, right) => {
                 format!(
                     "({} >= {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
             }
-            AST::OpLtEq(left, right, _) => {
+            ASTType::OpLtEq(left, right) => {
                 format!(
                     "({} <= {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
             }
-            AST::VariableDeclaration(name, is_const, _) if !*is_const => format!("var {}", name),
-            AST::VariableDeclaration(name, _, _) => format!("const {}", name),
-            AST::OpEq(left, right, _) => {
+            ASTType::VariableDeclaration(name, is_const) if !*is_const => format!("var {}", name),
+            ASTType::VariableDeclaration(name, _) => format!("const {}", name),
+            ASTType::OpEq(left, right) => {
                 format!(
                     "({} = {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
             }
-            AST::CharacterLiteral(c, _) => format!("'{}'", c),
-            AST::OpEqEq(left, right, _) => {
+            ASTType::CharacterLiteral(c) => format!("'{}'", c),
+            ASTType::OpEqEq(left, right) => {
                 format!(
                     "({} == {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
             }
-            AST::OpNotEq(left, right, _) => {
+            ASTType::OpNotEq(left, right) => {
                 format!(
                     "({} != {})",
                     left.debug_pretty_print(),
                     right.debug_pretty_print()
                 )
             }
-            AST::VariableAccess(name, _) => name.to_string(),
-            AST::Paren(ast, _) => format!("({})", ast.debug_pretty_print()),
+            ASTType::VariableAccess(name) => name.to_string(),
+            ASTType::Paren(ast) => format!("({})", ast.debug_pretty_print()),
         }
     }
 
     pub fn pretty_print(&self) -> String {
-        match self {
-            AST::Import(s, _) => format!("import {}", s),
-            AST::ObjectLiteral(_, _) => todo!(),
-            AST::BracketAccess(l, v, _) => {
+        match &self.t {
+            ASTType::Import(s) => format!("import {}", s),
+            ASTType::ObjectLiteral(s) => {
+                let mut ret = "{\n".to_string();
+                for (key, value) in s {
+                    ret += &format!(
+                        "  {} = {},\n",
+                        match key {
+                            ObjectKey::String(s) => format!("{}", s),
+                            ObjectKey::Number(n) => n.to_string(),
+                        },
+                        value.pretty_print()
+                    );
+                }
+
+                ret += "}";
+                ret
+            }
+            ASTType::BracketAccess(l, v) => {
                 format!("{}[{}]", l.pretty_print(), v.pretty_print())
             }
-            AST::DotAccess(l, v, _) => format!("{}.{}", l.pretty_print(), v),
-            AST::Return(v, _) => format!("return {}", v.pretty_print()),
-            AST::Break(_) => "break".to_string(),
-            AST::Continue(_) => "continue".to_string(),
-            AST::BooleanLiteral(b, _) => b.to_string(),
-            AST::FunctionCall(func, params, _) => {
+            ASTType::DotAccess(l, v) => format!("{}.{}", l.pretty_print(), v),
+            ASTType::Return(v) => format!("return {}", v.pretty_print()),
+            ASTType::Break => "break".to_string(),
+            ASTType::Continue => "continue".to_string(),
+            ASTType::BooleanLiteral(b) => b.to_string(),
+            ASTType::FunctionCall(func, params) => {
                 format!(
                     "{}({})",
                     func.pretty_print(),
@@ -1356,7 +1397,7 @@ impl AST {
                         .join(", ")
                 )
             }
-            AST::While(c, block, _) => {
+            ASTType::While(c, block) => {
                 format!(
                     "while {} {{\n{}\n}}",
                     c.pretty_print(),
@@ -1367,63 +1408,63 @@ impl AST {
                         .join("")
                 )
             }
-            AST::If(if_lit, _) => if_lit.pretty_print(),
-            AST::FunctionLiteral(func, _) => func.pretty_print(),
-            AST::StringLiteral(value, _) => format!("\"{}\"", value),
-            AST::NumberLiteral(value, _) => value.to_string(),
-            AST::OpAndAnd(left, right, _) => {
+            ASTType::If(if_lit) => if_lit.pretty_print(),
+            ASTType::FunctionLiteral(func) => func.pretty_print(),
+            ASTType::StringLiteral(value) => format!("\"{}\"", value),
+            ASTType::NumberLiteral(value) => value.to_string(),
+            ASTType::OpAndAnd(left, right) => {
                 format!("{} && {}", left.pretty_print(), right.pretty_print())
             }
-            AST::OpOrOr(left, right, _) => {
+            ASTType::OpOrOr(left, right) => {
                 format!("{} || {}", left.pretty_print(), right.pretty_print())
             }
-            AST::OpNot(left, _) => {
+            ASTType::OpNot(left) => {
                 format!("!{}", left.pretty_print())
             }
-            AST::OpMnsPrefix(left, _) => {
+            ASTType::OpMnsPrefix(left) => {
                 format!("-{}", left.pretty_print())
             }
-            AST::OpMns(left, right, _) => {
+            ASTType::OpMns(left, right) => {
                 format!("{} - {}", left.pretty_print(), right.pretty_print())
             }
-            AST::OpPls(left, right, _) => {
+            ASTType::OpPls(left, right) => {
                 format!("{} + {}", left.pretty_print(), right.pretty_print())
             }
-            AST::OpTimes(left, right, _) => {
+            ASTType::OpTimes(left, right) => {
                 format!("{} * {}", left.pretty_print(), right.pretty_print())
             }
-            AST::OpDiv(left, right, _) => {
+            ASTType::OpDiv(left, right) => {
                 format!("{} / {}", left.pretty_print(), right.pretty_print())
             }
-            AST::OpPlsEq(left, right, _) => {
+            ASTType::OpPlsEq(left, right) => {
                 format!("{} += {}", left.pretty_print(), right.pretty_print())
             }
-            AST::OpGt(left, right, _) => {
+            ASTType::OpGt(left, right) => {
                 format!("{} > {}", left.pretty_print(), right.pretty_print())
             }
-            AST::OpLt(left, right, _) => {
+            ASTType::OpLt(left, right) => {
                 format!("{} < {}", left.pretty_print(), right.pretty_print())
             }
-            AST::OpGtEq(left, right, _) => {
+            ASTType::OpGtEq(left, right) => {
                 format!("{} >= {}", left.pretty_print(), right.pretty_print())
             }
-            AST::OpLtEq(left, right, _) => {
+            ASTType::OpLtEq(left, right) => {
                 format!("{} <= {}", left.pretty_print(), right.pretty_print())
             }
-            AST::VariableDeclaration(name, is_const, _) if !*is_const => format!("var {}", name),
-            AST::VariableDeclaration(name, _, _) => format!("const {}", name),
-            AST::OpEq(left, right, _) => {
+            ASTType::VariableDeclaration(name, is_const) if !is_const => format!("var {}", name),
+            ASTType::VariableDeclaration(name, _) => format!("const {}", name),
+            ASTType::OpEq(left, right) => {
                 format!("{} = {}", left.pretty_print(), right.pretty_print())
             }
-            AST::CharacterLiteral(c, _) => format!("'{}'", c),
-            AST::OpEqEq(left, right, _) => {
+            ASTType::CharacterLiteral(c) => format!("'{}'", c),
+            ASTType::OpEqEq(left, right) => {
                 format!("{} == {}", left.pretty_print(), right.pretty_print())
             }
-            AST::OpNotEq(left, right, _) => {
+            ASTType::OpNotEq(left, right) => {
                 format!("{} != {}", left.pretty_print(), right.pretty_print())
             }
-            AST::VariableAccess(name, _) => name.to_string(),
-            AST::Paren(ast, _) => format!("({})", ast.pretty_print()),
+            ASTType::VariableAccess(name) => name.to_string(),
+            ASTType::Paren(ast) => format!("({})", ast.pretty_print()),
         }
     }
 }

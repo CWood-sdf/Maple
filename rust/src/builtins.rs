@@ -134,6 +134,30 @@ fn builtin_concat(
     }
 }
 
+pub fn builtin_sleep_nanos(
+    args: Vec<Rc<Value>>,
+    ast: &AST,
+    scopechain: &ScopeChain,
+    line: usize,
+) -> Result<Rc<Value>, Box<RuntimeError>> {
+    match 
+        args[0].unpack_and_transform(scopechain, line, ast)?.as_ref() 
+     {
+        Value::Number(ref n) => {
+            let nanos = n.round() as u64;
+            std::thread::sleep(std::time::Duration::from_nanos(nanos));
+
+        }
+        _ => {
+            return Err(Box::new(RuntimeError::new(
+                "Cannot toStr variable".to_string(),
+                line,
+            )));
+        }
+
+    };
+    Ok(Rc::new(Value::Undefined))
+}
 pub fn builtin_nanos(
     _args: Vec<Rc<Value>>,
     _ast: &AST,
@@ -242,6 +266,70 @@ pub fn builtin_str_len(
     }
 }
 
+pub fn builtin_math_ceil(
+    args: Vec<Rc<Value>>,
+    ast: &AST,
+    scopechain: &ScopeChain,
+    line: usize,
+) -> Result<Rc<Value>, Box<RuntimeError>> {
+    match args[0]
+        .unpack_and_transform(scopechain, line, ast)?
+        .as_ref()
+    {
+        Value::Number(ref n) => {
+            Ok(Rc::new(Value::Number(n.ceil())))
+        }
+        _ => {
+            return Err(Box::new(RuntimeError::new(
+                "Cannot floor non-number".to_string(),
+                line,
+            )));
+        }
+    }
+}
+pub fn builtin_math_floor(
+    args: Vec<Rc<Value>>,
+    ast: &AST,
+    scopechain: &ScopeChain,
+    line: usize,
+) -> Result<Rc<Value>, Box<RuntimeError>> {
+    match args[0]
+        .unpack_and_transform(scopechain, line, ast)?
+        .as_ref()
+    {
+        Value::Number(ref n) => {
+            Ok(Rc::new(Value::Number(n.floor())))
+        }
+        _ => {
+            return Err(Box::new(RuntimeError::new(
+                "Cannot floor non-number".to_string(),
+                line,
+            )));
+        }
+    }
+}
+pub fn builtin_math_round(
+    args: Vec<Rc<Value>>,
+    ast: &AST,
+    scopechain: &ScopeChain,
+    line: usize,
+) -> Result<Rc<Value>, Box<RuntimeError>> {
+    match args[0]
+        .unpack_and_transform(scopechain, line, ast)?
+        .as_ref()
+    {
+        Value::Number(ref n) => {
+            Ok(Rc::new(Value::Number(n.round())))
+        }
+        _ => {
+            return Err(Box::new(RuntimeError::new(
+                "Cannot round non-number".to_string(),
+                line,
+            )));
+        }
+    }
+}
+
 pub fn make_builtin_std(scope_chain: &mut ScopeChain) -> Result<(), Box<RuntimeError>> {
     let mut std_obj = Object { fields: vec![] };
     let mut std_io_obj = Object { fields: vec![] };
@@ -263,6 +351,10 @@ pub fn make_builtin_std(scope_chain: &mut ScopeChain) -> Result<(), Box<RuntimeE
         ObjectKey::String("nanos".to_string()),
         Rc::new(Value::BuiltinFunction(builtin_nanos, 0)),
     );
+    std_time_obj.set(
+        ObjectKey::String("sleepNanos".to_string()),
+        Rc::new(Value::BuiltinFunction(builtin_sleep_nanos, 1)),
+    );
     let std_time_rc = Rc::new(Value::Object(std_time_obj));
     std_obj.set(
         ObjectKey::String("time".to_string()),
@@ -278,6 +370,29 @@ pub fn make_builtin_std(scope_chain: &mut ScopeChain) -> Result<(), Box<RuntimeE
     std_obj.set(
         ObjectKey::String("arr".to_string()),
         std_arr_rc.clone(),
+    );
+
+    let mut std_math_obj = Object { fields: vec![] };
+    std_math_obj.set(
+        ObjectKey::String("PI".to_string()),
+        Rc::new(Value::Number(std::f64::consts::PI)),
+    );
+    std_math_obj.set(
+        ObjectKey::String("ceil".to_string()),
+        Rc::new(Value::BuiltinFunction(builtin_math_ceil, 1)),
+    );
+    std_math_obj.set(
+        ObjectKey::String("floor".to_string()),
+        Rc::new(Value::BuiltinFunction(builtin_math_floor, 1)),
+    );
+    std_math_obj.set(
+        ObjectKey::String("round".to_string()),
+        Rc::new(Value::BuiltinFunction(builtin_math_round, 1)),
+    );
+    let std_math_rc = Rc::new(Value::Object(std_math_obj));
+    std_obj.set(
+        ObjectKey::String("math".to_string()),
+        std_math_rc.clone(),
     );
 
     let mut std_str_obj = Object { fields: vec![] };

@@ -81,7 +81,7 @@ impl std::fmt::Display for RuntimeError {
             .base_asts
             .iter()
             .map(|e| (e.get_line(), e.pretty_print()))
-            .map(|(line, ast)| format!("{:?} at line {}", ast, line))
+            .map(|(line, ast)| format!("\"{}\" at line {}", ast, line))
             .collect::<Vec<String>>();
         write!(
             f,

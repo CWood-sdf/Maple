@@ -1,0 +1,3 @@
+2023/12/14 09:28:39 images.go:737: total blobs: 49
+2023/12/14 09:28:39 images.go:744: total unused blobs removed: 43
+2023/12/14 09:28:39 routes.go:870: Listening on 127.0.0.1:11434 (version 0.1.15)
