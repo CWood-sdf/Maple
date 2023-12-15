@@ -1,0 +1,28 @@
+Started server
+Capabilities: Object {"diagnosticProvider": Object {"identifier": String("maple"), "interFileDependencies": Bool(true), "workDoneProgress": Bool(true), "workspaceDiagnostics": Bool(true)}, "hoverProvider": Bool(true)}
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/src/main.rs")}} }
+Saved
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/test.mpl")}} }
+Saved
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/test.mpl")}} }
+Saved
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/test.mpl")}} }
+Saved
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/src/main.rs")}} }
+Saved
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Saved
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Saved
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Saved
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Saved
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Saved
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Saved
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Saved
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Saved
