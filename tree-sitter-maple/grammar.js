@@ -22,7 +22,7 @@ module.exports = grammar({
             seq(
                 choice("var", "const"),
                 field("name", $.identifier),
-                optional(seq("=", $.expression)),
+                optional(seq("=", field("right", $.expression))),
             ),
 
         parameter_list: ($) =>
@@ -48,10 +48,14 @@ module.exports = grammar({
                         $.return_statement,
                         $.while_loop,
                         $.if_statement,
+                        $.break_statement,
+                        $.continue_statement,
                     ),
                 ),
                 $.EOS,
             ),
+        break_statement: ($) => seq("break"),
+        continue_statement: ($) => seq("continue"),
         while_loop: ($) => seq("while", $.expression, $.block),
         if_statement: ($) =>
             seq(
@@ -134,16 +138,86 @@ module.exports = grammar({
             choice($.identifier, $.object_access, $.array_access),
         binary_operator: ($) =>
             choice(
-                prec.left(5, seq($.expression, "*", $.expression)),
-                prec.left(5, seq($.expression, "/", $.expression)),
-                prec.left(6, seq($.expression, "+", $.expression)),
-                prec.left(6, seq($.expression, "-", $.expression)),
-                prec.left(9, seq($.expression, "<", $.expression)),
-                prec.left(9, seq($.expression, ">", $.expression)),
-                prec.left(9, seq($.expression, ">=", $.expression)),
-                prec.left(9, seq($.expression, "<=", $.expression)),
-                prec.left(16, seq($.assignable, "=", $.expression)),
-                prec.left(16, seq($.assignable, "+=", $.expression)),
+                prec.left(
+                    5,
+                    seq(
+                        field("left", $.expression),
+                        field("op", "*"),
+                        field("right", $.expression),
+                    ),
+                ),
+                prec.left(
+                    5,
+                    seq(
+                        field("left", $.expression),
+                        field("op", "/"),
+                        field("right", $.expression),
+                    ),
+                ),
+                prec.left(
+                    6,
+                    seq(
+                        field("left", $.expression),
+                        field("op", "+"),
+                        field("right", $.expression),
+                    ),
+                ),
+                prec.left(
+                    6,
+                    seq(
+                        field("left", $.expression),
+                        field("op", "-"),
+                        field("right", $.expression),
+                    ),
+                ),
+                prec.left(
+                    9,
+                    seq(
+                        field("left", $.expression),
+                        field("op", "<"),
+                        field("right", $.expression),
+                    ),
+                ),
+                prec.left(
+                    9,
+                    seq(
+                        field("left", $.expression),
+                        field("op", ">"),
+                        field("right", $.expression),
+                    ),
+                ),
+                prec.left(
+                    9,
+                    seq(
+                        field("left", $.expression),
+                        field("op", ">="),
+                        field("right", $.expression),
+                    ),
+                ),
+                prec.left(
+                    9,
+                    seq(
+                        field("left", $.expression),
+                        field("op", "<="),
+                        field("right", $.expression),
+                    ),
+                ),
+                prec.left(
+                    16,
+                    seq(
+                        field("left", $.assignable),
+                        field("op", "="),
+                        field("right", $.expression),
+                    ),
+                ),
+                prec.left(
+                    16,
+                    seq(
+                        field("left", $.assignable),
+                        field("op", "+="),
+                        field("right", $.expression),
+                    ),
+                ),
             ),
     },
 });
