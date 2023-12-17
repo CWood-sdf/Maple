@@ -1,6 +1,8 @@
 use diagnostics::publish_diagnostics;
-use lsp_types::TextDocumentSyncKind;
+use lsp_types::{Location, TextDocumentSyncKind};
+use maple_rs::lexer::TokenType;
 use std::io::Write;
+use variables::Variables;
 // use maple_rs::error::MapleError;
 mod diagnostics;
 mod formatter;
@@ -14,8 +16,10 @@ fn main_server(
     _params: &serde_json::Value,
     log_file: &mut std::fs::File,
 ) -> Result<(), Box<dyn std::error::Error>> {
-    let mut file_contents: String;
+    let mut file_contents: String = "".to_string();
     let mut formats: Vec<TextEdit> = vec![];
+    let mut ref_errs = vec![];
+    let mut variables = Variables::new();
     // let mut current_format_req: Option<RequestId> = None;
     // loop {
     // let message = connection
@@ -55,6 +59,54 @@ fn main_server(
                 } else if req.method == "shutdown" || req.method == "exit" {
                     log_file.write_all(b"Shutting down\n")?;
                     return Ok(());
+                } else if req.method == "textDocument/publishDiagnostics" {
+                    let parsed_params: lsp_types::PublishDiagnosticsParams =
+                        serde_json::from_value(req.params.clone()).unwrap();
+                    let uri = parsed_params.uri;
+                    match publish_diagnostics(
+                        file_contents.clone(),
+                        connection,
+                        &uri,
+                        log_file,
+                        &ref_errs,
+                    ) {
+                        _ => {}
+                    }
+                } else if req.method == "textDocument/definition" {
+                    let parsed_params: lsp_types::TextDocumentPositionParams =
+                        serde_json::from_value(req.params.clone()).unwrap();
+                    let line = parsed_params.position.line as usize;
+                    let line_str = file_contents.lines().nth(line).unwrap();
+                    let mut lexer = maple_rs::lexer::Lexer::new(line_str.to_string());
+                    let char = parsed_params.position.character as usize;
+                    while lexer.get_current_token().char_end <= char {
+                        let _ = lexer.get_next_token();
+                    }
+                    let var_name = match lexer.get_current_token().t {
+                        TokenType::Ident(s) => Some(s),
+                        _ => None,
+                    };
+                    if var_name.is_none() {
+                        let response = Response::new_ok(req.id.clone(), Option::<Location>::None);
+                        connection.sender.send(Message::Response(response))?;
+                        continue;
+                    }
+                    let var_name = var_name.unwrap();
+                    let position = variables.get_variable_definition(var_name, line as u32);
+                    if position.is_none() {
+                        let response = Response::new_ok(req.id.clone(), Option::<Location>::None);
+                        connection.sender.send(Message::Response(response))?;
+                        continue;
+                    }
+                    let position = position.unwrap();
+                    let location = Location {
+                        uri: parsed_params.text_document.uri,
+                        range: position.definition,
+                    };
+                    connection.sender.send(Message::Response(Response::new_ok(
+                        req.id.clone(),
+                        Some(location),
+                    )))?;
                 }
                 // let response = match req.method.as_str() {
                 //     "textDocument/hover" => {
@@ -82,7 +134,20 @@ fn main_server(
                     let uri = params.text_document.uri;
                     file_contents =
                         std::fs::read_to_string(uri.to_string().replace("file://", ""))?;
-                    match publish_diagnostics(file_contents.clone(), connection, &uri, log_file) {
+                    (ref_errs, variables) = match variables::parse_file(&file_contents, log_file) {
+                        Ok((ref_errs, variables)) => (ref_errs, variables),
+                        Err(e) => {
+                            log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
+                            (vec![], Variables::new())
+                        }
+                    };
+                    match publish_diagnostics(
+                        file_contents.clone(),
+                        connection,
+                        &uri,
+                        log_file,
+                        &ref_errs,
+                    ) {
                         Ok(false) => {
                             formats = vec![];
                         }
@@ -106,7 +171,20 @@ fn main_server(
                         serde_json::from_value(n.params.clone()).unwrap();
                     file_contents = params.content_changes[0].text.clone();
                     let uri = params.text_document.uri;
-                    match publish_diagnostics(file_contents.clone(), connection, &uri, log_file) {
+                    (ref_errs, variables) = match variables::parse_file(&file_contents, log_file) {
+                        Ok((ref_errs, variables)) => (ref_errs, variables),
+                        Err(e) => {
+                            log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
+                            (vec![], Variables::new())
+                        }
+                    };
+                    match publish_diagnostics(
+                        file_contents.clone(),
+                        connection,
+                        &uri,
+                        log_file,
+                        &ref_errs,
+                    ) {
                         Ok(false) => {
                             formats = vec![];
                         }
@@ -134,7 +212,20 @@ fn main_server(
                     let uri = params.text_document.uri;
                     file_contents =
                         std::fs::read_to_string(uri.to_string().replace("file://", ""))?;
-                    match publish_diagnostics(file_contents.clone(), connection, &uri, log_file) {
+                    (ref_errs, variables) = match variables::parse_file(&file_contents, log_file) {
+                        Ok((ref_errs, variables)) => (ref_errs, variables),
+                        Err(e) => {
+                            log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
+                            (vec![], Variables::new())
+                        }
+                    };
+                    match publish_diagnostics(
+                        file_contents.clone(),
+                        connection,
+                        &uri,
+                        log_file,
+                        &ref_errs,
+                    ) {
                         Ok(false) => {
                             formats = vec![];
                         }
@@ -147,6 +238,15 @@ fn main_server(
                                     vec![]
                                 }
                             };
+                            (ref_errs, variables) =
+                                match variables::parse_file(&file_contents, log_file) {
+                                    Ok((ref_errs, variables)) => (ref_errs, variables),
+                                    Err(e) => {
+                                        log_file
+                                            .write_all(format!("Error: {:?}\n", e).as_bytes())?;
+                                        (vec![], Variables::new())
+                                    }
+                                }
                         }
                         Err(e) => {
                             formats = vec![];
@@ -179,6 +279,7 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
         text_document_sync: Some(lsp_types::TextDocumentSyncCapability::Kind(
             TextDocumentSyncKind::FULL,
         )),
+        definition_provider: Some(lsp_types::OneOf::Left(true)),
         ..Default::default()
     };
     log_file.write_all(b"Started server\n")?;

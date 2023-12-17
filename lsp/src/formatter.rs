@@ -115,7 +115,11 @@ fn format(
         )],
         ASTType::FunctionLiteral(f) => vec![format!(
             "fn ({}) {{\n{}\n{}}}",
-            f.params.join(", "),
+            f.params
+                .iter()
+                .map(|v| v.name.clone())
+                .collect::<Vec<String>>()
+                .join(", "),
             format_block(&f.body, indent, indent_size, log_file).join("\n"),
             "".to_string()
         )],
@@ -174,7 +178,11 @@ fn format(
                     ret = Some(vec![format!(
                         "fn {} ({}) {{\n{}\n{}}}",
                         name,
-                        f.params.join(", "),
+                        f.params
+                            .iter()
+                            .map(|v| v.name.clone())
+                            .collect::<Vec<String>>()
+                            .join(", "),
                         format_block(&f.body, indent, indent_size, log_file).join("\n"),
                         "".to_string()
                     )])
