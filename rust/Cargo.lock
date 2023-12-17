@@ -5,3 +5,10 @@ version = 3
 [[package]]
 name = "maple"
 version = "0.1.0"
+dependencies = [
+ "maple_rs",
+]
+
+[[package]]
+name = "maple_rs"
+version = "0.1.0"

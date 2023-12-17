@@ -1,8 +1,5 @@
+var time = std.time.nanos()
+var x = import maple.mpl
 
-var M = {
-
-}
-
-M.x = 1
-
-return M
+var end = std.time.nanos()
+std.io.println("Time: " + toStr((end - time) / 1000000) + "ms")

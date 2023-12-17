@@ -1,17 +1,8 @@
-mod lexer;
-// use crate::lexer::{Lexer, Token};
-mod ast;
-mod builtins;
-mod error;
-mod parser;
+use maple_rs::builtins::create_builtins;
+use maple_rs::scopechain::{ReturnType, ScopeChain};
 
-mod scopechain;
+use maple_rs::{error::MapleError, parser::Parser};
 use std::error::Error;
-
-use builtins::create_builtins;
-use scopechain::{ReturnType, ScopeChain};
-
-use crate::{error::MapleError, parser::Parser};
 
 fn time_interpreter(contents: String, demo: bool) -> Result<f64, Box<dyn Error>> {
     let mut parser = Parser::new(contents);
@@ -46,17 +37,17 @@ fn time_interpreter(contents: String, demo: bool) -> Result<f64, Box<dyn Error>>
         };
     }
     // println!("Time: {}us", timer.elapsed().as_micros());
-    if demo {
-        // let a_name = "a".to_string();
-        // let a = scope_chain.get_variable(&a_name)?;
-        // println!("a: {:?}", a);
-        let b_name = "b".to_string();
-        let b = scope_chain.get_variable(&b_name, 0)?;
-        println!("b: {:?}", b);
-        // let c_name = "c".to_string();
-        // let c = scope_chain.get_variable(&c_name)?;
-        // println!("c: {:?}", c);
-    }
+    // if demo {
+    //     // let a_name = "a".to_string();
+    //     // let a = scope_chain.get_variable(&a_name)?;
+    //     // println!("a: {:?}", a);
+    //     let b_name = "b".to_string();
+    //     let b = scope_chain.get_variable(&b_name, 0)?;
+    //     println!("b: {:?}", b);
+    //     // let c_name = "c".to_string();
+    //     // let c = scope_chain.get_variable(&c_name)?;
+    //     // println!("c: {:?}", c);
+    // }
     Ok(timer.elapsed().as_nanos() as f64 / 1000.0)
 }
 
@@ -96,6 +87,7 @@ fn main() -> Result<(), Box<dyn Error>> {
     }
     let time_arg = "--time".to_string();
     if args.contains(&time_arg) {
+        println!("Timing...");
         let contents: String = std::fs::read_to_string(filename)?;
 
         let mut times: Vec<f64> = Vec::new();
@@ -106,7 +98,8 @@ fn main() -> Result<(), Box<dyn Error>> {
         while amount < 1000000 {
             let time = match time_interpreter(contents.clone(), amount == 0) {
                 Ok(time) => time,
-                Err(_) => {
+                Err(e) => {
+                    println!("Error: {}", e);
                     return Ok(());
                 }
             };
@@ -145,6 +138,8 @@ fn main() -> Result<(), Box<dyn Error>> {
             std_dev += (time as f64 - total).square();
         }
         std_dev = (std_dev / amount as f64).sqrt();
+
+        println!("Amount: {}", amount);
 
         println!(
             "Mean of top 80%: {}us, 󰘫: {}, min: {}, max: {}",
