@@ -5,11 +5,5 @@ Errors: []
 Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple.mpl
 There are 0 reference errors
 Errors: []
-Request: Request { id: RequestId(I32(2)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(46)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Request: Request { id: RequestId(I32(3)), method: "textDocument/definition", params: Object {"position": Object {"character": Number(4), "line": Number(29)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Request: Request { id: RequestId(I32(4)), method: "textDocument/definition", params: Object {"position": Object {"character": Number(0), "line": Number(29)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Request: Request { id: RequestId(I32(5)), method: "textDocument/definition", params: Object {"position": Object {"character": Number(4), "line": Number(17)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Request: Request { id: RequestId(I32(6)), method: "textDocument/definition", params: Object {"position": Object {"character": Number(4), "line": Number(60)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Request: Request { id: RequestId(I32(7)), method: "textDocument/definition", params: Object {"position": Object {"character": Number(18), "line": Number(48)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Request: Request { id: RequestId(I32(8)), method: "textDocument/definition", params: Object {"position": Object {"character": Number(18), "line": Number(42)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Request: Request { id: RequestId(I32(9)), method: "textDocument/definition", params: Object {"position": Object {"character": Number(10), "line": Number(37)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Update time: 2755us
+Request: Request { id: RequestId(I32(2)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(73)}, "start": Object {"character": Number(0), "line": Number(27)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }

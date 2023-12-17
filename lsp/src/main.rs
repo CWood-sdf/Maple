@@ -128,6 +128,7 @@ fn main_server(
             }
             Message::Notification(n) => {
                 log_file.write_all(format!("Notification: {:?}\n", n).as_bytes())?;
+                let update_start_time = std::time::Instant::now();
                 if n.method == "textDocument/didSave" {
                     let params: DidSaveTextDocumentParams =
                         serde_json::from_value(n.params.clone()).unwrap();
@@ -166,6 +167,16 @@ fn main_server(
                             log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
                         }
                     }
+                    let update_end_time = std::time::Instant::now();
+                    log_file.write_all(
+                        format!(
+                            "Update time: {}us\n",
+                            update_end_time
+                                .duration_since(update_start_time)
+                                .as_micros()
+                        )
+                        .as_bytes(),
+                    )?;
                 } else if n.method == "textDocument/didChange" {
                     let params: lsp_types::DidChangeTextDocumentParams =
                         serde_json::from_value(n.params.clone()).unwrap();
@@ -203,6 +214,16 @@ fn main_server(
                             log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
                         }
                     }
+                    let update_end_time = std::time::Instant::now();
+                    log_file.write_all(
+                        format!(
+                            "Update time: {}us\n",
+                            update_end_time
+                                .duration_since(update_start_time)
+                                .as_micros()
+                        )
+                        .as_bytes(),
+                    )?;
                     // log_file.write_all(
                     //     format!("Params: {}\n", params.content_changes[0].text).as_bytes(),
                     // )?;
@@ -253,6 +274,16 @@ fn main_server(
                             log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
                         }
                     }
+                    let update_end_time = std::time::Instant::now();
+                    log_file.write_all(
+                        format!(
+                            "Update time: {}us\n",
+                            update_end_time
+                                .duration_since(update_start_time)
+                                .as_micros()
+                        )
+                        .as_bytes(),
+                    )?;
                 }
             }
         };
