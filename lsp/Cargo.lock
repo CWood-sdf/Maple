@@ -95,8 +95,13 @@ version = "0.1.0"
 dependencies = [
  "lsp-server",
  "lsp-types",
+ "maple_rs",
  "serde_json",
 ]
+
+[[package]]
+name = "maple_rs"
+version = "0.1.0"
 
 [[package]]
 name = "percent-encoding"

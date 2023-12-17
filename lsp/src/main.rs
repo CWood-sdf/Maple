@@ -1,14 +1,22 @@
+use diagnostics::publish_diagnostics;
+use lsp_types::TextDocumentSyncKind;
 use std::io::Write;
+// use maple_rs::error::MapleError;
+mod diagnostics;
+mod formatter;
+mod variables;
+use crate::formatter::get_formatted_document;
 
-use lsp_server::{Connection, Message, Notification, Request, RequestId, Response};
-use lsp_types::{
-    ServerCapabilities, TextDocumentSyncCapability, TextDocumentSyncKind, WorkDoneProgressOptions,
-};
+use lsp_server::{Connection, Message, Response};
+use lsp_types::{DidSaveTextDocumentParams, ServerCapabilities, TextEdit, WorkDoneProgressOptions};
 fn main_server(
     connection: &Connection,
-    params: &serde_json::Value,
+    _params: &serde_json::Value,
     log_file: &mut std::fs::File,
 ) -> Result<(), Box<dyn std::error::Error>> {
+    let mut file_contents: String;
+    let mut formats: Vec<TextEdit> = vec![];
+    // let mut current_format_req: Option<RequestId> = None;
     // loop {
     // let message = connection
     //     .receiver
@@ -25,14 +33,28 @@ fn main_server(
         match message {
             Message::Request(req) => {
                 log_file.write_all(format!("Request: {:?}\n", req).as_bytes())?;
-                if req.method == "textDocument/didOpen" {
-                    let params = req.params;
-                    let params = serde_json::to_value(params).unwrap();
-                    let params = serde_json::to_string(&params).unwrap();
-                    std::fs::write(
-                        "/home/cwood/projects/maple/lsp/did_open_params.json",
-                        params,
-                    )?;
+                if req.method == "textDocument/formatting" {
+                    let id = req.id.clone();
+                    let response = Response::new_ok(id, Some(formats.clone()));
+                    // current_format_req = Some(req.id.clone());
+                    connection.sender.send(Message::Response(response))?;
+                    log_file.write_all(b"Formatting\n")?;
+                    // log_file.write_all(
+                    //     format!("File contents: {}\n", formats[0].new_text).as_bytes(),
+                    // )?;
+                    // let params: lsp_types::DocumentFormattingParams =
+                    //     serde_json::from_value(req.params.clone()).unwrap();
+                    // match format_document(connection, &params.text_document.uri, log_file, req.id) {
+                    //     Ok(_) => {}
+                    //     Err(e) => {
+                    //         log_file.write_all(
+                    //             format!("Error while formatting: {:?}\n", e).as_bytes(),
+                    //         )?;
+                    //     }
+                    // }
+                } else if req.method == "shutdown" || req.method == "exit" {
+                    log_file.write_all(b"Shutting down\n")?;
+                    return Ok(());
                 }
                 // let response = match req.method.as_str() {
                 //     "textDocument/hover" => {
@@ -55,37 +77,82 @@ fn main_server(
             Message::Notification(n) => {
                 log_file.write_all(format!("Notification: {:?}\n", n).as_bytes())?;
                 if n.method == "textDocument/didSave" {
-                    log_file.write_all(b"Saved\n")?;
-                    connection.sender.send(Message::Notification(Notification {
-                        params: serde_json::to_value(lsp_types::PublishDiagnosticsParams {
-                            uri: lsp_types::Url::parse(
-                                "file:///home/cwood/projects/maple/rust/maple.mpl",
-                            )?,
-                            version: None,
-                            diagnostics: vec![lsp_types::Diagnostic {
-                                range: lsp_types::Range {
-                                    start: lsp_types::Position {
-                                        line: 1,
-                                        character: 1,
-                                    },
-                                    end: lsp_types::Position {
-                                        line: 1,
-                                        character: 3,
-                                    },
-                                },
-                                severity: Some(lsp_types::DiagnosticSeverity::ERROR),
-                                code: None,
-                                code_description: None,
-                                source: None,
-                                message: "Hello, world!".to_string(),
-                                related_information: None,
-                                tags: None,
-                                data: None,
-                            }],
-                        })
-                        .unwrap(),
-                        method: "textDocument/publishDiagnostics".to_string(),
-                    }))?;
+                    let params: DidSaveTextDocumentParams =
+                        serde_json::from_value(n.params.clone()).unwrap();
+                    let uri = params.text_document.uri;
+                    file_contents =
+                        std::fs::read_to_string(uri.to_string().replace("file://", ""))?;
+                    match publish_diagnostics(file_contents.clone(), connection, &uri, log_file) {
+                        Ok(false) => {
+                            formats = vec![];
+                        }
+                        Ok(true) => {
+                            formats = match get_formatted_document(file_contents.clone(), log_file)
+                            {
+                                Ok(formats) => formats,
+                                Err(e) => {
+                                    log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
+                                    vec![]
+                                }
+                            };
+                        }
+                        Err(e) => {
+                            formats = vec![];
+                            log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
+                        }
+                    }
+                } else if n.method == "textDocument/didChange" {
+                    let params: lsp_types::DidChangeTextDocumentParams =
+                        serde_json::from_value(n.params.clone()).unwrap();
+                    file_contents = params.content_changes[0].text.clone();
+                    let uri = params.text_document.uri;
+                    match publish_diagnostics(file_contents.clone(), connection, &uri, log_file) {
+                        Ok(false) => {
+                            formats = vec![];
+                        }
+                        Ok(true) => {
+                            formats = match get_formatted_document(file_contents.clone(), log_file)
+                            {
+                                Ok(formats) => formats,
+                                Err(e) => {
+                                    log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
+                                    vec![]
+                                }
+                            };
+                        }
+                        Err(e) => {
+                            formats = vec![];
+                            log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
+                        }
+                    }
+                    // log_file.write_all(
+                    //     format!("Params: {}\n", params.content_changes[0].text).as_bytes(),
+                    // )?;
+                } else if n.method == "textDocument/didOpen" {
+                    let params: lsp_types::DidOpenTextDocumentParams =
+                        serde_json::from_value(n.params.clone()).unwrap();
+                    let uri = params.text_document.uri;
+                    file_contents =
+                        std::fs::read_to_string(uri.to_string().replace("file://", ""))?;
+                    match publish_diagnostics(file_contents.clone(), connection, &uri, log_file) {
+                        Ok(false) => {
+                            formats = vec![];
+                        }
+                        Ok(true) => {
+                            formats = match get_formatted_document(file_contents.clone(), log_file)
+                            {
+                                Ok(formats) => formats,
+                                Err(e) => {
+                                    log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
+                                    vec![]
+                                }
+                            };
+                        }
+                        Err(e) => {
+                            formats = vec![];
+                            log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
+                        }
+                    }
                 }
             }
         };
@@ -95,7 +162,7 @@ fn main_server(
 }
 fn main() -> Result<(), Box<dyn std::error::Error>> {
     let mut log_file = std::fs::File::create("/home/cwood/projects/maple/lsp/log.txt")?;
-    let (connection, io_threads) = Connection::stdio();
+    let (connection, _) = Connection::stdio();
     let server_capabilities = ServerCapabilities {
         hover_provider: Some(lsp_types::HoverProviderCapability::Simple(true)),
         diagnostic_provider: Some(lsp_types::DiagnosticServerCapabilities::Options(
@@ -107,6 +174,10 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
                 identifier: Some("maple".to_string()),
                 inter_file_dependencies: true,
             },
+        )),
+        document_formatting_provider: Some(lsp_types::OneOf::Left(true)),
+        text_document_sync: Some(lsp_types::TextDocumentSyncCapability::Kind(
+            TextDocumentSyncKind::FULL,
         )),
         ..Default::default()
     };
@@ -122,6 +193,9 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
 
     main_server(&connection, &init_params, &mut log_file)?;
 
-    io_threads.join()?;
+    log_file.write_all(b"Shutting down\n")?;
+    // smh io_threads.join() blocks the task from ending
+    // io_threads.join()?;
+    // log_file.write_all(b"Shutting down\n")?;
     Ok(())
 }
