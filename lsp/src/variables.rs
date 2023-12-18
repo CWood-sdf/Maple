@@ -7,7 +7,7 @@ use maple_rs::{
 };
 #[derive(Debug)]
 pub struct VariableDefinition {
-    name: String,
+    pub name: String,
     visible: Range,
     pub definition: Range,
     scope_level: u32,
@@ -67,6 +67,31 @@ impl Variables {
             }
         }
         false
+    }
+    pub fn get_all_visible_variables(&self, ref_line: u32) -> Vec<&VariableDefinition> {
+        let mut ret: Vec<&VariableDefinition> = Vec::new();
+        for variable in &self.variables {
+            if line_in_range(ref_line, &variable.visible) {
+                if ret
+                    .iter()
+                    .filter(|&&x| x.name == variable.name && x.scope_level > variable.scope_level)
+                    .count()
+                    == 0
+                {
+                    ret.push(variable);
+                } else {
+                    ret = ret
+                        .iter()
+                        .filter(|&&x| {
+                            x.name != variable.name || x.scope_level <= variable.scope_level
+                        })
+                        .map(|x| *x)
+                        .collect();
+                    ret.push(variable);
+                }
+            }
+        }
+        ret
     }
 }
 #[derive(Debug)]
