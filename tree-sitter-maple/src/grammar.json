@@ -483,6 +483,10 @@
       "type": "PATTERN",
       "value": "\\\\."
     },
+    "import_path": {
+      "type": "PATTERN",
+      "value": "[\\.\\/a-zA-Z0-9_]+"
+    },
     "import_expression": {
       "type": "SEQ",
       "members": [
@@ -491,8 +495,8 @@
           "value": "import"
         },
         {
-          "type": "PATTERN",
-          "value": "[\\.\\/a-zA-Z0-9_]+"
+          "type": "SYMBOL",
+          "name": "import_path"
         }
       ]
     },

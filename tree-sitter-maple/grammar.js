@@ -90,7 +90,8 @@ module.exports = grammar({
         character_literal: ($) =>
             seq("'", choice(/[^']/, $.escape_sequence), "'"),
         escape_sequence: (_) => /\\./,
-        import_expression: (_) => seq("import", /[\.\/a-zA-Z0-9_]+/),
+        import_path: (_) => /[\.\/a-zA-Z0-9_]+/,
+        import_expression: ($) => seq("import", $.import_path),
         string_literal: ($) =>
             seq('"', repeat(choice(/[^"]/, $.escape_sequence)), '"'),
         op_eq: (_) => "=",

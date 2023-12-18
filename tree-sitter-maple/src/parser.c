@@ -43,8 +43,8 @@ enum {
   anon_sym_SQUOTE = 24,
   aux_sym_character_literal_token1 = 25,
   sym_escape_sequence = 26,
-  anon_sym_import = 27,
-  aux_sym_import_expression_token1 = 28,
+  sym_import_path = 27,
+  anon_sym_import = 28,
   anon_sym_DQUOTE = 29,
   aux_sym_string_literal_token1 = 30,
   anon_sym_LBRACK = 31,
@@ -130,8 +130,8 @@ static const char * const ts_symbol_names[] = {
   [anon_sym_SQUOTE] = "'",
   [aux_sym_character_literal_token1] = "character_literal_token1",
   [sym_escape_sequence] = "escape_sequence",
+  [sym_import_path] = "import_path",
   [anon_sym_import] = "import",
-  [aux_sym_import_expression_token1] = "import_expression_token1",
   [anon_sym_DQUOTE] = "\"",
   [aux_sym_string_literal_token1] = "string_literal_token1",
   [anon_sym_LBRACK] = "[",
@@ -217,8 +217,8 @@ static const TSSymbol ts_symbol_map[] = {
   [anon_sym_SQUOTE] = anon_sym_SQUOTE,
   [aux_sym_character_literal_token1] = aux_sym_character_literal_token1,
   [sym_escape_sequence] = sym_escape_sequence,
+  [sym_import_path] = sym_import_path,
   [anon_sym_import] = anon_sym_import,
-  [aux_sym_import_expression_token1] = aux_sym_import_expression_token1,
   [anon_sym_DQUOTE] = anon_sym_DQUOTE,
   [aux_sym_string_literal_token1] = aux_sym_string_literal_token1,
   [anon_sym_LBRACK] = anon_sym_LBRACK,
@@ -385,12 +385,12 @@ static const TSSymbolMetadata ts_symbol_metadata[] = {
     .visible = true,
     .named = true,
   },
+  [sym_import_path] = {
+    .visible = true,
+    .named = true,
+  },
   [anon_sym_import] = {
     .visible = true,
-    .named = false,
-  },
-  [aux_sym_import_expression_token1] = {
-    .visible = false,
     .named = false,
   },
   [anon_sym_DQUOTE] = {
@@ -982,7 +982,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
       ACCEPT_TOKEN(sym_escape_sequence);
       END_STATE();
     case 28:
-      ACCEPT_TOKEN(aux_sym_import_expression_token1);
+      ACCEPT_TOKEN(sym_import_path);
       if (lookahead == '/') ADVANCE(7);
       if (('.' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'Z') ||
@@ -990,7 +990,7 @@ static bool ts_lex(TSLexer *lexer, TSStateId state) {
           ('a' <= lookahead && lookahead <= 'z')) ADVANCE(29);
       END_STATE();
     case 29:
-      ACCEPT_TOKEN(aux_sym_import_expression_token1);
+      ACCEPT_TOKEN(sym_import_path);
       if (('.' <= lookahead && lookahead <= '9') ||
           ('A' <= lookahead && lookahead <= 'Z') ||
           lookahead == '_' ||
@@ -4592,7 +4592,7 @@ static const uint16_t ts_small_parse_table[] = {
     ACTIONS(392), 1,
       anon_sym_SLASH_SLASH,
     ACTIONS(471), 1,
-      aux_sym_import_expression_token1,
+      sym_import_path,
     STATE(126), 1,
       sym_comment,
   [3750] = 3,
