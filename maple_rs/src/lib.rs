@@ -4,5 +4,6 @@ pub mod ast;
 pub mod builtins;
 pub mod error;
 pub mod parser;
+mod runtime;
 
 pub mod scopechain;

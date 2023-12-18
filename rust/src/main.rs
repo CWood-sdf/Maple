@@ -4,7 +4,7 @@ use maple_rs::scopechain::{ReturnType, ScopeChain};
 use maple_rs::{error::MapleError, parser::Parser};
 use std::error::Error;
 
-fn time_interpreter(contents: String, demo: bool) -> Result<f64, Box<dyn Error>> {
+fn time_interpreter(contents: String, _demo: bool) -> Result<f64, Box<dyn Error>> {
     let mut parser = Parser::new(contents);
     let mut scope_chain: ScopeChain = ScopeChain::new();
 
@@ -106,7 +106,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             times.push(time);
             amount += 1;
 
-            if timer.elapsed().as_secs_f64() * 1000.0 >= 500.0 {
+            if timer.elapsed().as_secs_f64() * 1000.0 >= 3000.0 {
                 break;
             }
         }

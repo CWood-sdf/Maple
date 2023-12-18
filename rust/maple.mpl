@@ -1,6 +1,6 @@
 var startNanos = std.time.nanos()
 var sdfsfd = import maple2.mpl
-var sdfsfd = {}
+// var sdfsfd = {}
 
 sdfsfd.x = 1
 
@@ -55,7 +55,7 @@ var i = 0
 var spaces = ""
 var arr2 = []
 var h = 71
-var w = 35
+var w = 46
 while std.arr.len(arr2) < w {
     var subArr = []
     while std.arr.len(subArr) < h {
@@ -69,7 +69,7 @@ fn vec (x, y) {
         y = y
     }
 }
-var ballPos = vec(0, 0)
+var ballPos = vec(1, 1)
 var direction = vec(1, 1)
 
 var acc = vec(0, 1)
@@ -78,13 +78,35 @@ fn isOnScreen (pos) {
         return false
     } elseif pos.y < 0 {
         return false
-    } elseif pos.y >= w {
+    } elseif pos.y >= h {
         return false
-    } elseif pos.x >= h {
+    } elseif pos.x >= w {
         return false
     } else {
         return true
     }
 }
 var time = std.time.nanos() - startNanos
+printScreen(arr2)
+i = 0
+while i < 100000 {
+    ballPos.x += direction.x
+    ballPos.y += direction.y
+    if isOnScreen(ballPos) {
+        arr2[ballPos.x][ballPos.y] = "O"
+        printScreen(arr2)
+    }  
+    if ballPos.x >= w - 1 || ballPos.x <= 1 {
+// ballPos.x = w
+        // ballPos.x = 0
+        direction.x = direction.x * -1
+    }  
+    if ballPos.y >= h - 1 || ballPos.y <= 0 {
+        direction.y = direction.y * -1
+// ballPos.y = h
+    // ballPos.y = 0
+    }  
+    std.time.sleepNanos(50000000)
+    i += 1
+}
 // std.io.print("Time: " + toStr(time / 1000000) + "ms\n")
