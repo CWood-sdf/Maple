@@ -177,11 +177,12 @@ pub fn builtin_to_str(
     scopechain: &ScopeChain,
     line: usize,
 ) -> Result<Rc<Value>, Box<RuntimeError>> {
+    let val = args[0].unpack_and_transform(scopechain, line, ast)?;
     match 
         args[0].unpack_and_transform(scopechain, line, ast)?.as_ref() 
      {
-        Value::String(ref s) => {
-            Ok(Rc::new(Value::String(s.clone())))
+        Value::String(_) => {
+            Ok(val)
         }
         Value::Char(ref c) => {
             Ok(Rc::new(Value::String(c.to_string())))

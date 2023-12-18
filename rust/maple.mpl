@@ -1,5 +1,5 @@
 var startNanos = std.time.nanos()
-var sdfsfd = import maple2.mpl
+// var sdfsfd = import maple2.mpl
 var sdfsfd = {}
 
 sdfsfd.x = 1

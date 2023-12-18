@@ -95,7 +95,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         let timer = std::time::Instant::now();
         times.reserve(1000000);
         let start = std::time::Instant::now();
-        while amount < 1000000 {
+        while amount < 100000000 {
             let time = match time_interpreter(contents.clone(), amount == 0) {
                 Ok(time) => time,
                 Err(e) => {
@@ -106,7 +106,7 @@ fn main() -> Result<(), Box<dyn Error>> {
             times.push(time);
             amount += 1;
 
-            if timer.elapsed().as_secs_f64() * 1000.0 >= 500.0 {
+            if timer.elapsed().as_secs_f64() * 1000.0 >= 2000.0 {
                 break;
             }
         }
@@ -174,7 +174,7 @@ fn main() -> Result<(), Box<dyn Error>> {
         // for (_, stmt) in ast.iter().enumerate() {
         //     println!("{}", stmt.pretty_print());
         // }
-        for (_, stmt) in ast.iter().enumerate() {
+        for stmt in ast.iter() {
             match stmt.interpret(&mut scope_chain) {
                 Ok(ReturnType::None) => {}
                 Ok(_) => {

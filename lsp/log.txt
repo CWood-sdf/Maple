@@ -1,64 +1,486 @@
 Started server
 Capabilities: Object {"completionProvider": Object {"completionItem": Object {"labelDetailsSupport": Bool(true)}, "resolveProvider": Bool(true), "triggerCharacters": Array [], "workDoneProgress": Bool(true)}, "definitionProvider": Bool(true), "diagnosticProvider": Object {"identifier": String("maple"), "interFileDependencies": Bool(true), "workDoneProgress": Bool(true), "workspaceDiagnostics": Bool(true)}, "documentFormattingProvider": Bool(true), "hoverProvider": Bool(true), "textDocumentSync": Number(1)}
-Notification: Notification { method: "textDocument/didOpen", params: Object {"textDocument": Object {"languageId": String("maple"), "text": String("var startNanos = std.time.nanos()\nvar sdfsfd = import maple2.mpl\nvar sdfsfd = {}\n\nsdfsfd.x = 1\n\n\nvar a = 1\n\nvar b = 0\n\nfn yeet (b) {\n    b += 1\n}\n\nyeet(b)\n\nb = {\n    a = 0,\n    b = fn (a) {\n        return a + 1\n    },\n    a = fn () {\n        return 1\n    },\n    1.1 = 2\n}\n\n\nb.x = 1\n\na += 1\nb = b[1.1]\nb = [1, 2, 3, 4, 5]\nb = b[4 - 1]\nb = -4\nb = !!true\nfn printScreen (arr) {\n    var i = 0\n    var printed = \"\"\n    while i < std.arr.len(arr) {\n        // sdf\n        var subArr = arr[i]\n        var j = 0\n        while j < std.arr.len(subArr) {\n            printed = printed + subArr[j]\n            j += 1\n        }\n        printed = printed + \"\\n\"\n        i += 1\n    }\n    std.io.print(printed)\n}\nvar i = 0\nvar spaces = \"\"\nvar arr2 = []\nvar h = 71\nvar w = 35\nwhile std.arr.len(arr2) < w {\n    var subArr = []\n    while std.arr.len(subArr) < h {\n        subArr[std.arr.len(subArr)] = \" \"\n    }\n    arr2[std.arr.len(arr2)] = subArr\n}\nfn vec (x, y) {\n    return {\n        x = x,\n        y = y\n    }\n}\nvar ballPos = vec(0, 0)\nvar direction = vec(1, 1)\n\nvar acc = vec(0, 1)\nfn isOnScreen (pos) {\n    if pos.x < 0 {\n        return false\n    } elseif pos.y < 0 {\n        return false\n    } elseif pos.y >= w {\n        return false\n    } elseif pos.x >= h {\n        return false\n    } else {\n        return true\n    }\n}\nvar time = std.time.nanos() - startNanos\n// std.io.print(\"Time: \" + toStr(time / 1000000) + \"ms\\n\")\n"), "uri": String("file:///home/cwood/projects/maple/rust/maple.mpl"), "version": Number(0)}} }
+Notification: Notification { method: "textDocument/didOpen", params: Object {"textDocument": Object {"languageId": String("maple"), "text": String("\nvar x = 10\n\nif x < 1 {\n    print(\"x is less than 1\")\n} elseif x < 2 {\n    \n"), "uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(0)}} }
+Errors: [ReferenceError { name: "print", line: 4, char_start: 4, char_end: 9 }, ReferenceError { name: "print", line: 6, char_start: 4, char_end: 9 }, ReferenceError { name: "print", line: 8, char_start: 4, char_end: 9 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 3 reference errors
+Update time: 630us
+Request: Request { id: RequestId(I32(2)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(7)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    sprint(\"x is less than 1\")\n} elseif x < 2 {\n    \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(112)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected EOF (aka unclosed brace)", line: 9, token: Token { t: EOF, line: 8, char_start: 0, char_end: 0 } }
+Update time: 229us
+Request: Request { id: RequestId(I32(3)), method: "textDocument/completion", params: Object {"context": Object {"triggerKind": Number(1)}, "position": Object {"character": Number(5), "line": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(4)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(7)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    stprint(\"x is less than 1\")\n} elseif x < 2 {\n    \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(113)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected EOF (aka unclosed brace)", line: 9, token: Token { t: EOF, line: 8, char_start: 0, char_end: 0 } }
+Update time: 296us
+Request: Request { id: RequestId(I32(5)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(7)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    stdprint(\"x is less than 1\")\n} elseif x < 2 {\n    \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(114)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected EOF (aka unclosed brace)", line: 9, token: Token { t: EOF, line: 8, char_start: 0, char_end: 0 } }
+Update time: 427us
+Request: Request { id: RequestId(I32(6)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(7)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.print(\"x is less than 1\")\n} elseif x < 2 {\n    \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(115)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected EOF (aka unclosed brace)", line: 9, token: Token { t: EOF, line: 8, char_start: 0, char_end: 0 } }
+Update time: 472us
+Request: Request { id: RequestId(I32(7)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(7)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.iprint(\"x is less than 1\")\n} elseif x < 2 {\n    \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(116)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected EOF (aka unclosed brace)", line: 9, token: Token { t: EOF, line: 8, char_start: 0, char_end: 0 } }
+Update time: 403us
+Request: Request { id: RequestId(I32(8)), method: "textDocument/completion", params: Object {"context": Object {"triggerKind": Number(1)}, "position": Object {"character": Number(9), "line": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(9)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(7)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.ioprint(\"x is less than 1\")\n} elseif x < 2 {\n    \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(117)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected EOF (aka unclosed brace)", line: 9, token: Token { t: EOF, line: 8, char_start: 0, char_end: 0 } }
+Update time: 498us
+Request: Request { id: RequestId(I32(10)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(7)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(118)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected EOF (aka unclosed brace)", line: 9, token: Token { t: EOF, line: 8, char_start: 0, char_end: 0 } }
+Update time: 457us
+Request: Request { id: RequestId(I32(11)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(7)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    \n    \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(119)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected EOF (aka unclosed brace)", line: 10, token: Token { t: EOF, line: 9, char_start: 0, char_end: 0 } }
+Update time: 374us
+Request: Request { id: RequestId(I32(12)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n    \n    \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(120)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected EOF (aka unclosed brace)", line: 11, token: Token { t: EOF, line: 10, char_start: 0, char_end: 0 } }
+Update time: 548us
+Request: Request { id: RequestId(I32(13)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n    {\n    \n")}], "textDocShutting down
+ {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(121)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected token Token { t: LeftBrace, line: 7, char_start: 4, char_end: 5 }", line: 8, token: Token { t: LeftBrace, line: 7, char_start: 4, char_end: 5 } }
+Update time: 508us
+Request: Request { id: RequestId(I32(14)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n    \n    \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(122)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected EOF (aka unclosed brace)", line: 11, token: Token { t: EOF, line: 10, char_start: 0, char_end: 0 } }
+Update time: 297us
+Request: Request { id: RequestId(I32(15)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n    }\n    \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(123)}} }
 Errors: []
-Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple.mpl
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
 There are 0 reference errors
-Update time: 2412us
-Request: Request { id: RequestId(I32(2)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(70)}, "start": Object {"character": Number(0), "line": Number(24)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("var startNanos = std.time.nanos()\nvar sdfsfd = import maple2.mpl\nvar sdfsfd = {}\n\nsdfsfd.x = 1\n\n\nvar a = 1\n\nvar b = 0\n\nfn yeet (b) {\n    b += 1\n}\n\nyeet(b)\n\nb = {\n    a = 0,\n    b = fn (a) {\n        return a + 1\n    },\n    a = fn () {\n        return 1\n    },\n    1.1 = 2\n}\n\n\nb.x = 1\n\na += 1\nb = b[1.1]\nb = [1, 2, 3, 4, 5]\nb = b[4 - 1]\nb = -4\nb = !!true\nfn printScreen (arr) {\n    var i = 0\n    var printed = \"\"\n    while i < std.arr.len(arr) {\n        // sdf\n        var subArr = arr[i]\n        var j = 0\n        while j < std.arr.len(subArr) {\n            printed = printed + subArr[j]\n            j += 1\n        }\n        printed = printed + \"\\n\"\n        i += 1\n    }\n    std.io.print(printed)\n}\nvar i = 0\nvar spaces = \"\"\nvar arr2 = []\nvar h = 71\nvar w = 35\nwhile std.arr.len(arr2) < w {\n    var subArr = []\n    while std.arr.len(subArr) < h {\n        subArr[std.arr.len(subArr)] = \" \"\n    }\n    arr2[std.arr.len(arr2)] = subArr\n}\nfn vec (x, y) {\n    return {\n        x = x,\n        y = y\n    }\n}\nvar ballPos = vec(0, 0)\nvar direction = vec(1, 1)\n\nvar acc = vec(0, 1)\nfn isOnScreen (pos) {\n    if pos.x < 0 {\n        return false\n    } e\n    lseif pos.y < 0 {\n        return false\n    } elseif pos.y >= w {\n        return false\n    } elseif pos.x >= h {\n        return false\n    } else {\n        return true\n    }\n}\nvar time = std.time.nanos() - startNanos\n// std.io.print(\"Time: \" + toStr(time / 1000000) + \"ms\\n\")\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl"), "version": Number(203)}} }
-Error: "Error parsing file"
-Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple.mpl
-Error: ParserError { msg: "Expected newline after statement \"lseif\", instead got Token { t: Ident(\"pos\"), line: 79, char_start: 10, char_end: 13 }", line: 80, token: Token { t: Ident("pos"), line: 79, char_start: 10, char_end: 13 } }
-Update time: 1101us
-Request: Request { id: RequestId(I32(3)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(90)}, "start": Object {"character": Number(0), "line": Number(44)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("var startNanos = std.time.nanos()\nvar sdfsfd = import maple2.mpl\nvar sdfsfd = {}\n\nsdfsfd.x = 1\n\n\nvar a = 1\n\nvar b = 0\n\nfn yeet (b) {\n    b += 1\n}\n\nyeet(b)\n\nb = {\n    a = 0,\n    b = fn (a) {\n        return a + 1\n    },\n    a = fn () {\n        return 1\n    },\n    1.1 = 2\n}\n\n\nb.x = 1\n\na += 1\nb = b[1.1]\nb = [1, 2, 3, 4, 5]\nb = b[4 - 1]\nb = -4\nb = !!true\nfn printScreen (arr) {\n    var i = 0\n    var printed = \"\"\n    while i < std.arr.len(arr) {\n        // sdf\n        var subArr = arr[i]\n        var j = 0\n        while j < std.arr.len(subArr) {\n            printed = printed + subArr[j]\n            j += 1\n        }\n        printed = printed + \"\\n\"\n        i += 1\n    }\n    std.io.print(printed)\n}\nvar i = 0\nvar spaces = \"\"\nvar arr2 = []\nvar h = 71\nvar w = 35\nwhile std.arr.len(arr2) < w {\n    var subArr = []\n    while std.arr.len(subArr) < h {\n        subArr[std.arr.len(subArr)] = \" \"\n    }\n    arr2[std.arr.len(arr2)] = subArr\n}\nfn vec (x, y) {\n    return {\n        x = x,\n        y = y\n    }\n}\nvar ballPos = vec(0, 0)\nvar direction = vec(1, 1)\n\nvar acc = vec(0, 1)\nfn isOnScreen (pos) {\n    if pos.x < 0 {\n        return false\n    } e\n\n    lseif pos.y < 0 {\n        return false\n    } elseif pos.y >= w {\n        return false\n    } elseif pos.x >= h {\n        return false\n    } else {\n        return true\n    }\n}\nvar time = std.time.nanos() - startNanos\n// std.io.print(\"Time: \" + toStr(time / 1000000) + \"ms\\n\")\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl"), "version": Number(204)}} }
-Error: "Error parsing file"
-Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple.mpl
-Error: ParserError { msg: "Expected newline after statement \"lseif\", instead got Token { t: Ident(\"pos\"), line: 80, char_start: 10, char_end: 13 }", line: 81, token: Token { t: Ident("pos"), line: 80, char_start: 10, char_end: 13 } }
-Update time: 1353us
-Request: Request { id: RequestId(I32(4)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(90)}, "start": Object {"character": Number(0), "line": Number(44)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("var startNanos = std.time.nanos()\nvar sdfsfd = import maple2.mpl\nvar sdfsfd = {}\n\nsdfsfd.x = 1\n\n\nvar a = 1\n\nvar b = 0\n\nfn yeet (b) {\n    b += 1\n}\n\nyeet(b)\n\nb = {\n    a = 0,\n    b = fn (a) {\n        return a + 1\n    },\n    a = fn () {\n        return 1\n    },\n    1.1 = 2\n}\n\n\nb.x = 1\n\na += 1\nb = b[1.1]\nb = [1, 2, 3, 4, 5]\nb = b[4 - 1]\nb = -4\nb = !!true\nfn printScreen (arr) {\n    var i = 0\n    var printed = \"\"\n    while i < std.arr.len(arr) {\n        // sdf\n        var subArr = arr[i]\n        var j = 0\n        while j < std.arr.len(subArr) {\n            printed = printed + subArr[j]\n            j += 1\n        }\n        printed = printed + \"\\n\"\n        i += 1\n    }\n    std.io.print(printed)\n}\nvar i = 0\nvar spaces = \"\"\nvar arr2 = []\nvar h = 71\nvar w = 35\nwhile std.arr.len(arr2) < w {\n    var subArr = []\n    while std.arr.len(subArr) < h {\n        subArr[std.arr.len(subArr)] = \" \"\n    }\n    arr2[std.arr.len(arr2)] = subArr\n}\nfn vec (x, y) {\n    return {\n        x = x,\n        y = y\n    }\n}\nvar ballPos = vec(0, 0)\nvar direction = vec(1, 1)\n\nvar acc = vec(0, 1)\nfn isOnScreen (pos) {\n    if pos.x < 0 {\n        return false\n    } elseif pos.y < 0 {\n        return false\n    } elseif pos.y >= w {\n        return false\n    } elseif pos.x >= h {\n        return false\n    } else {\n        return true\n    }\n}\nvar time = std.time.nanos() - startNanos\n// std.io.print(\"Time: \" + toStr(time / 1000000) + \"ms\\n\")\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl"), "version": Number(205)}} }
+Update time: 658us
+Request: Request { id: RequestId(I32(16)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(17)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Formatting
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(124)}} }
 Errors: []
-Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple.mpl
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
 There are 0 reference errors
-Update time: 3321us
-Request: Request { id: RequestId(I32(5)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(90)}, "start": Object {"character": Number(0), "line": Number(44)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("var startNanos = std.time.nanos()\nvar sdfsfd = import maple2.mpl\nvar sdfsfd = {}\n\nsdfsfd.x = 1\n\n\nvar a = 1\n\nvar b = 0\n\nfn yeet (b) {\n    b += 1\n}\n\nyeet(b)\n\nb = {\n    a = 0,\n    b = fn (a) {\n        return a + 1\n    },\n    a = fn () {\n        return 1\n    },\n    1.1 = 2\n}\n\n\nb.x = 1\n\na += 1\nb = b[1.1]\nb = [1, 2, 3, 4, 5]\nb = b[4 - 1]\nb = -4\nb = !!true\nfn printScreen (arr) {\n    var i = 0\n    var printed = \"\"\n    while i < std.arr.len(arr) {\n        // sdf\n        var subArr = arr[i]\n        var j = 0\n        while j < std.arr.len(subArr) {\n            printed = printed + subArr[j]\n            j += 1\n        }\n        printed = printed + \"\\n\"\n        i += 1\n    }\n    std.io.print(printed)\n}\nvar i = 0\nvar spaces = \"\"\nvar arr2 = []\nvar h = 71\nvar w = 35\nwhile std.arr.len(arr2) < w {\n    var subArr = []\n    while std.arr.len(subArr) < h {\n        subArr[std.arr.len(subArr)] = \" \"\n    }\n    arr2[std.arr.len(arr2)] = subArr\n}\nfn vec (x, y) {\n    return {\n        x = x,\n        y = y\n    }\n}\nvar ballPos = vec(0, 0)\nvar direction = vec(1, 1)\n\nvar acc = vec(0, 1)\nfn isOnScreen (pos) {\n    if pos.x < 0 {\n        return false\n    } \n    elseif pos.y < 0 {\n        return false\n    } elseif pos.y >= w {\n        return false\n    } elseif pos.x >= h {\n        return false\n    } else {\n        return true\n    }\n}\nvar time = std.time.nanos() - startNanos\n// std.io.print(\"Time: \" + toStr(time / 1000000) + \"ms\\n\")\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl"), "version": Number(207)}} }
+Update time: 535us
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 447us
+Request: Request { id: RequestId(I32(18)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} else if x < 2 {\n\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(126)}} }
 Error: "Error parsing file"
-Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple.mpl
-Error: ParserError { msg: "Unexpected token Token { t: Elseif, line: 79, char_start: 4, char_end: 10 }", line: 80, token: Token { t: Elseif, line: 79, char_start: 4, char_end: 10 } }
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Expected left brace to start block, got Token { t: If, line: 5, char_start: 7, char_end: 9 }", line: 6, token: Token { t: If, line: 5, char_start: 7, char_end: 9 } }
+Update time: 283us
+Request: Request { id: RequestId(I32(19)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(20)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Formatting
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Expected left brace to start block, got Token { t: If, line: 5, char_start: 7, char_end: 9 }", line: 6, token: Token { t: If, line: 5, char_start: 7, char_end: 9 } }
+Update time: 337us
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(128)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 583us
+Request: Request { id: RequestId(I32(21)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(22)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Formatting
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(130)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 394us
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 509us
+Request: Request { id: RequestId(I32(23)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(10)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(132)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 498us
+Request: Request { id: RequestId(I32(24)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(133)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 452us
+Request: Request { id: RequestId(I32(25)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(26)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Formatting
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(134)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 647us
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 619us
+Request: Request { id: RequestId(I32(27)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(28)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Formatting
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(136)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 678us
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 544us
+Request: Request { id: RequestId(I32(29)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(10)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(138)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 551us
+Request: Request { id: RequestId(I32(30)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(139)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 328us
+Request: Request { id: RequestId(I32(31)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    \n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(140)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 636us
+Request: Request { id: RequestId(I32(32)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    s\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(141)}} }
+Errors: [ReferenceError { name: "s", line: 6, char_start: 4, char_end: 5 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 1 reference errors
+Update time: 747us
+Request: Request { id: RequestId(I32(33)), method: "textDocument/completion", params: Object {"context": Object {"triggerKind": Number(1)}, "position": Object {"character": Number(5), "line": Number(6)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(34)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    st\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(142)}} }
+Errors: [ReferenceError { name: "st", line: 6, char_start: 4, char_end: 6 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 1 reference errors
+Update time: 782us
+Request: Request { id: RequestId(I32(35)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(143)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 518us
+Request: Request { id: RequestId(I32(36)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(144)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Expected identifier, got Token { t: EndOfStatement, line: 6, char_start: 8, char_end: 9 } on right side of '.'", line: 8, token: Token { t: EndOfStatement, line: 6, char_start: 8, char_end: 9 } }
+Update time: 354us
+Request: Request { id: RequestId(I32(37)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.i\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(145)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 543us
+Request: Request { id: RequestId(I32(38)), method: "textDocument/completion", params: Object {"context": Object {"triggerKind": Number(1)}, "position": Object {"character": Number(9), "line": Number(6)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(39)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(146)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 466us
+Request: Request { id: RequestId(I32(40)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(147)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Expected identifier, got Token { t: EndOfStatement, line: 6, char_start: 11, char_end: 12 } on right side of '.'", line: 8, token: Token { t: EndOfStatement, line: 6, char_start: 11, char_end: 12 } }
+Update time: 617us
+Request: Request { id: RequestId(I32(41)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.p\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(148)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 757us
+Request: Request { id: RequestId(I32(42)), method: "textDocument/completion", params: Object {"context": Object {"triggerKind": Number(1)}, "position": Object {"character": Number(12), "line": Number(6)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(43)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.pr\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(149)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 560us
+Request: Request { id: RequestId(I32(44)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.pri\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(150)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 343us
+Request: Request { id: RequestId(I32(45)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.prin\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(151)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 512us
+Request: Request { id: RequestId(I32(46)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(152)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 545us
+Request: Request { id: RequestId(I32(47)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(48)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Formatting
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 504us
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(154)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 632us
+Request: Request { id: RequestId(I32(49)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} \n\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(155)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 541us
+Request: Request { id: RequestId(I32(50)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(9)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} \n\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(156)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 616us
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(157)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 461us
+Request: Request { id: RequestId(I32(51)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(52)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} e\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(158)}} }
+Errors: [ReferenceError { name: "e", line: 7, char_start: 2, char_end: 3 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 1 reference errors
+Update time: 508us
+Request: Request { id: RequestId(I32(53)), method: "textDocument/completion", params: Object {"context": Object {"triggerKind": Number(1)}, "position": Object {"character": Number(3), "line": Number(7)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(54)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} el\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(159)}} }
+Errors: [ReferenceError { name: "el", line: 7, char_start: 2, char_end: 4 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 1 reference errors
+Update time: 555us
+Request: Request { id: RequestId(I32(55)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} else\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(161)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Expected left brace to start block, got Token { t: EOF, line: 9, char_start: 0, char_end: 0 }", line: 10, token: Token { t: EOF, line: 9, char_start: 0, char_end: 0 } }
+Update time: 215us
+Request: Request { id: RequestId(I32(56)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} else \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(162)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Expected left brace to start block, got Token { t: EOF, line: 9, char_start: 0, char_end: 0 }", line: 10, token: Token { t: EOF, line: 9, char_start: 0, char_end: 0 } }
+Update time: 480us
+Request: Request { id: RequestId(I32(57)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} else\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(163)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Expected left brace to start block, got Token { t: EOF, line: 9, char_start: 0, char_end: 0 }", line: 10, token: Token { t: EOF, line: 9, char_start: 0, char_end: 0 } }
+Update time: 323us
+Request: Request { id: RequestId(I32(58)), method: "textDocument/completion", params: Object {"context": Object {"triggerKind": Number(1)}, "position": Object {"character": Number(6), "line": Number(7)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(59)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elsei\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(164)}} }
+Errors: [ReferenceError { name: "elsei", line: 7, char_start: 2, char_end: 7 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 1 reference errors
+Update time: 513us
+Request: Request { id: RequestId(I32(60)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(165)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Expected an expression, instead got Token { t: EndOfStatement, line: 7, char_start: 8, char_end: 9 }", line: 9, token: Token { t: EndOfStatement, line: 7, char_start: 8, char_end: 9 } }
+Update time: 630us
+Request: Request { id: RequestId(I32(61)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(8)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} else {\n    std.io.print(\"x is greater than or equal to 3\")\n}\n```\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(166)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: LexerError { msg: "Invalid character: `", line: 13, token: Token { t: Ident("`"), line: 12, char_start: 0, char_end: 1 } }
+Update time: 322us
+Request: Request { id: RequestId(I32(62)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(13)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(63)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Formatting
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: LexerError { msg: "Invalid character: `", line: 13, token: Token { t: Ident("`"), line: 12, char_start: 0, char_end: 1 } }
+Update time: 407us
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} \n    std.io.print(\"x is greater than or equal to 3\")\n}\n```\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(168)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected right brace in top level", line: 12, token: Token { t: RightBrace, line: 11, char_start: 0, char_end: 1 } }
+Update time: 489us
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(172)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 695us
+Request: Request { id: RequestId(I32(64)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(10)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(65)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(10)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} e\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(173)}} }
+Errors: [ReferenceError { name: "e", line: 9, char_start: 2, char_end: 3 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 1 reference errors
+Update time: 588us
+Request: Request { id: RequestId(I32(66)), method: "textDocument/completion", params: Object {"context": Object {"triggerKind": Number(1)}, "position": Object {"character": Number(3), "line": Number(9)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(67)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(10)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} el\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(174)}} }
+Errors: [ReferenceError { name: "el", line: 9, char_start: 2, char_end: 4 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 1 reference errors
+Update time: 706us
+Request: Request { id: RequestId(I32(68)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(10)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} else\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(176)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Expected left brace to start block, got Token { t: EOF, line: 11, char_start: 0, char_end: 0 }", line: 12, token: Token { t: EOF, line: 11, char_start: 0, char_end: 0 } }
+Update time: 373us
+Request: Request { id: RequestId(I32(69)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(10)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elsei\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(177)}} }
+Errors: [ReferenceError { name: "elsei", line: 9, char_start: 2, char_end: 7 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 1 reference errors
+Update time: 624us
+Request: Request { id: RequestId(I32(70)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(10)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elseif\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(178)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Expected an expression, instead got Token { t: EndOfStatement, line: 9, char_start: 8, char_end: 9 }", line: 11, token: Token { t: EndOfStatement, line: 9, char_start: 8, char_end: 9 } }
+Update time: 336us
+Request: Request { id: RequestId(I32(71)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(10)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elseif x < 4 {\n    std.io.print(\"x is less than 4\")\n} else {\n    std.io.print(\"x is greater than or equal to 4\")\n}\n```\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(179)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: LexerError { msg: "Invalid character: `", line: 15, token: Token { t: Ident("`"), line: 14, char_start: 0, char_end: 1 } }
+Update time: 422us
+Request: Request { id: RequestId(I32(72)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(15)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(73)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Formatting
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: LexerError { msg: "Invalid character: `", line: 15, token: Token { t: Ident("`"), line: 14, char_start: 0, char_end: 1 } }
+Update time: 413us
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elseif x < 4 {\n    std.io.print(\"x is less than 4\")\n} \n    std.io.print(\"x is greater than or equal to 4\")\n}\n```\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(181)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Unexpected right brace in top level", line: 14, token: Token { t: RightBrace, line: 13, char_start: 0, char_end: 1 } }
+Update time: 275us
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elseif x < 4 {\n    std.io.print(\"x is less than 4\")\n} \n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(185)}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 726us
+Request: Request { id: RequestId(I32(74)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(12)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(75)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(12)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elseif x < 4 {\n    std.io.print(\"x is less than 4\")\n} e\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(186)}} }
+Errors: [ReferenceError { name: "e", line: 11, char_start: 2, char_end: 3 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 1 reference errors
+Update time: 841us
+Request: Request { id: RequestId(I32(76)), method: "textDocument/completion", params: Object {"context": Object {"triggerKind": Number(1)}, "position": Object {"character": Number(3), "line": Number(11)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(77)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(12)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elseif x < 4 {\n    std.io.print(\"x is less than 4\")\n} el\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(187)}} }
+Errors: [ReferenceError { name: "el", line: 11, char_start: 2, char_end: 4 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 1 reference errors
 Update time: 798us
-Request: Request { id: RequestId(I32(6)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(90)}, "start": Object {"character": Number(0), "line": Number(44)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("var startNanos = std.time.nanos()\nvar sdfsfd = import maple2.mpl\nvar sdfsfd = {}\n\nsdfsfd.x = 1\n\n\nvar a = 1\n\nvar b = 0\n\nfn yeet (b) {\n    b += 1\n}\n\nyeet(b)\n\nb = {\n    a = 0,\n    b = fn (a) {\n        return a + 1\n    },\n    a = fn () {\n        return 1\n    },\n    1.1 = 2\n}\n\n\nb.x = 1\n\na += 1\nb = b[1.1]\nb = [1, 2, 3, 4, 5]\nb = b[4 - 1]\nb = -4\nb = !!true\nfn printScreen (arr) {\n    var i = 0\n    var printed = \"\"\n    while i < std.arr.len(arr) {\n        // sdf\n        var subArr = arr[i]\n        var j = 0\n        while j < std.arr.len(subArr) {\n            printed = printed + subArr[j]\n            j += 1\n        }\n        printed = printed + \"\\n\"\n        i += 1\n    }\n    std.io.print(printed)\n}\nvar i = 0\nvar spaces = \"\"\nvar arr2 = []\nvar h = 71\nvar w = 35\nwhile std.arr.len(arr2) < w {\n    var subArr = []\n    while std.arr.len(subArr) < h {\n        subArr[std.arr.len(subArr)] = \" \"\n    }\n    arr2[std.arr.len(arr2)] = subArr\n}\nfn vec (x, y) {\n    return {\n        x = x,\n        y = y\n    }\n}\nvar ballPos = vec(0, 0)\nvar direction = vec(1, 1)\n\nvar acc = vec(0, 1)\nfn isOnScreen (pos) {\n    if pos.x < 0 {\n        return false\n    } elseif pos.y < 0 {\n        return false\n    } elseif pos.y >= w {\n        return false\n    } elseif pos.x >= h {\n        return false\n    } else {\n        return true\n    }\n}\nvar time = std.time.nanos() - startNanos\n// std.io.print(\"Time: \" + toStr(time / 1000000) + \"ms\\n\")\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl"), "version": Number(208)}} }
-Errors: []
-Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple.mpl
-There are 0 reference errors
-Update time: 3514us
-Request: Request { id: RequestId(I32(7)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(90)}, "start": Object {"character": Number(0), "line": Number(44)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Request: Request { id: RequestId(I32(8)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Request: Request { id: RequestId(I32(78)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(12)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elseif x < 4 {\n    std.io.print(\"x is less than 4\")\n} els\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(188)}} }
+Errors: [ReferenceError { name: "els", line: 11, char_start: 2, char_end: 5 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 1 reference errors
+Update time: 653us
+Request: Request { id: RequestId(I32(79)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(12)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elseif x < 4 {\n    std.io.print(\"x is less than 4\")\n} else\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(189)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Expected left brace to start block, got Token { t: EOF, line: 13, char_start: 0, char_end: 0 }", line: 14, token: Token { t: EOF, line: 13, char_start: 0, char_end: 0 } }
+Update time: 398us
+Request: Request { id: RequestId(I32(80)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(12)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elseif x < 4 {\n    std.io.print(\"x is less than 4\")\n} elsei\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(190)}} }
+Errors: [ReferenceError { name: "elsei", line: 11, char_start: 2, char_end: 7 }]
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 1 reference errors
+Update time: 747us
+Request: Request { id: RequestId(I32(81)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(12)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elseif x < 4 {\n    std.io.print(\"x is less than 4\")\n} elseif\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(191)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: ParserError { msg: "Expected an expression, instead got Token { t: EndOfStatement, line: 11, char_start: 8, char_end: 9 }", line: 13, token: Token { t: EndOfStatement, line: 11, char_start: 8, char_end: 9 } }
+Update time: 433us
+Request: Request { id: RequestId(I32(82)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(12)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elseif x < 4 {\n    std.io.print(\"x is less than 4\")\n} elseif x < 5 {\n    std.io.print(\"x is less than 5\")\n} elseif x < 6 {\n    std.io.print(\"x is less than 6\")\n} elseif x < 7 {\n    std.io.print(\"x is less than 7\")\n} elseif x < 8 {\n    std.io.print(\"x is less than 8\")\n} elseif x < 9 {\n    std.io.print(\"x is less than 9\")\n} elseif x < 10 {\n    std.io.print(\"x is less than 10\")\n} else {\n    std.io.print(\"x is greater than or equal to 10\")\n}\n```\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(192)}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: LexerError { msg: "Invalid character: `", line: 27, token: Token { t: Ident("`"), line: 26, char_start: 0, char_end: 1 } }
+Update time: 568us
+Request: Request { id: RequestId(I32(83)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(27)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(84)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
 Formatting
-Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Error: "Error parsing file"
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+Error: LexerError { msg: "Invalid character: `", line: 27, token: Token { t: Ident("`"), line: 26, char_start: 0, char_end: 1 } }
+Update time: 514us
+Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("\nvar x = 10\n\nif x < 1 {\n    std.io.print(\"x is less than 1\")\n} elseif x < 2 {\n    std.io.print(\"x is less than 2\")\n} elseif x < 3 {\n    std.io.print(\"x is less than 3\")\n} elseif x < 4 {\n    std.io.print(\"x is less than 4\")\n} elseif x < 5 {\n    std.io.print(\"x is less than 5\")\n} elseif x < 6 {\n    std.io.print(\"x is less than 6\")\n} elseif x < 7 {\n    std.io.print(\"x is less than 7\")\n} elseif x < 8 {\n    std.io.print(\"x is less than 8\")\n} elseif x < 9 {\n    std.io.print(\"x is less than 9\")\n} elseif x < 10 {\n    std.io.print(\"x is less than 10\")\n} else {\n    std.io.print(\"x is greater than or equal to 10\")\n}\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl"), "version": Number(194)}} }
 Errors: []
-Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple.mpl
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
 There are 0 reference errors
-Update time: 2472us
-mpl"), "version": Number(207)}} }
-Errors: []
-Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple.mpl
-There are 0 reference errors
-Update time: 2499us
-Request: Request { id: RequestId(I32(10)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(90)}, "start": Object {"character": Number(0), "line": Number(44)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Notification: Notification { method: "textDocument/didChange", params: Object {"contentChanges": Array [Object {"text": String("var startNanos = std.time.nanos()\nvar sdfsfd = import maple2.mpl\nvar sdfsfd = {}\n\nsdfsfd.x = 1\n\n\nvar a = 1\n\nvar b = 0\n\nfn yeet (b) {\n    b += 1\n}\n\nyeet(b)\n\nb = {\n    a = 0,\n    b = fn (a) {\n        return a + 1\n    },\n    a = fn () {\n        return 1\n    },\n    1.1 = 2\n}\n\n\nb.x = 1\n\na += 1\nb = b[1.1]\nb = [1, 2, 3, 4, 5]\nb = b[4 - 1]\nb = -4\nb = !!true\nfn printScreen (arr) {\n    var i = 0\n    var printed = \"\"\n    while i < std.arr.len(arr) {\n        // sdf\n        var subArr = arr[i]\n        var j = 0\n        while j < std.arr.len(subArr) {\n            printed = printed + subArr[j]\n            j += 1\n        }\n        printed = printed + \"\\n\"\n        i += 1\n    }\n    std.io.print(printed)\n}\nvar i = 0\nvar spaces = \"\"\nvar arr2 = []\nvar h = 71\nvar w = 35\nwhile std.arr.len(arr2) < w {\n    var subArr = []\n    while std.arr.len(subArr) < h {\n        subArr[std.arr.len(subArr)] = \" \"\n    }\n    arr2[std.arr.len(arr2)] = subArr\n}\nfn vec (x, y) {\n    return {\n        x = x,\n        y = y\n    }\n}\nvar ballPos = vec(0, 0)\nvar direction = vec(1, 1)\n\nvar acc = vec(0, 1)\nfn isOnScreen (pos) {\n    if pos.x < 0 {\n        return false\n    } elseif pos.y < 0 {\n        return false\n    } elseif pos.y >= w {\n        return false\n    } elseif pos.x >= h {\n        return false\n    } else {\n        return true\n    }\n}\nvar time = std.time.nanos() - startNanos\n// std.io.print(\"Time: \" + toStr(time / 1000000) + \"ms\\n\")\n")}], "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl"), "version": Number(208)}} }
-Errors: []
-Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple.mpl
-There are 0 reference errors
-Update time: 3620us
-Request: Request { id: RequestId(I32(11)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(90)}, "start": Object {"character": Number(0), "line": Number(44)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
-Request: Request { id: RequestId(I32(12)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Update time: 1665us
+Request: Request { id: RequestId(I32(85)), method: "textDocument/diagnostic", params: Object {"range": Object {"end": Object {"character": Number(0), "line": Number(26)}, "start": Object {"character": Number(0), "line": Number(0)}}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Request: Request { id: RequestId(I32(86)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
 Formatting
-Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple.mpl")}} }
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
 Errors: []
-Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple.mpl
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
 There are 0 reference errors
-Update time: 2614us
+Update time: 2305us
+Request: Request { id: RequestId(I32(87)), method: "textDocument/formatting", params: Object {"options": Object {"insertSpaces": Bool(true), "tabSize": Number(4)}, "textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Formatting
+Notification: Notification { method: "textDocument/didSave", params: Object {"textDocument": Object {"uri": String("file:///home/cwood/projects/maple/rust/maple2.mpl")}} }
+Errors: []
+Publishing diagnostics for file:///home/cwood/projects/maple/rust/maple2.mpl
+There are 0 reference errors
+Update time: 1589us
+Shutting down

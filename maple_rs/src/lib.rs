@@ -5,4 +5,5 @@ pub mod builtins;
 pub mod error;
 pub mod parser;
 
+pub mod runtime;
 pub mod scopechain;
