@@ -10,19 +10,31 @@ It has strong typing (kinda) and might have "Metaprogramming" in the future
 
 ## Well Tested
 
-Maple has been tested not only on ubuntu wsl x64, but also on windows 11 x64. This clearly means that it will run on any other system. 
+Maple has been tested not only on ubuntu wsl x64, but also on Windows 11 x64. This clearly means that it will run on any other system.
 
 It compiles on the latest version of clang (built from the source, it's like clang 15 or something) and msvc; maybe it will also compile with gcc
 
 ## Syntax
 
-Maple's syntax is very nice, being inspied by what was easiest when i wrote each component into the lexer and parser
+Maple's syntax is very nice, being inspied by what was easiest when I wrote each component into the lexer and parser
 
 ### Variables
 
-Variables are declared with the syntax *type* *name* [= *value*]
+Variables are declared with the syntax _var|const_ _name_ = _value_
 
-very simple, here's 2 examples:
+very simple, here're 2 examples:
+
+```
+var x = 0
+
+const y = 1
+```
+
+### Variables (C++ version)
+
+Variables are declared with the syntax _type_ _name_ [= *value*]
+
+very simple, here're 2 examples:
 
 ```
 int x = 0
@@ -34,7 +46,19 @@ as you can see maple also has no semicolons
 
 ### Functions
 
-Functions are very easily declared with the syntax: fn *name* ([args[, ]...]) *return_type* { [code] }
+Functions are very easily declared with the syntax: fn _name_ ([args[, ]...]) { [code] }
+
+like this:
+
+```
+fn returnAnInt(a) {
+    return a + 2
+}
+```
+
+### Functions (C++ version)
+
+Functions are very easily declared with the syntax: fn _name_ ([args[, ]...]) _return_type_ { [code] }
 
 like this:
 
@@ -70,7 +94,7 @@ if x == 1 {
 
 ### Operators
 
-the currently used operators and their precedence can be found in Maple/AST.cpp (aka not all operators are actually implemented yet)
+the currently used operators and their precedence can be found in cpp/Maple/AST.cpp (or rust/src/lexer.rs) (aka not all operators are actually implemented yet)
 
 ## Future plans
 
@@ -100,4 +124,3 @@ else {
 4. mega super mega speed boost
 
 ### idk other stuff
-  
