@@ -40,17 +40,6 @@ impl Object {
             line,
         )))
     }
-    pub fn get_ref(&self, key: &ObjectKey, line: usize) -> Result<Rc<Value>, Box<RuntimeError>> {
-        for (k, v) in self.fields.iter() {
-            if k == key {
-                return Ok(v.clone());
-            }
-        }
-        Err(Box::new(RuntimeError::new(
-            format!("Object does not have key {:?}", key),
-            line,
-        )))
-    }
     pub fn set(&mut self, key: ObjectKey, value: Rc<Value>) {
         for (k, v) in self.fields.iter_mut() {
             if k == &key {
@@ -62,18 +51,6 @@ impl Object {
             }
         }
         self.fields.push((key, value));
-    }
-    pub fn set_ref(&mut self, key: &ObjectKey, value: Rc<Value>) {
-        for (k, v) in self.fields.iter_mut() {
-            if k == key {
-                let val_ptr = Rc::<Value>::as_ptr(&v) as *mut Value;
-                unsafe {
-                    *val_ptr = value.as_ref().clone();
-                }
-                return;
-            }
-        }
-        self.fields.push((key.clone(), value));
     }
     pub fn new() -> Object {
         Object { fields: vec![] }
@@ -116,7 +93,7 @@ impl Unpack<Rc<Value>> for Rc<Value> {
                 }
             }
             Value::ObjectAccess(v, key) => match v.as_ref() {
-                Value::Object(l) => match l.get_ref(key, line) {
+                Value::Object(l) => match l.get(key.clone(), line) {
                     Ok(value) => value.unpack(scope_chain, line),
                     Err(_) => Err(ScopeError::new(
                         format!("Object does not have key {}", key),
