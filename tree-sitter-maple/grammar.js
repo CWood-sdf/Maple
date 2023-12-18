@@ -9,7 +9,7 @@ module.exports = grammar({
         comment: (_) => seq("//", /[^\n]*/),
         _definition: ($) =>
             choice($.function_definition, $.variable_definition),
-        fn: ($) => "fn",
+        fn: (_) => "fn",
         function_definition: ($) =>
             seq(
                 $.fn,
@@ -54,8 +54,8 @@ module.exports = grammar({
                 ),
                 $.EOS,
             ),
-        break_statement: ($) => seq("break"),
-        continue_statement: ($) => seq("continue"),
+        break_statement: (_) => seq("break"),
+        continue_statement: (_) => seq("continue"),
         while_loop: ($) => seq("while", $.expression, $.block),
         if_statement: ($) =>
             seq(

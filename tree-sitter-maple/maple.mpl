@@ -97,5 +97,6 @@ while i < 100000000 {
     }
     i += 1
     while std.time.nanos() - start < 10000000 {
+        // yeet
     }
 }
