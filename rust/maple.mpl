@@ -87,26 +87,26 @@ fn isOnScreen (pos) {
     }
 }
 var time = std.time.nanos() - startNanos
-printScreen(arr2)
-i = 0
-while i < 100000 {
-    ballPos.x += direction.x
-    ballPos.y += direction.y
-    if isOnScreen(ballPos) {
-        arr2[ballPos.x][ballPos.y] = "O"
-        printScreen(arr2)
-    }  
-    if ballPos.x >= w - 1 || ballPos.x <= 1 {
-// ballPos.x = w
-        // ballPos.x = 0
-        direction.x = direction.x * -1
-    }  
-    if ballPos.y >= h - 1 || ballPos.y <= 0 {
-        direction.y = direction.y * -1
-// ballPos.y = h
-    // ballPos.y = 0
-    }  
-    std.time.sleepNanos(50000000)
-    i += 1
-}
+// printScreen(arr2)
+// i = 0
+// while i < 100000 {
+//     ballPos.x += direction.x
+//     ballPos.y += direction.y
+//     if isOnScreen(ballPos) {
+//         arr2[ballPos.x][ballPos.y] = "O"
+//         printScreen(arr2)
+//     }  
+//     if ballPos.x >= w - 1 || ballPos.x <= 1 {
+// // ballPos.x = w
+//         // ballPos.x = 0
+//         direction.x = direction.x * -1
+//     }  
+//     if ballPos.y >= h - 1 || ballPos.y <= 0 {
+//         direction.y = direction.y * -1
+// // ballPos.y = h
+//     // ballPos.y = 0
+//     }  
+//     std.time.sleepNanos(50000000)
+//     i += 1
+// }
 // std.io.print("Time: " + toStr(time / 1000000) + "ms\n")
