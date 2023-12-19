@@ -6,3 +6,5 @@ output.txt
 # ignore zig build stuff
 zig/zig-cache/
 zig/zig-out/
+
+target/
