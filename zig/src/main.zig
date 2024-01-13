@@ -1,5 +1,6 @@
 const std = @import("std");
 const lex = @import("lexer.zig");
+const parser = @import("parser.zig");
 
 pub fn main() !void {
     std.debug.print("Hello, world!\n", .{});
@@ -8,19 +9,13 @@ pub fn main() !void {
     const file = try std.fs.cwd().openFile("maple.mpl", std.fs.File.OpenFlags{});
     // this string must live for the duration of the interpreting process
     const fileStr = try file.readToEndAlloc(allocator, 10000000);
+    defer allocator.free(fileStr);
     std.debug.print("file: {s}\n", .{fileStr});
     var lexer = try lex.Lexer.init(allocator, fileStr);
-    std.debug.print("token: {}\n", .{try lexer.next_token()});
-    std.debug.print("token: {}\n", .{try lexer.next_token()});
-    std.debug.print("token: {}\n", .{try lexer.next_token()});
-    std.debug.print("token: {}\n", .{try lexer.next_token()});
-    std.debug.print("token: {}\n", .{try lexer.next_token()});
-    std.debug.print("token: {}\n", .{try lexer.next_token()});
-    std.debug.print("token: {}\n", .{try lexer.next_token()});
-    switch ((try lexer.get_current_token()).type) {
-        .Ident => |str| std.debug.print("ident: {s}\n", .{str}),
-        else => |token| std.debug.print("token: {}\n", .{token}),
-    }
+    defer lexer.deinit();
+    var parse = parser.Parser.init(allocator, &lexer);
+    _ = try parse.parse();
+    // std.debug.print("parse: {s}\n", .{parse});
 }
 //
 // test "simple test" {
