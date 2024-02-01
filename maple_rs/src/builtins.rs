@@ -400,6 +400,14 @@ pub fn make_builtin_std(scope_chain: &mut ScopeChain) -> Result<(), Box<RuntimeE
         ObjectKey::String("len".to_string()),
         Rc::new(Value::BuiltinFunction(builtin_str_len, 1)),
     );
+    std_str_obj.set(
+        ObjectKey::String("concat".to_string()),
+        Rc::new(Value::BuiltinFunction(builtin_concat, 2)),
+    );
+    std_str_obj.set(
+        ObjectKey::String("from".to_string()),
+        Rc::new(Value::BuiltinFunction(builtin_to_str, 1)),
+    );
     let std_str_rc = Rc::new(Value::Object(std_str_obj));
     std_obj.set(
         ObjectKey::String("str".to_string()),
@@ -431,8 +439,9 @@ pub fn add_builtin_fn(scope_chain: &mut ScopeChain, name: &str, len: usize, func
     Ok(())
 }
 pub fn create_builtins(scope_chain: &mut ScopeChain) -> Result<(), Box<RuntimeError>> {
-    add_builtin_fn(scope_chain, "concat", 2, builtin_concat)?;
-    add_builtin_fn(scope_chain, "toStr", 1, builtin_to_str)?;
+    // add_builtin_fn(scope_chain, "arrLen", 1, builtin_arr_len)?;
+    // add_builtin_fn(scope_chain, "concat", 2, builtin_concat)?;
+    // add_builtin_fn(scope_chain, "toStr", 1, builtin_to_str)?;
     make_builtin_std(scope_chain)?;
     Ok(())
 }

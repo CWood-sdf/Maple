@@ -278,8 +278,7 @@ fn main_server(
     // }
     Ok(())
 }
-fn main() -> Result<(), Box<dyn std::error::Error>> {
-    let mut log_file = std::fs::File::create("/home/cwood/projects/maple/lsp/log.txt")?;
+fn actual_main(log_file: &mut std::fs::File) -> Result<(), Box<dyn ::std::error::Error>> {
     let (connection, _) = Connection::stdio();
     let server_capabilities = ServerCapabilities {
         hover_provider: Some(lsp_types::HoverProviderCapability::Simple(true)),
@@ -316,16 +315,48 @@ fn main() -> Result<(), Box<dyn std::error::Error>> {
     log_file.write_all(format!("Capabilities: {:?}\n", capabilities).as_bytes())?;
     let init_params = connection.initialize(capabilities)?;
     // log_file.write_all(format!("Init params: {:?}\n", init_params).as_bytes())?;
-    std::fs::write(
-        "/home/cwood/projects/maple/lsp/init_params.json",
-        init_params.to_string(),
-    )?;
+    // std::fs::write(
+    //     "~/projects/maple/lsp/init_params.json",
+    //     init_params.to_string(),
+    // )?;
 
-    main_server(&connection, &init_params, &mut log_file)?;
+    main_server(&connection, &init_params, log_file)?;
 
     log_file.write_all(b"Shutting down\n")?;
     // smh io_threads.join() blocks the task from ending
     // io_threads.join()?;
     // log_file.write_all(b"Shutting down\n")?;
     Ok(())
+}
+fn main() -> Result<(), Box<dyn std::error::Error>> {
+    eprintln!("Starting server");
+    let dir = match std::env::var("HOME") {
+        Ok(dir) => dir,
+        Err(e) => {
+            eprintln!("{:?}", e);
+            return Err(Box::new(e));
+        }
+    };
+    let mut log_file = match std::fs::File::options()
+        .create(true)
+        .append(true)
+        .open(format!("{}{}", dir, "/.local/state/nvim/lsp.log"))
+    {
+        Ok(file) => file,
+        Err(e) => {
+            eprintln!("{:?}", e);
+            return Err(Box::new(e));
+        }
+    };
+    match actual_main(&mut log_file) {
+        Ok(_) => {
+            log_file.write_all(b"Success\n")?;
+            Ok(())
+        }
+        Err(e) => {
+            log_file.write_all(format!("Error: {:?}\n", e).as_bytes())?;
+            eprintln!("{:?}", e);
+            Err(e)
+        }
+    }
 }

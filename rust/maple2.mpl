@@ -25,4 +25,4 @@ if x < 1 {
     msg = "x is greater than or equal to 10"
 }
 
-return {}
+return msg

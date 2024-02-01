@@ -7,6 +7,7 @@ pub trait MapleError: std::fmt::Debug + std::fmt::Display + std::error::Error {
     fn get_msg(&self) -> String {
         format!("{}", self)
     }
+    fn get_raw_msg(&self) -> String;
     fn set_msg(&mut self, msg: String);
     fn get_token_from_error(&self) -> Token;
 }
@@ -30,6 +31,9 @@ impl MapleError for LexerError {
     }
     fn set_msg(&mut self, msg: String) {
         self.msg = msg;
+    }
+    fn get_raw_msg(&self) -> String {
+        self.msg.clone()
     }
     fn get_token_from_error(&self) -> Token {
         self.token.clone()
@@ -63,6 +67,9 @@ impl MapleError for ParserError {
     }
     fn set_msg(&mut self, msg: String) {
         self.msg = msg;
+    }
+    fn get_raw_msg(&self) -> String {
+        self.msg.clone()
     }
     fn get_token_from_error(&self) -> Token {
         self.token.clone()
@@ -124,6 +131,9 @@ impl MapleError for RuntimeError {
     }
     fn set_msg(&mut self, msg: String) {
         self.msg = msg;
+    }
+    fn get_raw_msg(&self) -> String {
+        self.msg.clone()
     }
     fn get_token_from_error(&self) -> Token {
         self.base_asts[0].token.clone()

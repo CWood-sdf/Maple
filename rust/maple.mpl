@@ -2,7 +2,7 @@ var startNanos = std.time.nanos()
 var sdfsfd = import maple2.mpl
 // var sdfsfd = {}
 
-sdfsfd.x = 1
+// sdfsfd.x = 1
 
 
 var a = 1
@@ -15,26 +15,29 @@ fn yeet (b) {
 
 yeet(b)
 
-b = {
-    a = 0,
-    b = fn (a) {
-        return a + 1
-    },
-    a = fn () {
-        return 1
-    },
-    1.1 = 2
-}
 
 
-b.x = 1
+// b = {
+//     a = 0,
+//     b = fn (a) {
+//         return a + 1
+//     },
+//     a = fn () {
+//         return 1
+//     },
+//     1.1 = 2
+// }
+//
+//
+// b.x = 1
+//
+// a += 1
+// b = b[1.1]
+// b = [1, 2, 3, 4, 5]
+// b = b[4 - 1]
+// b = -4
+// b = !!true
 
-a += 1
-b = b[1.1]
-b = [1, 2, 3, 4, 5]
-b = b[4 - 1]
-b = -4
-b = !!true
 fn printScreen (arr) {
     var i = 0
     var printed = ""
@@ -56,13 +59,23 @@ var spaces = ""
 var arr2 = []
 var h = 71
 var w = 46
-while std.arr.len(arr2) < w {
+var start = std.time.nanos()
+var x = 0
+while x < w {
     var subArr = []
-    while std.arr.len(subArr) < h {
-        subArr[std.arr.len(subArr)] = " "
+    var y = 0
+    while y < h {
+        subArr[y] = " "
+        y += 1
     }
-    arr2[std.arr.len(arr2)] = subArr
+    arr2[x] = subArr
+    x += 1
 }
+
+var end = std.time.nanos()
+std.io.println(std.str.from((end - start) / 1000000) + "ms")
+
+std.io.println(h * w)
 fn vec (x, y) {
     return {
         x = x,
@@ -87,6 +100,7 @@ fn isOnScreen (pos) {
     }
 }
 var time = std.time.nanos() - startNanos
+// std.io.println(time / 1000000000)
 // printScreen(arr2)
 // i = 0
 // while i < 100000 {

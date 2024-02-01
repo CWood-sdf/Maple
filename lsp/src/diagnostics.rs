@@ -84,7 +84,7 @@ pub fn publish_diagnostics(
                 code: None,
                 code_description: None,
                 source: None,
-                message: e.get_msg(),
+                message: e.get_raw_msg(),
                 related_information: None,
                 tags: None,
                 data: None,
